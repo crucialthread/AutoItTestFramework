@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Getting Started - TestFramework.au3 for AutoIt</title>
+<link rel="stylesheet" type="text/css" href="css/default.css">
+</head>
+<body>
+<div class="topnav">
+    <a href="index.htm">Welcome</a>
+    <a href="getting-started.htm">Getting Started</a>
+    <a href="functions.htm">Function Reference</a>
+    <a href="constants.htm">Constants</a>
+</div>
+
+<h1>Getting Started</h1>
+
+<h2>Installation</h2>
+
+<p>
+    If you installed TestFramework.au3 via the provided installer, it is placed in AutoIt's
+    standard include directory and can be referenced from any project using the angle-bracket form:
+</p>
+
+<div class="signature">#include &lt;TestFramework.au3&gt;</div>
+
+<p>
+    If you are using TestFramework.au3 without installing it (for example, by placing it alongside
+    your own scripts), use the quoted form with a relative or full path:
+</p>
+
+<div class="signature">#include "TestFramework.au3"</div>
+
+<hr>
+
+<h2>Anatomy of a Test File</h2>
+
+<p>A typical test file using TestFramework.au3 follows this structure:</p>
+
+<h3>1. Include the framework and the code under test</h3>
+<pre>
+#include &lt;TestFramework.au3&gt;
+#include "MyLibrary.au3"
+</pre>
+
+<h3>2. Write one function per test group</h3>
+<p>
+    Each test function calls <a href="functions/TestFmkHeader.htm">_TestFmkHeader()</a> once
+    at the top to label the group, then one or more
+    <a href="functions/TestFmkAssert.htm">_TestFmkAssert()</a> calls to verify behavior.
+    Always pass the actual value and the expected value as the 3rd and 4th arguments so that
+    failures show exactly what went wrong.
+</p>
+<pre>
+Func _TestAdd()
+    _TestFmkHeader("Test: Add()")
+    _TestFmkAssert(Add(1, 2) = 3,   "Add(1, 2) returns 3",   Add(1, 2),   "3")
+    _TestFmkAssert(Add(-1, 1) = 0,  "Add(-1, 1) returns 0",  Add(-1, 1),  "0")
+    _TestFmkAssert(Add(0, 0) = 0,   "Add(0, 0) returns 0",   Add(0, 0),   "0")
+EndFunc
+</pre>
+
+<h3>3. Wire tests into _RunAllTests() using _TestFmkRun()</h3>
+<p>
+    <a href="functions/TestFmkRun.htm">_TestFmkRun()</a> runs a test function and feeds its
+    pass/fail result into a cumulative <code>$bAllPassed</code> variable. This means even if
+    an early test fails, all remaining tests still run and are reported.
+</p>
+<pre>
+Func _RunAllTests()
+    Local $bAllPassed = True
+    $bAllPassed = _TestFmkRun(_TestAdd,      $bAllPassed)
+    $bAllPassed = _TestFmkRun(_TestSubtract, $bAllPassed)
+    $bAllPassed = _TestFmkRun(_TestMultiply, $bAllPassed)
+    _TestFmkSummary()
+    Return $bAllPassed
+EndFunc
+
+_RunAllTests()
+</pre>
+
+<h3>4. Call _TestFmkSummary() at the end</h3>
+<p>
+    <a href="functions/TestFmkSummary.htm">_TestFmkSummary()</a> prints the final
+    Total/Passed/Failed block to the console. Call it once at the end of <code>_RunAllTests()</code>,
+    not inside individual test functions.
+</p>
+
+<hr>
+
+<h2>Complete Worked Example</h2>
+
+<p>
+    This example tests a small custom math library, showing a realistic test file from start to finish.
+</p>
+
+<h3>MathLib.au3 (the code under test)</h3>
+<pre>
+; A simple math library
+Func Add($a, $b)
+    Return $a + $b
+EndFunc
+
+Func Divide($a, $b)
+    If $b = 0 Then Return SetError(1, 0, 0)
+    Return $a / $b
+EndFunc
+</pre>
+
+<h3>MathLibTests.au3 (the test file)</h3>
+<pre>
+#include &lt;TestFramework.au3&gt;
+#include "MathLib.au3"
+
+Func _TestAdd()
+    _TestFmkHeader("Test: Add()")
+    _TestFmkAssert(Add(2, 3) = 5,   "Add(2, 3) returns 5",   Add(2, 3),   "5")
+    _TestFmkAssert(Add(-1, 1) = 0,  "Add(-1, 1) returns 0",  Add(-1, 1),  "0")
+    _TestFmkAssert(Add(0, 0) = 0,   "Add(0, 0) returns 0",   Add(0, 0),   "0")
+EndFunc
+
+Func _TestDivide()
+    _TestFmkHeader("Test: Divide()")
+    _TestFmkAssert(Divide(10, 2) = 5,  "Divide(10, 2) returns 5",  Divide(10, 2),  "5")
+    _TestFmkAssert(Divide(7, 2) = 3.5, "Divide(7, 2) returns 3.5", Divide(7, 2),   "3.5")
+
+    ; Test divide by zero - expect @error to be set
+    Divide(1, 0)
+    _TestFmkAssert(@error = 1, "Divide(1, 0) sets @error = 1", @error, "1")
+EndFunc
+
+Func _RunAllTests()
+    Local $bAllPassed = True
+    $bAllPassed = _TestFmkRun(_TestAdd,    $bAllPassed)
+    $bAllPassed = _TestFmkRun(_TestDivide, $bAllPassed)
+    _TestFmkSummary()
+    Return $bAllPassed
+EndFunc
+
+_RunAllTests()
+</pre>
+
+<h3>Console output (all passing)</h3>
+<div class="console">
+<span class="head">+ --- Test: Add() ---</span><br>
+<span class="pass">&gt; [PASS] Add(2, 3) returns 5</span><br>
+<span class="pass">&gt; [PASS] Add(-1, 1) returns 0</span><br>
+<span class="pass">&gt; [PASS] Add(0, 0) returns 0</span><br>
+<br>
+<span class="head">+ --- Test: Divide() ---</span><br>
+<span class="pass">&gt; [PASS] Divide(10, 2) returns 5</span><br>
+<span class="pass">&gt; [PASS] Divide(7, 2) returns 3.5</span><br>
+<span class="pass">&gt; [PASS] Divide(1, 0) sets @error = 1</span><br>
+<br>
+<span class="total">+ Total:  6</span><br>
+<span class="pass">&gt; Passed: 6</span><br>
+: Failed: 0
+</div>
+
+<h3>Console output (one failure)</h3>
+<div class="console">
+<span class="head">+ --- Test: Add() ---</span><br>
+<span class="pass">&gt; [PASS] Add(2, 3) returns 5</span><br>
+<span class="fail">! [FAIL] Add(-1, 1) returns 0 (expected: 0, actual: 99)</span><br>
+<span class="pass">&gt; [PASS] Add(0, 0) returns 0</span><br>
+<br>
+<span class="total">+ Total:  3</span><br>
+<span class="pass">&gt; Passed: 2</span><br>
+<span class="fail">! Failed: 1</span>
+</div>
+
+<hr>
+
+<h2>Tips</h2>
+
+<p><b>Always pass actual and expected values to _TestFmkAssert().</b>
+The 3rd and 4th arguments are optional, but without them a failure only tells you the
+description failed, not what the actual result was. Always include them.</p>
+
+<p><b>Keep test functions focused.</b>
+One test function per unit of behavior. If a function has 20 assertions, consider splitting
+it into smaller, more specific test functions with clearer headers.</p>
+
+<p><b>Name test functions descriptively.</b>
+<code>_TestAdd_NegativeNumbers()</code> is more useful than <code>_TestAdd2()</code> when
+reading the console output after a failure.</p>
+
+<p><b>Test both the happy path and the error path.</b>
+As shown in the <code>_TestDivide()</code> example above, testing that <code>@error</code> is
+correctly set on failure is just as important as testing correct return values on success.
+Remember: capture <code>@error</code> into a local variable immediately after the call, since
+any subsequent function call resets it.</p>
+
+</body>
+</html>

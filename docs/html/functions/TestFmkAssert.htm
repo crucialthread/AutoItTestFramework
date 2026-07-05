@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>_TestFmkAssert - TestFramework.au3 for AutoIt</title>
+<link rel="stylesheet" type="text/css" href="../css/default.css">
+</head>
+<body>
+<div class="topnav">
+    <a href="../index.htm">Welcome</a>
+    <a href="../getting-started.htm">Getting Started</a>
+    <a href="../functions.htm">Function Reference</a>
+    <a href="../constants.htm">Constants</a>
+</div>
+
+<h1>Function Reference</h1>
+<hr>
+<h1>_TestFmkAssert</h1>
+
+<p>Evaluates a condition, records pass or fail, and prints the result to the console.</p>
+
+<div class="signature">
+#include &lt;TestFramework.au3&gt;<br>
+_TestFmkAssert ( $bCondition, $sDescription [, $vActual = "" [, $vExpected = ""]] )
+</div>
+
+<h2>Parameters</h2>
+<table>
+<tr><td>$bCondition</td><td>The condition to evaluate. If <code>True</code>, the assertion passes; if <code>False</code>, it fails.</td></tr>
+<tr><td>$sDescription</td><td>A short description of what this assertion is checking. Printed alongside the pass/fail result.</td></tr>
+<tr><td>$vActual</td><td><b>[optional]</b> The actual value produced by the code under test. Displayed on failure so you can see what the code returned. Strongly recommended.</td></tr>
+<tr><td>$vExpected</td><td><b>[optional]</b> The expected value. Displayed on failure alongside <code>$vActual</code>. Strongly recommended.</td></tr>
+</table>
+
+<h2>Return Value</h2>
+<table>
+<tr><td>None.</td><td>This function does not return a value. Pass/fail state is tracked in internal global counters.</td></tr>
+</table>
+
+<h2>Remarks</h2>
+<p>
+    Every call to <code>_TestFmkAssert()</code> increments the internal total counter.
+    A passing assertion increments the passed counter and prints a blue
+    <code>[PASS]</code> line. A failing assertion increments the failed counter
+    and prints a red <code>[FAIL]</code> line.
+</p>
+<p>
+    Always provide <code>$vActual</code> and <code>$vExpected</code>. Without them, a failure
+    only tells you which description failed, not what the actual value was. With them, you can
+    diagnose the failure directly from the console output without re-running the script under a debugger.
+</p>
+<p>
+    <b>Important:</b> if you are asserting on <code>@error</code>, capture it into a local variable
+    immediately after the call being tested, before passing it to <code>_TestFmkAssert()</code>.
+    Any function call (including <code>_TestFmkAssert</code> itself) resets <code>@error</code> to 0.
+</p>
+<div class="note">
+    Correct: <code>Local $iErr = @error</code> (captured immediately), then <code>_TestFmkAssert($iErr = 1, ...)</code><br>
+    Incorrect: <code>_TestFmkAssert(@error = 1, ...)</code> (already reset by the time _TestFmkAssert runs)
+</div>
+
+<h2>Related</h2>
+<p>
+    <a href="TestFmkHeader.htm">_TestFmkHeader</a>,
+    <a href="TestFmkRun.htm">_TestFmkRun</a>,
+    <a href="TestFmkSummary.htm">_TestFmkSummary</a>
+</p>
+
+<h2>Example</h2>
+<pre>
+#include &lt;TestFramework.au3&gt;
+
+Func _TestMyFunc()
+    _TestFmkHeader("Test: MyFunc")
+
+    ; Basic assertion - always pass $vActual and $vExpected
+    Local $iResult = 2 + 3
+    _TestFmkAssert($iResult = 5, "2 + 3 equals 5", $iResult, "5")
+
+    ; Asserting on @error - capture it immediately before any other call
+    FileRead("nonexistent_file.txt")
+    Local $iErr = @error
+    _TestFmkAssert($iErr &lt;&gt; 0, "FileRead on missing file sets @error", $iErr, "&lt;&gt; 0")
+EndFunc
+
+_TestMyFunc()
+</pre>
+
+<p>Console output (both passing):</p>
+<div class="console">
+<span class="head">+ --- Test: MyFunc ---</span><br>
+<span class="pass">&gt; [PASS] 2 + 3 equals 5</span><br>
+<span class="pass">&gt; [PASS] FileRead on missing file sets @error</span>
+</div>
+
+<p>Console output (first assertion failing):</p>
+<div class="console">
+<span class="head">+ --- Test: MyFunc ---</span><br>
+<span class="fail">! [FAIL] 2 + 3 equals 5 (expected: 5, actual: 99)</span><br>
+<span class="pass">&gt; [PASS] FileRead on missing file sets @error</span>
+</div>
+
+</body>
+</html>

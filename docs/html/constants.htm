@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Constants Reference - TestFramework.au3 for AutoIt</title>
+<link rel="stylesheet" type="text/css" href="css/default.css">
+</head>
+<body>
+<div class="topnav">
+    <a href="index.htm">Welcome</a>
+    <a href="getting-started.htm">Getting Started</a>
+    <a href="functions.htm">Function Reference</a>
+    <a href="constants.htm">Constants</a>
+</div>
+
+<h1>Constants Reference</h1>
+
+<h2>$TFW_COLOR_*</h2>
+
+<p>
+    These constants are single-character prefix strings recognized by SciTE's output pane
+    to color console lines. They are used as the optional <code>$sColor</code> parameter of
+    <a href="functions/TestFmkHeader.htm">_TestFmkHeader()</a>, and internally by
+    <a href="functions/TestFmkAssert.htm">_TestFmkAssert()</a> and
+    <a href="functions/TestFmkSummary.htm">_TestFmkSummary()</a> to color output lines automatically.
+</p>
+
+<table>
+<tr>
+    <td>$TFW_COLOR_WHITE</td>
+    <td><code>":"</code></td>
+    <td>White (no color highlight). Used for the Failed line when count is zero.</td>
+</tr>
+<tr>
+    <td>$TFW_COLOR_RED</td>
+    <td><code>"!"</code></td>
+    <td>Bold red. Used for <code>[FAIL]</code> lines and the Failed count when non-zero.</td>
+</tr>
+<tr>
+    <td>$TFW_COLOR_BLUE</td>
+    <td><code>"&gt;"</code></td>
+    <td>Blue. Used for <code>[PASS]</code> lines and the Passed count.</td>
+</tr>
+<tr>
+    <td>$TFW_COLOR_YELLOW</td>
+    <td><code>"-"</code></td>
+    <td>Bold yellow. Available for use with <a href="functions/TestFmkHeader.htm">_TestFmkHeader()</a> to distinguish test sections visually.</td>
+</tr>
+<tr>
+    <td>$TFW_COLOR_ORANGE</td>
+    <td><code>"+"</code></td>
+    <td>Bold orange. The default color for <a href="functions/TestFmkHeader.htm">_TestFmkHeader()</a> and the Total count in the summary.</td>
+</tr>
+</table>
+
+<h2>Remarks</h2>
+<p>
+    These prefix characters are prepended to the text passed to <code>ConsoleWrite()</code>.
+    SciTE maps each character to a color based on its <code>style.errorlist.*</code> properties.
+    The exact colors rendered depend on the user's SciTE theme/configuration, but the defaults
+    described above match the standard SciTE4AutoIt3 install.
+</p>
+<p>
+    These constants are only meaningful when the script is run from SciTE (via Go/F5 or
+    a Tools menu command). When run from a plain command prompt, the prefix character
+    is printed as a literal character before the text and has no visual significance.
+</p>
+
+<h2>Example</h2>
+<pre>
+#include &lt;TestFramework.au3&gt;
+
+; Use $TFW_COLOR_YELLOW to distinguish a sub-group of tests visually
+_TestFmkHeader("Test: Setup", $TFW_COLOR_YELLOW)
+
+; Use the default orange for the main test group
+_TestFmkHeader("Test: Main assertions")
+</pre>
+
+</body>
+</html>

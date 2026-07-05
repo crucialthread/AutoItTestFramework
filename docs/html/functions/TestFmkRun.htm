@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>_TestFmkRun - TestFramework.au3 for AutoIt</title>
+<link rel="stylesheet" type="text/css" href="../css/default.css">
+</head>
+<body>
+<div class="topnav">
+    <a href="../index.htm">Welcome</a>
+    <a href="../getting-started.htm">Getting Started</a>
+    <a href="../functions.htm">Function Reference</a>
+    <a href="../constants.htm">Constants</a>
+</div>
+
+<h1>Function Reference</h1>
+<hr>
+<h1>_TestFmkRun</h1>
+
+<p>Runs a test function by reference and accumulates its pass/fail result into a cumulative boolean.</p>
+
+<div class="signature">
+#include &lt;TestFramework.au3&gt;<br>
+_TestFmkRun ( $fTest [, $bCumulative = True] )
+</div>
+
+<h2>Parameters</h2>
+<table>
+<tr><td>$fTest</td><td>A function reference to the test function to run. Pass the function name directly without parentheses or quotes (e.g. <code>_TestMyFunc</code>, not <code>"_TestMyFunc"</code> or <code>_TestMyFunc()</code>).</td></tr>
+<tr><td>$bCumulative</td><td><b>[optional]</b> The accumulated result from all previously run tests. Pass <code>$bAllPassed</code> here to carry the running total forward. Default is <code>True</code>.</td></tr>
+</table>
+
+<h2>Return Value</h2>
+<table>
+<tr><td>Success:</td><td><code>True</code> if this test produced no new failures AND <code>$bCumulative</code> is <code>True</code>.</td></tr>
+<tr><td>Failure:</td><td><code>False</code> if this test produced at least one new failure, OR if <code>$bCumulative</code> was already <code>False</code>.</td></tr>
+</table>
+
+<h2>Remarks</h2>
+<p>
+    <code>_TestFmkRun()</code> snapshots the internal failure counter before calling <code>$fTest()</code>,
+    then compares it afterward. If the count increased, the test is considered failed and
+    <code>False</code> is returned.
+</p>
+<p>
+    Critically, <code>_TestFmkRun()</code> <b>always</b> runs every test function, regardless
+    of whether previous tests have already failed. This is intentional: the full suite should
+    always complete so you get a complete picture of what passes and fails in a single run,
+    rather than stopping at the first failure.
+</p>
+<p>
+    The standard pattern is to assign the return value back to <code>$bAllPassed</code> on
+    each call, chaining the cumulative result through every test in the suite:
+</p>
+<pre>
+Local $bAllPassed = True
+$bAllPassed = _TestFmkRun(_TestA, $bAllPassed)
+$bAllPassed = _TestFmkRun(_TestB, $bAllPassed)
+$bAllPassed = _TestFmkRun(_TestC, $bAllPassed)
+</pre>
+<p>
+    After all tests have run, <code>$bAllPassed</code> is <code>True</code> only if every
+    single test in the suite passed. This makes it usable as a return value from the overall
+    <code>_RunAllTests()</code> function for external callers that need a single pass/fail signal.
+</p>
+
+<h2>Related</h2>
+<p>
+    <a href="TestFmkHeader.htm">_TestFmkHeader</a>,
+    <a href="TestFmkAssert.htm">_TestFmkAssert</a>,
+    <a href="TestFmkSummary.htm">_TestFmkSummary</a>
+</p>
+
+<h2>Example</h2>
+<pre>
+#include &lt;TestFramework.au3&gt;
+
+Func _TestAdd()
+    _TestFmkHeader("Test: Add()")
+    _TestFmkAssert(1 + 1 = 2, "1 + 1 = 2", 1 + 1, "2")
+EndFunc
+
+Func _TestSubtract()
+    _TestFmkHeader("Test: Subtract()")
+    _TestFmkAssert(5 - 3 = 2, "5 - 3 = 2", 5 - 3, "2")
+EndFunc
+
+Func _RunAllTests()
+    Local $bAllPassed = True
+    $bAllPassed = _TestFmkRun(_TestAdd,      $bAllPassed)
+    $bAllPassed = _TestFmkRun(_TestSubtract, $bAllPassed)
+    _TestFmkSummary()
+    Return $bAllPassed
+EndFunc
+
+_RunAllTests()
+</pre>
+
+</body>
+</html>

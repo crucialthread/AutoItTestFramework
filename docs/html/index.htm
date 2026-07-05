@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>TestFramework.au3 for AutoIt</title>
+<link rel="stylesheet" type="text/css" href="css/default.css">
+</head>
+<body>
+<div class="topnav">
+    <a href="index.htm">Welcome</a>
+    <a href="getting-started.htm">Getting Started</a>
+    <a href="functions.htm">Function Reference</a>
+    <a href="constants.htm">Constants</a>
+</div>
+
+<h1>TestFramework.au3 for AutoIt</h1>
+
+<p>
+    <b>TestFramework.au3</b> is a simple, lightweight unit test framework for AutoIt.
+    It provides colored console output, pass/fail tracking, and cumulative test result
+    accumulation with zero dependencies beyond AutoIt itself.
+</p>
+
+<p>
+    Designed to be used alongside any AutoIt library or script, TestFramework.au3 makes it
+    easy to write, run, and read test suites directly inside SciTE's console output pane.
+</p>
+
+<hr>
+
+<h2>Key Features</h2>
+
+<table>
+<tr><td>Colored console output</td><td>Pass/fail results are color-coded in SciTE's output pane for at-a-glance readability.</td></tr>
+<tr><td>Actual vs. expected display</td><td>On failure, the actual and expected values are printed alongside the description.</td></tr>
+<tr><td>Cumulative pass/fail tracking</td><td><a href="functions/TestFmkRun.htm">_TestFmkRun()</a> accumulates results across multiple test functions, so a single <code>$bAllPassed</code> variable reflects the entire suite.</td></tr>
+<tr><td>Summary block</td><td><a href="functions/TestFmkSummary.htm">_TestFmkSummary()</a> prints a final total/passed/failed count in the AutoIt convention used by Au3Check output.</td></tr>
+<tr><td>Zero dependencies</td><td>No <code>#include</code> required beyond <code>TestFramework.au3</code> itself.</td></tr>
+</table>
+
+<hr>
+
+<h2>Quick Example</h2>
+
+<pre>
+#include &lt;TestFramework.au3&gt;
+
+Func _TestMyFunc()
+    _TestFmkHeader("Test: MyFunc")
+    _TestFmkAssert(MyFunc(2, 3) = 5, "MyFunc(2, 3) returns 5", MyFunc(2, 3), "5")
+    _TestFmkAssert(MyFunc(0, 0) = 0, "MyFunc(0, 0) returns 0", MyFunc(0, 0), "0")
+EndFunc
+
+Func _RunAllTests()
+    Local $bAllPassed = True
+    $bAllPassed = _TestFmkRun(_TestMyFunc, $bAllPassed)
+    _TestFmkSummary()
+EndFunc
+
+_RunAllTests()
+</pre>
+
+<p>Console output:</p>
+
+<div class="console">
+<span class="head">+ --- Test: MyFunc ---</span><br>
+<span class="pass">&gt; [PASS] MyFunc(2, 3) returns 5</span><br>
+<span class="pass">&gt; [PASS] MyFunc(0, 0) returns 0</span><br>
+<br>
+<span class="total">+ Total:  2</span><br>
+<span class="pass">&gt; Passed: 2</span><br>
+:  Failed: 0
+</div>
+
+<hr>
+
+<h2>Contents</h2>
+
+<p><a href="getting-started.htm">Getting Started</a> &mdash; Installation, anatomy of a test file, and a complete worked example.</p>
+<p><a href="functions.htm">Function Reference</a> &mdash; Detailed documentation for every public function.</p>
+<p><a href="constants.htm">Constants Reference</a> &mdash; The <code>$TFW_COLOR_*</code> console color constants.</p>
+
+</body>
+</html>

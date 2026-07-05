@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>_TestFmkSummary - TestFramework.au3 for AutoIt</title>
+<link rel="stylesheet" type="text/css" href="../css/default.css">
+</head>
+<body>
+<div class="topnav">
+    <a href="../index.htm">Welcome</a>
+    <a href="../getting-started.htm">Getting Started</a>
+    <a href="../functions.htm">Function Reference</a>
+    <a href="../constants.htm">Constants</a>
+</div>
+
+<h1>Function Reference</h1>
+<hr>
+<h1>_TestFmkSummary</h1>
+
+<p>Prints the final Total/Passed/Failed summary block to the console.</p>
+
+<div class="signature">
+#include &lt;TestFramework.au3&gt;<br>
+_TestFmkSummary ( )
+</div>
+
+<h2>Parameters</h2>
+<table>
+<tr><td>None.</td><td>This function takes no parameters.</td></tr>
+</table>
+
+<h2>Return Value</h2>
+<table>
+<tr><td>None.</td><td>This function does not return a value.</td></tr>
+</table>
+
+<h2>Remarks</h2>
+<p>
+    Call <code>_TestFmkSummary()</code> once at the end of your <code>_RunAllTests()</code>
+    function, after all test functions have been run via
+    <a href="TestFmkRun.htm">_TestFmkRun()</a>. Calling it inside individual test functions
+    would produce partial/incorrect totals.
+</p>
+<p>
+    The Failed line is printed in red (<a href="../constants.htm">$TFW_COLOR_RED</a>) when
+    there are one or more failures, and in white (<a href="../constants.htm">$TFW_COLOR_WHITE</a>)
+    when the count is zero, making a fully-passing suite immediately distinguishable from a
+    suite with failures in SciTE's output pane.
+</p>
+<p>
+    The summary block is bounded by <code>==============================</code> separator
+    lines to visually separate it from the individual test output above.
+</p>
+
+<h2>Related</h2>
+<p>
+    <a href="TestFmkHeader.htm">_TestFmkHeader</a>,
+    <a href="TestFmkAssert.htm">_TestFmkAssert</a>,
+    <a href="TestFmkRun.htm">_TestFmkRun</a>
+</p>
+
+<h2>Example</h2>
+<pre>
+#include &lt;TestFramework.au3&gt;
+
+Func _TestSomething()
+    _TestFmkHeader("Test: Something")
+    _TestFmkAssert(True,  "This passes",  "True",  "True")
+    _TestFmkAssert(False, "This fails",   "False", "True")
+    _TestFmkAssert(True,  "This passes",  "True",  "True")
+EndFunc
+
+Func _RunAllTests()
+    Local $bAllPassed = True
+    $bAllPassed = _TestFmkRun(_TestSomething, $bAllPassed)
+    _TestFmkSummary()
+EndFunc
+
+_RunAllTests()
+</pre>
+
+<p>Console output:</p>
+<div class="console">
+<span class="head">+ --- Test: Something ---</span><br>
+<span class="pass">&gt; [PASS] This passes</span><br>
+<span class="fail">! [FAIL] This fails (expected: True, actual: False)</span><br>
+<span class="pass">&gt; [PASS] This passes</span><br>
+<br>
+==============================<br>
+<span class="total">+ Total:  3</span><br>
+<span class="pass">&gt; Passed: 2</span><br>
+<span class="fail">! Failed: 1</span><br>
+==============================
+</div>
+
+</body>
+</html>

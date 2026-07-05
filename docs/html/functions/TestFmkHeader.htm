@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>_TestFmkHeader - TestFramework.au3 for AutoIt</title>
+<link rel="stylesheet" type="text/css" href="../css/default.css">
+</head>
+<body>
+<div class="topnav">
+    <a href="../index.htm">Welcome</a>
+    <a href="../getting-started.htm">Getting Started</a>
+    <a href="../functions.htm">Function Reference</a>
+    <a href="../constants.htm">Constants</a>
+</div>
+
+<h1>Function Reference</h1>
+<hr>
+<h1>_TestFmkHeader</h1>
+
+<p>Prints a labeled section header to the console to identify a group of related tests.</p>
+
+<div class="signature">
+#include &lt;TestFramework.au3&gt;<br>
+_TestFmkHeader ( $sTitle [, $sColor = $TFW_COLOR_ORANGE] )
+</div>
+
+<h2>Parameters</h2>
+<table>
+<tr><td>$sTitle</td><td>The title text to display in the header.</td></tr>
+<tr><td>$sColor</td><td><b>[optional]</b> Console color constant for the header line. Default is <a href="../constants.htm">$TFW_COLOR_ORANGE</a>.<br>
+    Accepted values: <code>$TFW_COLOR_ORANGE</code>, <code>$TFW_COLOR_YELLOW</code>, <code>$TFW_COLOR_BLUE</code>, <code>$TFW_COLOR_RED</code>, <code>$TFW_COLOR_WHITE</code>.</td></tr>
+</table>
+
+<h2>Return Value</h2>
+<table>
+<tr><td>None.</td><td>This function does not return a value.</td></tr>
+</table>
+
+<h2>Remarks</h2>
+<p>
+    Call <code>_TestFmkHeader()</code> once at the beginning of each test function to clearly
+    separate groups of related assertions in the console output. The header is printed with a
+    blank line before it and surrounded by <code>---</code> markers for readability.
+</p>
+<p>
+    The color constants control how SciTE colors the line in its output pane.
+    See <a href="../constants.htm">Constants Reference</a> for details on the available colors.
+</p>
+
+<h2>Related</h2>
+<p>
+    <a href="TestFmkAssert.htm">_TestFmkAssert</a>,
+    <a href="TestFmkRun.htm">_TestFmkRun</a>,
+    <a href="TestFmkSummary.htm">_TestFmkSummary</a>,
+    <a href="../constants.htm">$TFW_COLOR_*</a>
+</p>
+
+<h2>Example</h2>
+<pre>
+#include &lt;TestFramework.au3&gt;
+
+Func _TestMyFunc()
+    _TestFmkHeader("Test: MyFunc")
+    _TestFmkAssert(True, "This assertion always passes")
+EndFunc
+
+_TestMyFunc()
+</pre>
+
+<p>Console output:</p>
+<div class="console">
+<span class="head">+ --- Test: MyFunc ---</span><br>
+<span class="pass">&gt; [PASS] This assertion always passes</span>
+</div>
+
+</body>
+</html>
