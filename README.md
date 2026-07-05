@@ -143,7 +143,7 @@ git commit -m "Update TestFramework to latest"
 
 ## Usage
 
-See the [documentation](docs/html/index.htm) for the full function reference and a complete worked example.
+See the [documentation](https://crucialthread.github.io/AutoItTestFramework/) for the full function reference and a complete worked example.
 
 ## API
 
