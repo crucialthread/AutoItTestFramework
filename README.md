@@ -178,3 +178,4 @@ The skill lives at `.claude/skills/autoit-testframework/SKILL.md`.
 ## License
 
 MIT
+
