@@ -112,7 +112,7 @@ If your project is a Git repository, you can add TestFramework.au3 as a submodul
 **Step 1 - Add the submodule:**
 
 ```bash
-git submodule add -b dist https://github.com/youruser/TestFramework.au3 lib/TestFramework
+git submodule add -b dist https://github.com/crucialthread/AutoItTestFramework lib/TestFramework
 git submodule update --init
 ```
 
