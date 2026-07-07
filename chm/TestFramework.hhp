@@ -1,0 +1,25 @@
+[OPTIONS]
+Compatibility=1.1 or later
+Compiled file=TestFramework.chm
+Contents file=TestFramework.hhc
+Index file=TestFramework.hhk
+Default topic=html/index.htm
+Default Window=Main
+Display compile progress=No
+Full-text search=Yes
+Language=0x409 English (United States)
+Title=TestFramework.au3 for AutoIt
+
+[WINDOWS]
+Main="TestFramework.au3 for AutoIt","TestFramework.hhc","TestFramework.hhk","html/index.htm","html/index.htm",,,,,0x63520,,0x10384e,,,,,,,,0
+
+[FILES]
+html/index.htm
+html/getting-started.htm
+html/functions.htm
+html/functions/TestFmkHeader.htm
+html/functions/TestFmkAssert.htm
+html/functions/TestFmkRun.htm
+html/functions/TestFmkSummary.htm
+html/constants.htm
+html/css/default.css
