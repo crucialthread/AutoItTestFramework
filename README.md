@@ -17,8 +17,9 @@ A simple, lightweight unit test framework for AutoIt. Provides colored console o
 
 Func _TestAdd()
     _TestFmkHeader("Test: Add()")
-    _TestFmkAssert(1 + 1 = 2, "1 + 1 equals 2", 1 + 1, "2")
-    _TestFmkAssert(2 + 2 = 4, "2 + 2 equals 4", 2 + 2, "4")
+    _TestFmkAssert(Add(1, 2) = 3,   "Add(1, 2) returns 3",   Add(1, 2),   "3")
+    _TestFmkAssert(Add(-1, 1) = 0,  "Add(-1, 1) returns 0",  Add(-1, 1),  "0")
+    _TestFmkAssert(Add(0, 0) = 0,   "Add(0, 0) returns 0",   Add(0, 0),   "0")
 EndFunc
 
 Func _RunAllTests()
