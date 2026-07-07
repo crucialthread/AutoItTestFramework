@@ -155,6 +155,21 @@ See the [documentation](https://crucialthread.github.io/AutoItTestFramework/) fo
 | `_TestFmkRun($fTest, $bCumulative)` | Runs a test function and accumulates its result into a cumulative boolean. |
 | `_TestFmkSummary()` | Prints the final Total/Passed/Failed summary block. |
 
+## Claude Code Skill
+
+This repository includes a Claude Code skill that helps you generate AutoIt unit tests using TestFramework.au3. When you open this project (or any project that includes it as a submodule) in Claude Code, the skill is automatically available.
+
+It can generate complete, ready-to-run test files from:
+
+- A plain language description of what a function should do
+- An existing `.au3` source file or project folder
+- BDD/Gherkin feature files or any other specification format
+- A mix of any of the above
+
+It also supports TDD workflows - generating tests first alongside function stubs, then implementing the code to make the tests pass, all in one flow.
+
+The skill lives at `.claude/skills/autoit-testframework/SKILL.md`.
+
 ## Requirements
 
 - AutoIt 3.3.18.0 or later
