@@ -168,6 +168,8 @@ It can generate complete, ready-to-run test files from:
 
 It also supports TDD workflows - generating tests first alongside function stubs, then implementing the code to make the tests pass, all in one flow.
 
+If you are using TestFramework.au3 and want to use its Claude Code skill in your own project, copy `.claude/skills/autoit-testframework/SKILL.md` from this repository into your own project's `.claude/skills/autoit-testframework/` folder and Claude Code will pick it up automatically.
+
 The skill lives at `.claude/skills/autoit-testframework/SKILL.md`.
 
 ## Requirements
