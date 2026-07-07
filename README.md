@@ -157,7 +157,7 @@ See the [documentation](https://crucialthread.github.io/AutoItTestFramework/) fo
 
 ## Claude Code Skill
 
-This repository includes a Claude Code skill that helps you generate AutoIt unit tests using TestFramework.au3. When you clone this repository and open it in Claude Code, the skill is automatically available.
+This repository includes a Claude Code skill that helps you generate AutoIt unit tests using TestFramework.au3. If you want to use it in your own project, copy `.claude/skills/autoit-testframework/SKILL.md` from this repository into your own project's `.claude/skills/autoit-testframework/` folder and Claude Code will pick it up automatically.
 
 It can generate complete, ready-to-run test files from:
 
