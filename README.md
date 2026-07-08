@@ -33,10 +33,6 @@ _RunAllTests()
 
 ## Installation
 
-Choose one of the following options. Option 3 is the recommended approach for most users. Option 4 is recommended if your project is using Git.
-
-> **Finding your AutoIt installation folder:** if you are unsure where AutoIt is installed, right-click the AutoIt3.exe shortcut or file and select "Properties" - the folder shown in the "Start in" or "Target" field is your AutoIt installation folder.
-
 ### Option 1 - Local project folder
 
 Copy `TestFramework.au3` into the same folder as your project and reference it with a relative path:
@@ -47,65 +43,7 @@ Copy `TestFramework.au3` into the same folder as your project and reference it w
 
 This is the simplest option but means you need a separate copy for each project.
 
-### Option 2 - AutoIt include folder
-
-Copy `TestFramework.au3` to the `Include` subfolder inside your AutoIt installation folder and reference it with the angle-bracket form:
-
-```autoit
-#include <TestFramework.au3>
-```
-
-This makes it available to any project on your machine. The downside is that third-party files sit alongside AutoIt's own standard library files, which can get messy over time.
-
-### Option 3 - Vendor subfolder (recommended)
-
-This approach keeps third-party libraries organized separately from AutoIt's own files while still making them available globally with the angle-bracket form.
-
-Considering AutoIt is installed on the default `C:\Program Files (x86)\AutoIt3`, follow the steps below. If you installed AutoIt in a different location, replace `C:\Program Files (x86)\AutoIt3` with your actual installation folder path wherever it appears.
-
-**Step 1 - Create a `Vendor` subfolder inside the AutoIt `Include` folder:**
-
-```
-C:\Program Files (x86)\AutoIt3\Include\Vendor\
-```
-
-> **Note:** the default AutoIt installation folder is usually `C:\Program Files (x86)\AutoIt3`, so the full path would typically be `C:\Program Files (x86)\AutoIt3\Include\Vendor\`. Your path may differ if you installed AutoIt in a custom location.
-
-**Step 2 - Copy `TestFramework.au3` into it:**
-
-```
-C:\Program Files (x86)\AutoIt3\Include\Vendor\TestFramework.au3
-```
-
-**Step 3 - Register the folder with AutoIt via the registry:**
-
-Open `regedit.exe` and navigate to:
-
-```
-HKEY_CURRENT_USER\Software\AutoIt v3\AutoIt
-```
-
-Create a new `REG_SZ` (string) value named `Include` with the following value data:
-
-```
-C:\Program Files (x86)\AutoIt3\Include\Vendor
-```
-
-If the `Include` value already exists (for example, if you have other vendor libraries registered), append the new path to the existing value separated by a semicolon:
-
-```
-C:\ExistingPath\SomeLib;C:\Program Files (x86)\AutoIt3\Include\Vendor
-```
-
-This is the mechanism documented in the official AutoIt documentation for extending the include search path beyond the standard locations.
-
-**Step 4 - Reference it from any project:**
-
-```autoit
-#include <TestFramework.au3>
-```
-
-### Option 4 - Git submodule (recommended for Git projects)
+### Option 2 - Git submodule (recommended for Git projects)
 
 If your project is a Git repository, you can add TestFramework.au3 as a submodule directly from the `dist` branch. This gives you exactly one file (`TestFramework.au3`) with no extra content from the development repo, and lets you pin to a specific version and update deliberately when you are ready.
 
@@ -140,6 +78,68 @@ git submodule update --init
 git submodule update --remote lib/TestFramework
 git add lib/TestFramework
 git commit -m "Update TestFramework to latest"
+```
+
+## Global Installation
+
+> **Warning:** The following installation methods make TestFramework.au3 available globally on your machine. If you use either of these, do not also use any other installation method in your projects - having TestFramework.au3 available both globally and locally will cause errors at runtime.
+
+> **Finding your AutoIt installation folder:** if you are unsure where AutoIt is installed, right-click the AutoIt3.exe shortcut or file and select "Properties" - the folder shown in the "Start in" or "Target" field is your AutoIt installation folder.
+
+### AutoIt include folder
+
+Copy `TestFramework.au3` to the `Include` subfolder inside your AutoIt installation folder and reference it with the angle-bracket form:
+
+```autoit
+#include <TestFramework.au3>
+```
+
+This makes it available to any project on your machine. The downside is that third-party files sit alongside AutoIt's own standard library files, which can get messy over time.
+
+### Vendor subfolder
+
+This approach keeps third-party libraries organized separately from AutoIt's own files while still making them available globally with the angle-bracket form.
+
+Considering AutoIt is installed on the default `C:\Program Files (x86)\AutoIt3`, follow the steps below. If you installed AutoIt in a different location, replace `C:\Program Files (x86)\AutoIt3` with your actual installation folder path wherever it appears.
+
+**Step 1 - Create a `Vendor` subfolder inside the AutoIt `Include` folder:**
+
+```
+C:\Program Files (x86)\AutoIt3\Include\Vendor\
+```
+
+**Step 2 - Copy `TestFramework.au3` into it:**
+
+```
+C:\Program Files (x86)\AutoIt3\Include\Vendor\TestFramework.au3
+```
+
+**Step 3 - Register the folder with AutoIt via the registry:**
+
+Open `regedit.exe` and navigate to:
+
+```
+HKEY_CURRENT_USER\Software\AutoIt v3\AutoIt
+```
+
+Create a new `REG_SZ` (string) value named `Include` with the following value data:
+
+```
+C:\Program Files (x86)\AutoIt3\Include\Vendor
+```
+
+If the `Include` value already exists (for example, if you have other vendor libraries registered), append the new path to the existing value separated by a semicolon:
+
+```
+C:\ExistingPath\SomeLib;C:\Program Files (x86)\AutoIt3\Include\Vendor
+```
+
+This is the mechanism documented in the official AutoIt documentation for extending the include search path beyond the standard locations.
+
+**Step 4 - Reference it from any project:**
+
+```autoit
+#include <TestFramework.au3>
 ```
 
 ## Usage
@@ -178,4 +178,3 @@ The skill lives at `.claude/skills/autoit-testframework/SKILL.md`.
 ## License
 
 MIT
-
