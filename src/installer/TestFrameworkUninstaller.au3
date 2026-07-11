@@ -1,3 +1,29 @@
+#Region ;**** Directives created by AutoIt3Wrapper_GUI ****
+#AutoIt3Wrapper_Icon=..\..\img\installer.ico
+#AutoIt3Wrapper_Outfile_x64=..\..\.out\TestFrameworkUninstaller.exe
+#AutoIt3Wrapper_Res_Comment=A simple, lightweight unit test framework for AutoIt
+#AutoIt3Wrapper_Res_Description=AutoIt Test Framework Uninstaller
+#AutoIt3Wrapper_Res_Fileversion=0.0.1.0
+#AutoIt3Wrapper_Res_ProductName=AutoIt Test Framework
+#AutoIt3Wrapper_Res_ProductVersion=0.0.1
+#AutoIt3Wrapper_Res_CompanyName=Crucial Thread
+#AutoIt3Wrapper_Res_LegalCopyright=MIT License
+#AutoIt3Wrapper_Res_SaveSource=y
+#AutoIt3Wrapper_Add_Constants=y
+#EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
+#Region ;**** Directives created by AutoIt3Wrapper_GUI ****
+#AutoIt3Wrapper_Icon=..\..\img\installer.ico
+#AutoIt3Wrapper_Outfile_x64=..\..\.out\TestFrameworkUninstaller.exe
+#AutoIt3Wrapper_Res_Comment=A simple, lightweight unit test framework for AutoIt
+#AutoIt3Wrapper_Res_Description=AutoIt Test Framework Uninstaller
+#AutoIt3Wrapper_Res_Fileversion=0.0.1
+#AutoIt3Wrapper_Res_ProductName=AutoIt Test Framework
+#AutoIt3Wrapper_Res_ProductVersion=0.0.1
+#AutoIt3Wrapper_Res_CompanyName=Crucial Thread
+#AutoIt3Wrapper_Res_LegalCopyright=MIT License
+#AutoIt3Wrapper_Res_SaveSource=y
+#AutoIt3Wrapper_Add_Constants=n
+#EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
 ; #INDEX# =======================================================================================================================
 ; Title .........: TestFrameworkUninstaller.au3
 ; Version .......: 0.0.1
@@ -69,6 +95,16 @@ Func _Main()
             "It may have already been uninstalled.")
         Exit
     EndIf
+
+    ; If running from the install folder, copy to temp and relaunch from there
+    ; so we can delete the install folder at the end of uninstallation
+    If StringInStr(StringLower(@ScriptFullPath), StringLower($g_sChmPath)) Then
+        Local $sTempExe = @TempDir & "\TestFrameworkUninstaller.exe"
+        FileCopy(@ScriptFullPath, $sTempExe, $FC_OVERWRITE)
+        ShellExecute($sTempExe)
+        Exit
+    EndIf
+
     __RunWizard()
 EndFunc
 

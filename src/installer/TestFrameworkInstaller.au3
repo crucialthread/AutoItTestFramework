@@ -1,3 +1,17 @@
+#Region ;**** Directives created by AutoIt3Wrapper_GUI ****
+#AutoIt3Wrapper_Icon=..\..\img\installer.ico
+#AutoIt3Wrapper_Outfile_x64=..\..\.out\TestFrameworkInstaller.exe
+#AutoIt3Wrapper_Res_Comment=A simple, lightweight unit test framework for AutoIt
+#AutoIt3Wrapper_Res_Description=AutoIt Test Framework Installer
+#AutoIt3Wrapper_Res_Fileversion=0.0.1.0
+#AutoIt3Wrapper_Res_ProductName=AutoIt Test Framework
+#AutoIt3Wrapper_Res_ProductVersion=0.0.1
+#AutoIt3Wrapper_Res_CompanyName=Crucial Thread
+#AutoIt3Wrapper_Res_LegalCopyright=MIT License
+#AutoIt3Wrapper_Res_SaveSource=y
+#AutoIt3Wrapper_Res_Language=1033
+#AutoIt3Wrapper_Add_Constants=n
+#EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
 ; #INDEX# =======================================================================================================================
 ; Title .........: TestFrameworkInstaller.au3
 ; Version .......: 0.0.1
@@ -378,7 +392,7 @@ Func __RunInstall($idStatusLabel, $idProgress)
     $iStep += 1
 
     __ProgressStep($idStatusLabel, $idProgress, $iStep, $iSteps, "Copying TestFrameworkUninstaller.exe...")
-    FileInstall("TestFrameworkUninstaller.exe", $g_sChmPath & "\TestFrameworkUninstaller.exe", $FC_OVERWRITE)
+    FileInstall("..\..\.out\TestFrameworkUninstaller.exe", $g_sChmPath & "\TestFrameworkUninstaller.exe", $FC_OVERWRITE)
     $iStep += 1
 
     __ProgressStep($idStatusLabel, $idProgress, $iStep, $iSteps, "Writing AutoIt include registry entry...")
