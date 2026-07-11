@@ -35,6 +35,12 @@ _RunAllTests()
 
 ### Option 1 - Installer (recommended)
 
+> **Windows security warning:** Windows may show a SmartScreen warning when running the installer for the first time since it is not digitally signed. This is expected for open source tools distributed outside the Microsoft Store. You can proceed in one of two ways:
+> - Click **More info** then **Run anyway** on the SmartScreen dialog
+> - Right-click the downloaded `.exe` > **Properties** > check **Unblock** at the bottom > click OK, then run it normally
+>
+> If you prefer not to run the installer, you can install manually by downloading `TestFramework.au3` directly from the release and following Option 2 below.
+
 Download the latest release from the [releases page](https://github.com/crucialthread/AutoItTestFramework/releases) and run the installer. It copies `TestFramework.au3` to your AutoIt Vendor include folder and configures the registry automatically, making it available from any project via:
 
 ```autoit
