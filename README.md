@@ -45,7 +45,7 @@ The installer also includes the documentation (`TestFramework.chm`) and an unins
 
 > **Note:** the installer requires administrator rights to write to the AutoIt installation folder.
 
-> **Windows security warning:** Windows may show a SmartScreen warning when running the installer for the first time since it is not digitally signed. This is expected for open source tools distributed outside the Microsoft Store. You can proceed in one of two ways:
+> **<u>Windows security warning:</u>** Windows may show a SmartScreen warning when running the installer for the first time since it is not digitally signed. This is expected for open source tools distributed outside the Microsoft Store. You can proceed in one of two ways:
 > - Click **More info** then **Run anyway** on the SmartScreen dialog
 > - Right-click the downloaded `.exe` > **Properties** > check **Unblock** at the bottom > click OK, then run it normally
 >
