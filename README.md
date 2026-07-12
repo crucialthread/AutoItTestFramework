@@ -35,13 +35,7 @@ _RunAllTests()
 
 ### Option 1 - Installer (recommended)
 
-> **Windows security warning:** Windows may show a SmartScreen warning when running the installer for the first time since it is not digitally signed. This is expected for open source tools distributed outside the Microsoft Store. You can proceed in one of two ways:
-> - Click **More info** then **Run anyway** on the SmartScreen dialog
-> - Right-click the downloaded `.exe` > **Properties** > check **Unblock** at the bottom > click OK, then run it normally
->
-> If you prefer not to run the installer, you can install manually by downloading `TestFramework.au3` directly from the release and following Option 2 below.
-
-Download the latest release from the [releases page](https://github.com/crucialthread/AutoItTestFramework/releases) and run the installer. It copies `TestFramework.au3` to your AutoIt Vendor include folder and configures the registry automatically, making it available from any project via:
+Download the latest installer from the [releases page](https://github.com/crucialthread/AutoItTestFramework/releases) and run it. It copies `TestFramework.au3` to your AutoIt Vendor include folder and configures the registry automatically, making it available from any project via:
 
 ```autoit
 #include <TestFramework.au3>
@@ -51,15 +45,21 @@ The installer also includes the documentation (`TestFramework.chm`) and an unins
 
 > **Note:** the installer requires administrator rights to write to the AutoIt installation folder.
 
+> **Windows security warning:** Windows may show a SmartScreen warning when running the installer for the first time since it is not digitally signed. This is expected for open source tools distributed outside the Microsoft Store. You can proceed in one of two ways:
+> - Click **More info** then **Run anyway** on the SmartScreen dialog
+> - Right-click the downloaded `.exe` > **Properties** > check **Unblock** at the bottom > click OK, then run it normally
+>
+> If you prefer not to run the installer, you can install manually by downloading and extracting the source code zip from the releases page, copying `src/core/TestFramework.au3` into your project folder, and following Option 2 below.
+
 ### Option 2 - Local project folder
 
-Download `TestFramework.au3` from the [releases page](https://github.com/crucialthread/AutoItTestFramework/releases) and copy it into your project folder, then reference it with a relative path:
+Download and extract the source code zip from the [releases page](https://github.com/crucialthread/AutoItTestFramework/releases), copy `src/core/TestFramework.au3` into your project folder, and reference it with a relative path:
 
 ```autoit
 #include "TestFramework.au3"
 ```
 
-This is the simplest option but means you need a separate copy for each project.
+This is the simplest option but means you need a separate copy for each project (or you can keep it in a shared folder from where all your projects reference it).
 
 ### Option 3 - Git submodule (recommended for Git projects)
 
@@ -121,18 +121,16 @@ See the [documentation](https://crucialthread.github.io/AutoItTestFramework/) fo
 
 ## Claude Code Skill
 
-This repository includes a Claude Code skill that helps you generate AutoIt unit tests using AutoIt Test Framework. If you want to use it in your own project, copy `.claude/skills/autoit-testframework/SKILL.md` from this repository into your own project's `.claude/skills/autoit-testframework/` folder and Claude Code will pick it up automatically.
+This repository includes a Claude Code skill for generating AutoIt unit tests using AutoIt Test Framework. The skill lives at `.claude/skills/autoit-testframework/SKILL.md` and is automatically available when you open this repository in Claude Code - no setup needed.
 
-It can generate complete, ready-to-run test files from:
+If you are using AutoIt Test Framework in your own project (via the installer, local copy, or Git submodule) and want the skill available there too, copy the `autoit-testframework/` folder from `.claude/skills/` into your own project's `.claude/skills/` directory. Claude Code will detect it automatically.
 
-- A plain language description of what a function should do
-- An existing `.au3` source file or project folder
-- BDD/Gherkin feature files or any other specification format
-- A mix of any of the above
+Once available, simply describe what you need in natural language - Claude Code will use the skill to generate complete, ready-to-run test files. For example:
 
-It also supports TDD workflows - generating tests first alongside function stubs, then implementing the code to make the tests pass, all in one flow.
-
-The skill lives at `.claude/skills/autoit-testframework/SKILL.md`.
+- *"Write tests for this AutoIt function"* - generates tests from existing code
+- *"Create a test file for a function that validates email addresses"* - generates tests and stubs from a description
+- *"Add test coverage to this project"* - scans the project and generates a full test suite
+- *"Build this using TDD"* - generates tests first, then implements the code to make them pass
 
 ## Requirements
 
