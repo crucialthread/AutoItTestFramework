@@ -1,4 +1,4 @@
-/* TestFramework.au3 Help - default.css
+/* AutoIt Test Framework Help - default.css
    Matches the AutoIt3 CHM help visual style.
    Compatible with IE engine (CHM) and modern browsers (static web). */
 
@@ -7,7 +7,8 @@ body {
     font-size: 13px;
     color: #000000;
     background-color: #FFFFFF;
-    margin: 8px 16px 16px 16px;
+    margin: 0;
+    padding: 0 16px 16px 16px;
 }
 
 h1 {
@@ -16,7 +17,7 @@ h1 {
     color: #000000;
     border-bottom: 1px solid #AAAAAA;
     padding-bottom: 4px;
-    margin-top: 0;
+    margin-top: 8px;
 }
 
 h2 {
@@ -100,13 +101,13 @@ table td:first-child {
     background-color: #F4F4F4;
 }
 
-/* Top navigation bar (web version only - not visible in CHM left panel) */
+/* Top navigation bar - zero margin so it works in both CHM and web */
 .topnav {
     font-size: 12px;
     background-color: #F0F0F0;
     border-bottom: 1px solid #CCCCCC;
     padding: 4px 8px;
-    margin: -8px -16px 12px -16px;
+    margin: 0 -16px 12px -16px;
 }
 
 .topnav a {
