@@ -121,18 +121,34 @@ See the [documentation](https://crucialthread.github.io/AutoItTestFramework/) fo
 | `_TestFmkRun($fTest, $bCumulative)` | Runs a test function and accumulates its result into a cumulative boolean. |
 | `_TestFmkSummary()` | Prints the final Total/Passed/Failed summary block. |
 
-## Claude Code Skill
+## AI Claude Skill
 
-This repository includes a Claude Code skill for generating AutoIt unit tests using AutoIt Test Framework. The skill lives at `.claude/skills/autoit-testframework/SKILL.md` and is automatically available when you open this repository in Claude Code - no setup needed.
+This repository includes an AI Claude skill for generating AutoIt unit tests using AutoIt Test Framework.
 
-If you are using AutoIt Test Framework in your own project (via the installer, local copy, or Git submodule) and want the skill available there too, copy the `autoit-testframework/` folder from `.claude/skills/` into your own project's `.claude/skills/` directory. Claude Code will detect it automatically.
+### Install Via Claude Desktop UI
 
-Once available, simply describe what you need in natural language - Claude Code will use the skill to generate complete, ready-to-run test files. For example:
+Download the `SKILL.md` file from `.claude/skills/autoit-testframework/SKILL.md` in this repository, then go to Settings, select Skills from the left menu, click Add at the top right, and choose Upload a Skill. Select the downloaded `SKILL.md` file. The skill becomes available in both Claude Code and Cowork automatically.
 
-- *"Write tests for this AutoIt function"* - generates tests from existing code
+### Manual Installation
+
+Copy the `.claude/skills/autoit-testframework/` folder to your skills directory:
+
+- **Windows:** `%USERPROFILE%\.claude\skills\autoit-testframework\`
+  (the `.claude` folder is hidden - enable hidden items in Explorer or paste the path directly into the address bar)
+- **macOS/Linux:** `~/.claude/skills/autoit-testframework/`
+
+The skill becomes available in both Claude Code and Cowork automatically.
+
+### Usage
+
+Once installed, just describe what you need:
+
+- *"Write tests for this AutoIt script"* - generates tests from existing code
 - *"Create a test file for a function that validates email addresses"* - generates tests and stubs from a description
 - *"Add test coverage to this project"* - scans the project and generates a full test suite
 - *"Build this using TDD"* - generates tests first, then implements the code to make them pass
+
+The skill can generate complete, ready-to-run test files from a plain language description, an existing `.au3` source file or project folder, BDD/Gherkin feature files, or a mix of any of the above. It also supports TDD workflows - generating tests first alongside function stubs, then implementing the code to make the tests pass.
 
 ## Requirements
 
