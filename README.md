@@ -2,6 +2,8 @@
 
 A simple, lightweight unit test framework for AutoIt. Provides colored console output, pass/fail tracking, and cumulative test result accumulation with zero dependencies beyond AutoIt itself.
 
+See the full [documentation](https://crucialthread.github.io/AutoItTestFramework/) for more details.
+
 ## Features
 
 - Colored console output in SciTE's output pane for at-a-glance readability
