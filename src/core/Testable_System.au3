@@ -21,6 +21,8 @@ Global $g_hFn_DriveSpaceTotal    = DriveSpaceTotal
 Global $g_hFn_DriveStatus        = DriveStatus
 Global $g_hFn_DriveGetLabel      = DriveGetLabel
 Global $g_hFn_DriveGetType       = DriveGetType
+Global $g_hFn_ConsoleWrite       = ConsoleWrite
+Global $g_hFn_ConsoleWriteError  = ConsoleWriteError
 
 Func _Tstbl_Sleep($iDelay)
     Local $vResult = $g_hFn_Sleep($iDelay)
@@ -79,5 +81,15 @@ EndFunc
 
 Func _Tstbl_DriveGetType($sDrive)
     Local $vResult = $g_hFn_DriveGetType($sDrive)
+    Return SetError(@error, @extended, $vResult)
+EndFunc
+
+Func _Tstbl_ConsoleWrite($sText)
+    Local $vResult = $g_hFn_ConsoleWrite($sText)
+    Return SetError(@error, @extended, $vResult)
+EndFunc
+
+Func _Tstbl_ConsoleWriteError($sText)
+    Local $vResult = $g_hFn_ConsoleWriteError($sText)
     Return SetError(@error, @extended, $vResult)
 EndFunc

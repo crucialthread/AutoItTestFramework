@@ -16,7 +16,7 @@ Func _Stub_Sleep($iDelay)
     Local $oCall[]
     $oCall["iDelay"] = $iDelay
     $g_StubCalls["Sleep"][$iIdx] = $oCall
-    $g_StubCalls["Sleep"].count  = $iIdx
+    $g_StubCalls["Sleep"].count = $iIdx
 EndFunc
 
 Func _Stub_Shutdown($iCode)
@@ -25,7 +25,7 @@ Func _Stub_Shutdown($iCode)
     Local $oCall[]
     $oCall["iCode"] = $iCode
     $g_StubCalls["Shutdown"][$iIdx] = $oCall
-    $g_StubCalls["Shutdown"].count  = $iIdx
+    $g_StubCalls["Shutdown"].count = $iIdx
 EndFunc
 
 Func _Stub_IsAdmin()
@@ -33,7 +33,7 @@ Func _Stub_IsAdmin()
     Local $iIdx = $g_StubCalls["IsAdmin"].count + 1
     Local $oCall[]
     $g_StubCalls["IsAdmin"][$iIdx] = $oCall
-    $g_StubCalls["IsAdmin"].count  = $iIdx
+    $g_StubCalls["IsAdmin"].count = $iIdx
     Local $bReturn = MapExists($g_StubReturns["IsAdmin"], $iIdx) ? $g_StubReturns["IsAdmin"][$iIdx] : True
     Return $bReturn
 EndFunc
@@ -44,7 +44,7 @@ Func _Stub_EnvGet($sEnvVarName)
     Local $oCall[]
     $oCall["sEnvVarName"] = $sEnvVarName
     $g_StubCalls["EnvGet"][$iIdx] = $oCall
-    $g_StubCalls["EnvGet"].count  = $iIdx
+    $g_StubCalls["EnvGet"].count = $iIdx
     Local $sReturn = MapExists($g_StubReturns["EnvGet"], $iIdx) ? $g_StubReturns["EnvGet"][$iIdx] : ""
     Return $sReturn
 EndFunc
@@ -54,9 +54,9 @@ Func _Stub_EnvSet($sEnvVarName, $sValue = "")
     Local $iIdx = $g_StubCalls["EnvSet"].count + 1
     Local $oCall[]
     $oCall["sEnvVarName"] = $sEnvVarName
-    $oCall["sValue"]      = $sValue
+    $oCall["sValue"] = $sValue
     $g_StubCalls["EnvSet"][$iIdx] = $oCall
-    $g_StubCalls["EnvSet"].count  = $iIdx
+    $g_StubCalls["EnvSet"].count = $iIdx
     Local $bReturn = MapExists($g_StubReturns["EnvSet"], $iIdx) ? $g_StubReturns["EnvSet"][$iIdx] : True
     Return $bReturn
 EndFunc
@@ -67,7 +67,7 @@ Func _Stub_DriveGetDrive($sType = "ALL")
     Local $oCall[]
     $oCall["sType"] = $sType
     $g_StubCalls["DriveGetDrive"][$iIdx] = $oCall
-    $g_StubCalls["DriveGetDrive"].count  = $iIdx
+    $g_StubCalls["DriveGetDrive"].count = $iIdx
     Local $vReturn = MapExists($g_StubReturns["DriveGetDrive"], $iIdx) ? $g_StubReturns["DriveGetDrive"][$iIdx] : ""
     Return $vReturn
 EndFunc
@@ -78,7 +78,7 @@ Func _Stub_DriveGetFileSystem($sDrive)
     Local $oCall[]
     $oCall["sDrive"] = $sDrive
     $g_StubCalls["DriveGetFileSystem"][$iIdx] = $oCall
-    $g_StubCalls["DriveGetFileSystem"].count  = $iIdx
+    $g_StubCalls["DriveGetFileSystem"].count = $iIdx
     Local $sReturn = MapExists($g_StubReturns["DriveGetFileSystem"], $iIdx) ? $g_StubReturns["DriveGetFileSystem"][$iIdx] : ""
     Return $sReturn
 EndFunc
@@ -89,7 +89,7 @@ Func _Stub_DriveSpaceFree($sPath)
     Local $oCall[]
     $oCall["sPath"] = $sPath
     $g_StubCalls["DriveSpaceFree"][$iIdx] = $oCall
-    $g_StubCalls["DriveSpaceFree"].count  = $iIdx
+    $g_StubCalls["DriveSpaceFree"].count = $iIdx
     Local $iReturn = MapExists($g_StubReturns["DriveSpaceFree"], $iIdx) ? $g_StubReturns["DriveSpaceFree"][$iIdx] : 0
     Return $iReturn
 EndFunc
@@ -100,7 +100,7 @@ Func _Stub_DriveSpaceTotal($sPath)
     Local $oCall[]
     $oCall["sPath"] = $sPath
     $g_StubCalls["DriveSpaceTotal"][$iIdx] = $oCall
-    $g_StubCalls["DriveSpaceTotal"].count  = $iIdx
+    $g_StubCalls["DriveSpaceTotal"].count = $iIdx
     Local $iReturn = MapExists($g_StubReturns["DriveSpaceTotal"], $iIdx) ? $g_StubReturns["DriveSpaceTotal"][$iIdx] : 0
     Return $iReturn
 EndFunc
@@ -111,7 +111,7 @@ Func _Stub_DriveStatus($sDrive)
     Local $oCall[]
     $oCall["sDrive"] = $sDrive
     $g_StubCalls["DriveStatus"][$iIdx] = $oCall
-    $g_StubCalls["DriveStatus"].count  = $iIdx
+    $g_StubCalls["DriveStatus"].count = $iIdx
     Local $sReturn = MapExists($g_StubReturns["DriveStatus"], $iIdx) ? $g_StubReturns["DriveStatus"][$iIdx] : "READY"
     Return $sReturn
 EndFunc
@@ -122,7 +122,7 @@ Func _Stub_DriveGetLabel($sDrive)
     Local $oCall[]
     $oCall["sDrive"] = $sDrive
     $g_StubCalls["DriveGetLabel"][$iIdx] = $oCall
-    $g_StubCalls["DriveGetLabel"].count  = $iIdx
+    $g_StubCalls["DriveGetLabel"].count = $iIdx
     Local $sReturn = MapExists($g_StubReturns["DriveGetLabel"], $iIdx) ? $g_StubReturns["DriveGetLabel"][$iIdx] : ""
     Return $sReturn
 EndFunc
@@ -133,9 +133,31 @@ Func _Stub_DriveGetType($sDrive)
     Local $oCall[]
     $oCall["sDrive"] = $sDrive
     $g_StubCalls["DriveGetType"][$iIdx] = $oCall
-    $g_StubCalls["DriveGetType"].count  = $iIdx
+    $g_StubCalls["DriveGetType"].count = $iIdx
     Local $sReturn = MapExists($g_StubReturns["DriveGetType"], $iIdx) ? $g_StubReturns["DriveGetType"][$iIdx] : ""
     Return $sReturn
+EndFunc
+
+Func _Stub_ConsoleWrite($sText)
+    __StubInitType("ConsoleWrite")
+    Local $iIdx = $g_StubCalls["ConsoleWrite"].count + 1
+    Local $oCall[]
+    $oCall["sText"] = $sText
+    $g_StubCalls["ConsoleWrite"][$iIdx] = $oCall
+    $g_StubCalls["ConsoleWrite"].count = $iIdx
+    Local $iReturn = MapExists($g_StubReturns["ConsoleWrite"], $iIdx) ? $g_StubReturns["ConsoleWrite"][$iIdx] : 1
+    Return $iReturn
+EndFunc
+
+Func _Stub_ConsoleWriteError($sText)
+    __StubInitType("ConsoleWriteError")
+    Local $iIdx = $g_StubCalls["ConsoleWriteError"].count + 1
+    Local $oCall[]
+    $oCall["sText"] = $sText
+    $g_StubCalls["ConsoleWriteError"][$iIdx] = $oCall
+    $g_StubCalls["ConsoleWriteError"].count = $iIdx
+    Local $iReturn = MapExists($g_StubReturns["ConsoleWriteError"], $iIdx) ? $g_StubReturns["ConsoleWriteError"][$iIdx] : 1
+    Return $iReturn
 EndFunc
 
 $g_hFn_Sleep              = _Stub_Sleep
@@ -150,3 +172,5 @@ $g_hFn_DriveSpaceTotal    = _Stub_DriveSpaceTotal
 $g_hFn_DriveStatus        = _Stub_DriveStatus
 $g_hFn_DriveGetLabel      = _Stub_DriveGetLabel
 $g_hFn_DriveGetType       = _Stub_DriveGetType
+$g_hFn_ConsoleWrite       = _Stub_ConsoleWrite
+$g_hFn_ConsoleWriteError  = _Stub_ConsoleWriteError
