@@ -1,6 +1,6 @@
 # AutoIt Test Framework
 
-A simple, lightweight unit test framework for AutoIt. Provides colored console output, pass/fail tracking, and cumulative test result accumulation with zero dependencies beyond AutoIt itself.
+A simple, lightweight unit test framework for AutoIt. Provides colored console output, pass/fail tracking, and cumulative test result accumulation. Includes `Testable.au3` and `Stubs.au3` for testing scripts that require user interaction or return values that affect program flow (dialogs, file system, registry, GUI, shell, etc.).
 
 See the full [documentation](https://crucialthread.github.io/AutoItTestFramework/) for more details.
 
@@ -10,7 +10,8 @@ See the full [documentation](https://crucialthread.github.io/AutoItTestFramework
 - Actual vs. expected value display on failure
 - Cumulative pass/fail tracking across multiple test functions
 - Final summary block showing total, passed, and failed counts
-- Zero dependencies - no additional `#include` required
+- Testable wrappers and stubs - `Testable.au3` and `Stubs.au3` provide a pattern to test scripts that require user interaction or return values that affect program flow, without those operations actually executing during tests
+- Zero dependencies - no additional `#include` required beyond the framework itself
 
 ## Quick Example
 
@@ -37,10 +38,12 @@ _RunAllTests()
 
 ### Option 1 - Installer (recommended)
 
-Download the latest installer from the [releases page](https://github.com/crucialthread/AutoItTestFramework/releases) and run it. It copies `TestFramework.au3` to your AutoIt Vendor include folder and configures the registry automatically, making it available from any project via:
+Download the latest installer from the [releases page](https://github.com/crucialthread/AutoItTestFramework/releases) and run it. It copies `TestFramework.au3`, `Testable.au3`, `Stubs.au3`, and all `Testable_*.au3` and `Stubs_*.au3` category files to your AutoIt Vendor include folder and configures the registry automatically, making them available from any project via:
 
 ```autoit
 #include <TestFramework.au3>
+#include <Testable.au3>
+#include <Stubs.au3>
 ```
 
 The installer also includes the documentation (`TestFramework.chm`) and an uninstaller registered in Add/Remove Programs.
@@ -51,21 +54,23 @@ The installer also includes the documentation (`TestFramework.chm`) and an unins
 > - Click **More info** then **Run anyway** on the SmartScreen dialog
 > - Right-click the downloaded `.exe` > **Properties** > check **Unblock** at the bottom > click OK, then run it normally
 >
-> If you prefer not to run the installer, you can install manually by downloading and extracting the source code zip from the releases page, copying `src/core/TestFramework.au3` into your project folder, and following Option 2 below.
+> If you prefer not to run the installer, you can install manually by downloading and extracting the source code zip from the releases page, copying the files from `src/core/` into your project folder, and following Option 2 below.
 
 ### Option 2 - Local project folder
 
-Download and extract the source code zip from the [releases page](https://github.com/crucialthread/AutoItTestFramework/releases), copy `src/core/TestFramework.au3` into your project folder, and reference it with a relative path:
+Download and extract the source code zip from the [releases page](https://github.com/crucialthread/AutoItTestFramework/releases), copy all files from `src/core/` into your project folder, and reference them with a relative path:
 
 ```autoit
 #include "TestFramework.au3"
+#include "Testable.au3"
+#include "Stubs.au3"
 ```
 
-This is the simplest option but means you need a separate copy for each project (or you can keep it in a shared folder from where all your projects reference it).
+This is the simplest option but means you need a separate copy for each project (or you can keep them in a shared folder from where all your projects reference them).
 
 ### Option 3 - Git submodule (recommended for Git projects)
 
-If your project is a Git repository, you can add AutoIt Test Framework as a submodule directly from the `dist` branch. This gives you exactly one file (`TestFramework.au3`) with no extra content from the development repo, and lets you pin to a specific version and update deliberately when you are ready.
+If your project is a Git repository, you can add AutoIt Test Framework as a submodule directly from the `dist` branch. This gives you `TestFramework.au3`, `Testable.au3`, `Stubs.au3`, and all category files with no extra content from the development repo, and lets you pin to a specific version and update deliberately when you are ready.
 
 **Step 1 - Add the submodule:**
 
@@ -74,10 +79,12 @@ git submodule add -b dist https://github.com/crucialthread/AutoItTestFramework l
 git submodule update --init
 ```
 
-**Step 2 - Reference it from your test files:**
+**Step 2 - Reference it from your files:**
 
 ```autoit
 #include "lib/TestFramework/TestFramework.au3"
+#include "lib/TestFramework/Testable.au3"
+#include "lib/TestFramework/Stubs.au3"
 ```
 
 **Cloning a project that already uses the submodule:**
@@ -104,15 +111,17 @@ git commit -m "Update TestFramework to latest"
 
 ### Conflict between global installation and Git submodule
 
-If you have AutoIt Test Framework installed globally (via the installer) and are working on a Git project that also includes it as a submodule, you will get duplicate declaration errors at runtime. This happens because AutoIt sees two copies of the same file from different paths.
+If you have AutoIt Test Framework installed globally (via the installer) and are working on a Git project that also includes it as a submodule, you will get duplicate declaration errors at runtime. This happens because AutoIt sees two copies of the same files from different paths.
 
-To resolve this, uninstall the global installation via Add/Remove Programs and use the submodule reference (`#include "lib/TestFramework/TestFramework.au3"`) for that project. Then install it locally as described in Option 2, and any other scripts that previously used `#include <TestFramework.au3>` will need to be updated to reference the file directly.
+To resolve this, uninstall the global installation via Add/Remove Programs and use the submodule references for that project. Then install it locally as described in Option 2, and any other scripts that previously used the angle-bracket form will need to be updated to reference the files directly.
 
 ## Usage
 
-See the [documentation](https://crucialthread.github.io/AutoItTestFramework/) for the full function reference and a complete worked example.
+See the [documentation](https://crucialthread.github.io/AutoItTestFramework/) for the full function reference, testable wrappers, stubs reference, and complete worked examples.
 
 ## API
+
+### TestFramework.au3
 
 | Function | Description |
 |---|---|
@@ -121,23 +130,49 @@ See the [documentation](https://crucialthread.github.io/AutoItTestFramework/) fo
 | `_TestFmkRun($fTest, $bCumulative)` | Runs a test function and accumulates its result into a cumulative boolean. |
 | `_TestFmkSummary()` | Prints the final Total/Passed/Failed summary block. |
 
-## AI Claude Skill
+### Testable.au3
 
-This repository includes an AI Claude skill for generating AutoIt unit tests using AutoIt Test Framework.
+Include in script code. Provides `_Tstbl_*` wrappers for AutoIt built-ins so calls can be intercepted by stubs in tests. Covers dialogs, file system, INI, registry, shell, process, GUI, network, system, clipboard, input, window management, splash, sound, and tray functions.
+
+### Stubs.au3
+
+Include in test files. Automatically rewires all `_Tstbl_*` wrappers to stubs that record calls and return controlled values.
+
+| Function / Variable | Description |
+|---|---|
+| `_ResetStubs()` | Clears all recorded calls and configured return values. Call between tests. |
+| `_SetStubReturn($sType, $iIdx, $vValue)` | Pre-configures the return value for the Nth call of a stub type. |
+| `$g_StubCalls["TypeName"]` | Map of recorded calls keyed by 1-based index, with a `.count` property. |
+| `$g_StubReturns["TypeName"]` | Map of pre-configured return values keyed by 1-based call index. |
+
+## AI Claude Skills
+
+This repository includes two AI Claude skills for AutoIt Test Framework.
+
+### autoit-testframework
+
+Generates complete, ready-to-run AutoIt unit test files. Works from any input - source files, descriptions, BDD specs, or project folders. Also handles the Testable/Stubs pattern automatically when the script requires user interaction or return values that affect program flow.
+
+### autoit-testable-converter
+
+Audits, suggests, or converts AutoIt scripts to use `_Tstbl_*` testable wrappers, making them compatible with the Testable/Stubs pattern. Supports interactive mode (audit and suggest) and approved mode for autonomous AI agent workflows.
 
 ### Install Via Claude Desktop UI
 
-Download the `SKILL.md` file from `.claude/skills/autoit-testframework/SKILL.md` in this repository, then go to Settings, select Skills from the left menu, click Add at the top right, and choose Upload a Skill. Select the downloaded `SKILL.md` file. The skill becomes available in both Claude Code and Cowork automatically.
+Download the `SKILL.md` file for each skill from this repository, then go to Settings, select Skills from the left menu, click Add at the top right, and choose Upload a Skill. Select the downloaded `SKILL.md` file. The skill becomes available in both Claude Code and Cowork automatically.
+
+- `autoit-testframework`: `.claude/skills/autoit-testframework/SKILL.md`
+- `autoit-testable-converter`: `.claude/skills/autoit-testable-converter/SKILL.md`
 
 ### Manual Installation
 
-Copy the `.claude/skills/autoit-testframework/` folder to your skills directory:
+Copy the skill folders to your skills directory:
 
-- **Windows:** `%USERPROFILE%\.claude\skills\autoit-testframework\`
+- **Windows:** `%USERPROFILE%\.claude\skills\`
   (the `.claude` folder is hidden - enable hidden items in Explorer or paste the path directly into the address bar)
-- **macOS/Linux:** `~/.claude/skills/autoit-testframework/`
+- **macOS/Linux:** `~/.claude/skills/`
 
-The skill becomes available in both Claude Code and Cowork automatically.
+The skills become available in both Claude Code and Cowork automatically.
 
 ### Usage
 
@@ -147,8 +182,7 @@ Once installed, just describe what you need:
 - *"Create a test file for a function that validates email addresses"* - generates tests and stubs from a description
 - *"Add test coverage to this project"* - scans the project and generates a full test suite
 - *"Build this using TDD"* - generates tests first, then implements the code to make them pass
-
-The skill can generate complete, ready-to-run test files from a plain language description, an existing `.au3` source file or project folder, BDD/Gherkin feature files, or a mix of any of the above. It also supports TDD workflows - generating tests first alongside function stubs, then implementing the code to make the tests pass.
+- *"Make this script testable"* - audits and converts raw built-in calls to `_Tstbl_*` wrappers
 
 ## Requirements
 
