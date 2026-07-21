@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>FileInstall Special Case - AutoIt Test Framework</title>
+<link rel="stylesheet" type="text/css" href="css/default.css">
+</head>
+<body>
+<div class="topnav">
+    <a href="index.htm">Welcome</a>
+    <a href="getting-started.htm">Getting Started</a>
+    <a href="functions.htm">Function Reference</a>
+    <a href="testable.htm">Testable Reference</a>
+    <a href="stubs.htm">Stubs Reference</a>
+    <a href="constants.htm">Constants</a>
+</div>
+
+<h1>FileInstall Special Case</h1>
+
+<h2>The Problem</h2>
+
+<p>
+    <code>FileInstall</code> cannot be routed through a function pointer like other testable
+    wrappers. Aut2Exe performs a static analysis pass over the source code at compile time,
+    looking for <code>FileInstall("literal string", ...)</code> patterns to know which files
+    to embed into the compiled exe. When <code>FileInstall</code> is called through a variable,
+    Aut2Exe does not find it and the file is not embedded - causing the compiled exe to fail
+    at runtime.
+</p>
+
+<h2>The Solution</h2>
+
+<p>
+    Create a <code>__FileInstall</code> wrapper function with a <code>Select</code> block
+    containing all literal <code>FileInstall</code> calls. Aut2Exe finds the literal calls
+    inside the <code>Select</code> block at compile time and embeds all files correctly.
+    A function pointer global is then assigned to this wrapper rather than to
+    <code>FileInstall</code> directly, which allows the pointer to be replaced with a stub
+    in tests.
+</p>
+
+<pre>
+; $g_hFn_FileInstall points to __FileInstall (a wrapper function) rather than FileInstall directly.
+; This allows stubbing in tests while keeping literal FileInstall calls visible to Aut2Exe for embedding.
+Global $g_hFn_FileInstall = __FileInstall
+
+Func __FileInstall($sSrc, $sDest, $iFlag)
+    Select
+        Case $sSrc = "path\to\file1.au3"
+            FileInstall("path\to\file1.au3", $sDest, $iFlag)
+        Case $sSrc = "path\to\file2.au3"
+            FileInstall("path\to\file2.au3", $sDest, $iFlag)
+        Case $sSrc = "path\to\file3.exe"
+            FileInstall("path\to\file3.exe", $sDest, $iFlag)
+    EndSelect
+EndFunc
+</pre>
+
+<p>In script code, call through the function pointer instead of calling <code>FileInstall</code> directly:</p>
+
+<pre>
+$g_hFn_FileInstall("path\to\file1.au3", $sDestFolder & "\file1.au3", $FC_OVERWRITE)
+$g_hFn_FileInstall("path\to\file2.au3", $sDestFolder & "\file2.au3", $FC_OVERWRITE)
+</pre>
+
+<h2>Stubbing in Tests</h2>
+
+<p>
+    In test files, declare a stub function that records calls and assign it to
+    <code>$g_hFn_FileInstall</code> after including the script under test:
+</p>
+
+<pre>
+Global $__MY_SCRIPT_TEST_MODE = True
+#include &lt;TestFramework.au3&gt;
+#include &lt;Stubs.au3&gt;
+#include "MyScript.au3"
+
+; Stub wired after the installer include since $g_hFn_FileInstall is declared inside it
+Func _Stub_FileInstall($sSrc, $sDest, $iFlag)
+    __StubInitType("FileInstall")
+    Local $iIdx = $g_StubCalls["FileInstall"].count + 1
+    Local $oCall[]
+    $oCall["sSrc"]  = $sSrc
+    $oCall["sDest"] = $sDest
+    $g_StubCalls["FileInstall"][$iIdx] = $oCall
+    $g_StubCalls["FileInstall"].count  = $iIdx
+EndFunc
+
+$g_hFn_FileInstall = _Stub_FileInstall
+
+; Now tests can verify FileInstall calls
+Func _TestMyInstall()
+    _TestFmkHeader("Test: install copies files")
+
+    _ResetStubs()
+    $g_hFn_FileInstall = _Stub_FileInstall
+
+    __RunInstall(1, 2)
+
+    _TestFmkAssert($g_StubCalls["FileInstall"].count = 3, "Installs 3 files", $g_StubCalls["FileInstall"].count, 3)
+    _TestFmkAssert($g_StubCalls["FileInstall"][1]["sSrc"] = "path\to\file1.au3", _
+        "First file correct", $g_StubCalls["FileInstall"][1]["sSrc"], "path\to\file1.au3")
+EndFunc
+</pre>
+
+<div class="note">
+    <b>Note:</b> <code>_ResetStubs()</code> only clears <code>$g_StubCalls</code> and
+    <code>$g_StubReturns</code> - it does not reset function pointer globals. This means
+    <code>$g_hFn_FileInstall</code> is not handled by <code>_ResetStubs()</code> and must
+    be managed individually in each test that needs it.
+</div>
+
+</body>
+</html>

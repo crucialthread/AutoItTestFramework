@@ -13,7 +13,6 @@ Title=TestFramework.au3 for AutoIt
 [WINDOWS]
 Main="AutoIt Test Framework","TestFramework.hhc","TestFramework.hhk","html/index.htm","html/index.htm",,,,,0x63520,,0x10384e,,,,,,,,0
 
-
 [FILES]
 html\index.htm
 html\getting-started.htm
@@ -23,7 +22,9 @@ html\functions\TestFmkAssert.htm
 html\functions\TestFmkRun.htm
 html\functions\TestFmkSummary.htm
 html\constants.htm
+html\testable.htm
+html\stubs.htm
+html\fileinstall.htm
 html\css\default.css
 
 [INFOTYPES]
-

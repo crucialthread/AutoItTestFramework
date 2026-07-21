@@ -10,10 +10,14 @@
     <a href="index.htm">Welcome</a>
     <a href="getting-started.htm">Getting Started</a>
     <a href="functions.htm">Function Reference</a>
+    <a href="testable.htm">Testable Reference</a>
+    <a href="stubs.htm">Stubs Reference</a>
     <a href="constants.htm">Constants</a>
 </div>
 
 <h1>Function Reference</h1>
+
+<h2>TestFramework.au3</h2>
 
 <p>Click a function name for full documentation.</p>
 
@@ -33,6 +37,97 @@
 <tr>
     <td><a href="functions/TestFmkSummary.htm">_TestFmkSummary</a></td>
     <td>Prints the final Total/Passed/Failed summary block to the console.</td>
+</tr>
+</table>
+
+<hr>
+
+<h2>Testable.au3</h2>
+
+<p>
+    Provides <code>_Tstbl_*</code> wrapper functions for AutoIt built-ins. Include
+    <code>Testable.au3</code> in script code and use these wrappers instead of AutoIt
+    built-ins directly so that calls can be intercepted by stubs in tests.
+    See the <a href="testable.htm">Testable Reference</a> for the full list of wrappers
+    by category.
+</p>
+
+<table>
+<tr>
+    <td><code>_Tstbl_MsgBox</code></td>
+    <td>Testable wrapper for <code>MsgBox</code>.</td>
+</tr>
+<tr>
+    <td><code>_Tstbl_InputBox</code></td>
+    <td>Testable wrapper for <code>InputBox</code>.</td>
+</tr>
+<tr>
+    <td><code>_Tstbl_FileExists</code></td>
+    <td>Testable wrapper for <code>FileExists</code>.</td>
+</tr>
+<tr>
+    <td><code>_Tstbl_FileDelete</code></td>
+    <td>Testable wrapper for <code>FileDelete</code>.</td>
+</tr>
+<tr>
+    <td><code>_Tstbl_RegRead</code></td>
+    <td>Testable wrapper for <code>RegRead</code>.</td>
+</tr>
+<tr>
+    <td><code>_Tstbl_RegWrite</code></td>
+    <td>Testable wrapper for <code>RegWrite</code>.</td>
+</tr>
+<tr>
+    <td><code>_Tstbl_GUICreate</code></td>
+    <td>Testable wrapper for <code>GUICreate</code>.</td>
+</tr>
+<tr>
+    <td><code>_Tstbl_GUIGetMsg</code></td>
+    <td>Testable wrapper for <code>GUIGetMsg</code>.</td>
+</tr>
+<tr>
+    <td><code>_Tstbl_ShellExecute</code></td>
+    <td>Testable wrapper for <code>ShellExecute</code>.</td>
+</tr>
+<tr>
+    <td><code>_Tstbl_*</code></td>
+    <td>Many more wrappers available &mdash; see <a href="testable.htm">Testable Reference</a> for the complete list.</td>
+</tr>
+</table>
+
+<p>
+    Each wrapper routes the call through a function pointer global (<code>$g_hFn_*</code>).
+    In script code these point to the real AutoIt built-ins. In test files, including
+    <code>Stubs.au3</code> automatically rewires them to stubs.
+</p>
+
+<hr>
+
+<h2>Stubs.au3</h2>
+
+<p>
+    Include <code>Stubs.au3</code> in test files to automatically wire all
+    <code>_Tstbl_*</code> wrappers to stubs. Stubs record every call with its parameters
+    and return controlled values so tests can verify behavior without executing real
+    AutoIt built-ins. See the <a href="stubs.htm">Stubs Reference</a> for full details.
+</p>
+
+<table>
+<tr>
+    <td><code>_ResetStubs()</code></td>
+    <td>Clears all recorded calls and configured return values. Call between tests to start with a clean state.</td>
+</tr>
+<tr>
+    <td><code>_SetStubReturn($sType, $iIdx, $vValue)</code></td>
+    <td>Pre-configures the return value for the Nth call of a given stub type. Call before running the code under test.</td>
+</tr>
+<tr>
+    <td><code>$g_StubCalls["TypeName"]</code></td>
+    <td>Map of recorded calls for a stub type. Each entry is keyed by 1-based call index and holds the parameters passed to that call. Also has a <code>.count</code> property.</td>
+</tr>
+<tr>
+    <td><code>$g_StubReturns["TypeName"]</code></td>
+    <td>Map of pre-configured return values keyed by 1-based call index. Set via <code>_SetStubReturn()</code>.</td>
 </tr>
 </table>
 

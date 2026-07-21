@@ -6,24 +6,27 @@
 <link rel="stylesheet" type="text/css" href="css/default.css">
 </head>
 <body>
+
 <div class="topnav">
-    <a href="index.htm">Welcome</a>
-    <a href="getting-started.htm">Getting Started</a>
-    <a href="functions.htm">Function Reference</a>
-    <a href="constants.htm">Constants</a>
+<a href="index.htm">Welcome</a>
+<a href="getting-started.htm">Getting Started</a>
+<a href="functions.htm">Function Reference</a>
+<a href="testable.htm">Testable Reference</a>
+<a href="stubs.htm">Stubs Reference</a>
+<a href="constants.htm">Constants</a>
 </div>
 
 <h1>AutoIt Test Framework</h1>
 
 <p>
-    <b>AutoIt Test Framework</b> is a simple, lightweight unit test framework for AutoIt.
-    It provides colored console output, pass/fail tracking, and cumulative test result
-    accumulation with zero dependencies beyond AutoIt itself.
+<b>AutoIt Test Framework</b> is a simple, lightweight unit test framework for AutoIt.
+It provides colored console output, pass/fail tracking, and cumulative test result
+accumulation with zero dependencies beyond AutoIt itself.
 </p>
 
 <p>
-    Designed to be used alongside any AutoIt library or script, TestFramework.au3 makes it
-    easy to write, run, and read test suites directly inside SciTE's console output pane.
+Designed to be used alongside any AutoIt library or script, AutoIt Test Framework makes it
+easy to write, run, and read test suites directly inside SciTE's console output pane.
 </p>
 
 <hr>
@@ -35,7 +38,8 @@
 <tr><td>Actual vs. expected display</td><td>On failure, the actual and expected values are printed alongside the description.</td></tr>
 <tr><td>Cumulative pass/fail tracking</td><td><a href="functions/TestFmkRun.htm">_TestFmkRun()</a> accumulates results across multiple test functions, so a single <code>$bAllPassed</code> variable reflects the entire suite.</td></tr>
 <tr><td>Summary block</td><td><a href="functions/TestFmkSummary.htm">_TestFmkSummary()</a> prints a final total/passed/failed count in the AutoIt convention used by Au3Check output.</td></tr>
-<tr><td>Zero dependencies</td><td>No <code>#include</code> required beyond <code>TestFramework.au3</code> itself.</td></tr>
+<tr><td>Testable wrappers and stubs</td><td><code>Testable.au3</code> and <code>Stubs.au3</code> provide a pattern to test code that uses GUI controls, dialogs, file system, registry, and other side-effecting AutoIt built-ins &mdash; without those operations actually executing during tests.</td></tr>
+<tr><td>Zero dependencies</td><td>The core framework requires no <code>#include</code> beyond <code>TestFramework.au3</code> itself. <code>Testable.au3</code> and <code>Stubs.au3</code> are additional opt-in libraries for testing GUI and side-effecting code.</td></tr>
 </table>
 
 <hr>
@@ -67,9 +71,9 @@ _RunAllTests()
 <span class="pass">&gt; [PASS] MyFunc(2, 3) returns 5</span><br>
 <span class="pass">&gt; [PASS] MyFunc(0, 0) returns 0</span><br>
 <br>
-<span class="total">+ Total:  2</span><br>
+<span class="total">+ Total: 2</span><br>
 <span class="pass">&gt; Passed: 2</span><br>
-:  Failed: 0
+: Failed: 0
 </div>
 
 <hr>
@@ -78,6 +82,8 @@ _RunAllTests()
 
 <p><a href="getting-started.htm">Getting Started</a> &mdash; Installation, anatomy of a test file, and a complete worked example.</p>
 <p><a href="functions.htm">Function Reference</a> &mdash; Detailed documentation for every public function.</p>
+<p><a href="testable.htm">Testable Reference</a> &mdash; Wrapper functions for making GUI and side-effecting code testable.</p>
+<p><a href="stubs.htm">Stubs Reference</a> &mdash; Stub implementations that allow tests to mock testable wrappers and control their behavior.</p>
 <p><a href="constants.htm">Constants Reference</a> &mdash; The <code>$TFW_COLOR_*</code> console color constants.</p>
 
 </body>

@@ -5,66 +5,94 @@
 </HEAD>
 <BODY>
 <UL>
-    <LI><OBJECT type="text/sitemap">
-        <param name="Name" value="_TestFmkAssert">
-        <param name="Local" value="html/functions/TestFmkAssert.htm">
-    </OBJECT>
-    <LI><OBJECT type="text/sitemap">
-        <param name="Name" value="_TestFmkHeader">
-        <param name="Local" value="html/functions/TestFmkHeader.htm">
-    </OBJECT>
-    <LI><OBJECT type="text/sitemap">
-        <param name="Name" value="_TestFmkRun">
-        <param name="Local" value="html/functions/TestFmkRun.htm">
-    </OBJECT>
-    <LI><OBJECT type="text/sitemap">
-        <param name="Name" value="_TestFmkSummary">
-        <param name="Local" value="html/functions/TestFmkSummary.htm">
-    </OBJECT>
-    <LI><OBJECT type="text/sitemap">
-        <param name="Name" value="$TFW_COLOR_BLUE">
-        <param name="Local" value="html/constants.htm">
-    </OBJECT>
-    <LI><OBJECT type="text/sitemap">
-        <param name="Name" value="$TFW_COLOR_ORANGE">
-        <param name="Local" value="html/constants.htm">
-    </OBJECT>
-    <LI><OBJECT type="text/sitemap">
-        <param name="Name" value="$TFW_COLOR_RED">
-        <param name="Local" value="html/constants.htm">
-    </OBJECT>
-    <LI><OBJECT type="text/sitemap">
-        <param name="Name" value="$TFW_COLOR_WHITE">
-        <param name="Local" value="html/constants.htm">
-    </OBJECT>
-    <LI><OBJECT type="text/sitemap">
-        <param name="Name" value="$TFW_COLOR_YELLOW">
-        <param name="Local" value="html/constants.htm">
-    </OBJECT>
-    <LI><OBJECT type="text/sitemap">
-        <param name="Name" value="assert">
-        <param name="Local" value="html/functions/TestFmkAssert.htm">
-    </OBJECT>
-    <LI><OBJECT type="text/sitemap">
-        <param name="Name" value="constants">
-        <param name="Local" value="html/constants.htm">
-    </OBJECT>
-    <LI><OBJECT type="text/sitemap">
-        <param name="Name" value="getting started">
-        <param name="Local" value="html/getting-started.htm">
-    </OBJECT>
-    <LI><OBJECT type="text/sitemap">
-        <param name="Name" value="installation">
-        <param name="Local" value="html/getting-started.htm">
-    </OBJECT>
-    <LI><OBJECT type="text/sitemap">
-        <param name="Name" value="summary">
-        <param name="Local" value="html/functions/TestFmkSummary.htm">
-    </OBJECT>
-    <LI><OBJECT type="text/sitemap">
-        <param name="Name" value="unit test">
-        <param name="Local" value="html/getting-started.htm">
-    </OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="_TestFmkAssert">
+<param name="Local" value="html/functions/TestFmkAssert.htm">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="_TestFmkHeader">
+<param name="Local" value="html/functions/TestFmkHeader.htm">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="_TestFmkRun">
+<param name="Local" value="html/functions/TestFmkRun.htm">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="_TestFmkSummary">
+<param name="Local" value="html/functions/TestFmkSummary.htm">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="_ResetStubs">
+<param name="Local" value="html/stubs.htm">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="_SetStubReturn">
+<param name="Local" value="html/stubs.htm">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="$TFW_COLOR_BLUE">
+<param name="Local" value="html/constants.htm">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="$TFW_COLOR_ORANGE">
+<param name="Local" value="html/constants.htm">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="$TFW_COLOR_RED">
+<param name="Local" value="html/constants.htm">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="$TFW_COLOR_WHITE">
+<param name="Local" value="html/constants.htm">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="$TFW_COLOR_YELLOW">
+<param name="Local" value="html/constants.htm">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="$g_StubCalls">
+<param name="Local" value="html/stubs.htm">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="$g_StubReturns">
+<param name="Local" value="html/stubs.htm">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="assert">
+<param name="Local" value="html/functions/TestFmkAssert.htm">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="constants">
+<param name="Local" value="html/constants.htm">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="FileInstall">
+<param name="Local" value="html/fileinstall.htm">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="getting started">
+<param name="Local" value="html/getting-started.htm">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="installation">
+<param name="Local" value="html/getting-started.htm">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="stubs">
+<param name="Local" value="html/stubs.htm">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="summary">
+<param name="Local" value="html/functions/TestFmkSummary.htm">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="testable">
+<param name="Local" value="html/testable.htm">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="unit test">
+<param name="Local" value="html/getting-started.htm">
+</OBJECT>
 </UL>
 </BODY>
 </HTML>

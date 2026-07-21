@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Stubs Reference - AutoIt Test Framework</title>
+<link rel="stylesheet" type="text/css" href="css/default.css">
+</head>
+<body>
+<div class="topnav">
+    <a href="index.htm">Welcome</a>
+    <a href="getting-started.htm">Getting Started</a>
+    <a href="functions.htm">Function Reference</a>
+    <a href="testable.htm">Testable Reference</a>
+    <a href="stubs.htm">Stubs Reference</a>
+    <a href="constants.htm">Constants</a>
+</div>
+
+<h1>Stubs Reference</h1>
+
+<h2>Overview</h2>
+
+<p>
+    <code>Stubs.au3</code> provides stub implementations for all <code>_Tstbl_*</code> wrappers
+    defined in <code>Testable.au3</code>. Including <code>Stubs.au3</code> in a test file
+    automatically rewires all function pointer globals to stubs - no manual setup needed.
+</p>
+
+<p>
+    Each stub serves two purposes:
+</p>
+
+<ul style="margin: 6px 0; padding-left: 20px; line-height: 1.8;">
+    <li><b>Call recording</b> - every call is recorded with its parameters into <code>$g_StubCalls</code> so tests can verify that the correct functions were called with the correct arguments.</li>
+    <li><b>Return control</b> - tests can pre-configure what a stub returns for each call via <code>_SetStubReturn()</code>, allowing tests to drive the code under test down specific branches.</li>
+</ul>
+
+<h2>Usage</h2>
+
+<p>Include <code>Stubs.au3</code> in test files. It automatically includes <code>Testable.au3</code>
+and rewires all function pointers:</p>
+
+<pre>
+Global $__MY_SCRIPT_TEST_MODE = True
+#include &lt;TestFramework.au3&gt;
+#include &lt;Stubs.au3&gt;
+#include "MyScript.au3"
+
+Func _TestSomething()
+    _TestFmkHeader("Test: something")
+
+    _ResetStubs()
+    _SetStubReturn("MsgBox", 1, $IDYES)
+
+    MyFunction()
+
+    _TestFmkAssert($g_StubCalls["MsgBox"].count = 1, "MsgBox called once", $g_StubCalls["MsgBox"].count, 1)
+    _TestFmkAssert($g_StubCalls["MsgBox"][1]["sTitle"] = "Confirm", "MsgBox title correct", $g_StubCalls["MsgBox"][1]["sTitle"], "Confirm")
+EndFunc
+</pre>
+
+<p>
+    You can also include individual category stub files directly, for example
+    <code>#include &lt;Stubs_Dialogs.au3&gt;</code>. Each category file includes
+    <code>Stubs_Core.au3</code> automatically.
+</p>
+
+<hr>
+
+<h2>Functions</h2>
+
+<h3>_ResetStubs()</h3>
+<div class="signature">_ResetStubs()</div>
+<p>
+    Clears all recorded calls in <code>$g_StubCalls</code> and all configured return values
+    in <code>$g_StubReturns</code>. Call this at the start of each test to ensure a clean state.
+</p>
+<pre>
+_ResetStubs()
+_SetStubReturn("FileExists", 1, True)
+
+MyFunction()
+
+_TestFmkAssert($g_StubCalls["FileExists"].count = 1, ...)
+</pre>
+
+<h3>_SetStubReturn($sType, $iIdx, $vValue)</h3>
+<div class="signature">_SetStubReturn($sType, $iIdx, $vValue)</div>
+<p>
+    Pre-configures the return value for the Nth call of a given stub type. Call this before
+    running the code under test to control which branches execute.
+</p>
+<table>
+<tr><td>$sType</td><td>The stub type name as a string, e.g. <code>"MsgBox"</code>, <code>"FileExists"</code>, <code>"RegRead"</code>.</td></tr>
+<tr><td>$iIdx</td><td>The 1-based call index. <code>1</code> configures the return for the first call, <code>2</code> for the second, and so on.</td></tr>
+<tr><td>$vValue</td><td>The value to return for that call. Use <code>"__ERROR__"</code> for stubs that support it (e.g. <code>RegRead</code>) to simulate a function setting <code>@error</code>.</td></tr>
+</table>
+<pre>
+; First MsgBox returns YES, second returns NO
+_SetStubReturn("MsgBox", 1, $IDYES)
+_SetStubReturn("MsgBox", 2, $IDNO)
+
+; Simulate RegRead failing with @error
+_SetStubReturn("RegRead", 1, "__ERROR__")
+</pre>
+
+<p>
+    If no return is configured for a given call index the stub falls back to a sensible
+    default (e.g. <code>$IDOK</code> for MsgBox, <code>True</code> for FileExists,
+    empty string for RegRead).
+</p>
+
+<hr>
+
+<h2>Stub Stores</h2>
+
+<h3>$g_StubCalls</h3>
+<p>
+    A map keyed by stub type name. Each entry is itself a map of recorded calls keyed by
+    1-based call index, plus a <code>.count</code> property holding the total number of calls.
+</p>
+<pre>
+; Check how many times FileDelete was called
+$g_StubCalls["FileDelete"].count
+
+; Read the sPath argument of the first FileDelete call
+$g_StubCalls["FileDelete"][1]["sPath"]
+
+; Read the sTitle argument of the second MsgBox call
+$g_StubCalls["MsgBox"][2]["sTitle"]
+</pre>
+
+<div class="note">
+    <b>Note:</b> If a stub was never called its entry does not exist in <code>$g_StubCalls</code>.
+    Accessing <code>.count</code> or a call index on a non-existent entry will cause a runtime error.
+    Use <code>MapExists($g_StubCalls, "TypeName")</code> to check whether a stub was ever called
+    before accessing its data.
+</div>
+
+<pre>
+; Correct way to assert a stub was never called
+_TestFmkAssert(Not MapExists($g_StubCalls, "FileDelete"), "FileDelete not called", MapExists($g_StubCalls, "FileDelete"), False)
+</pre>
+
+<h3>$g_StubReturns</h3>
+<p>
+    A map keyed by stub type name. Each entry is a map of return values keyed by 1-based
+    call index. Populated by <code>_SetStubReturn()</code> before running the code under test.
+</p>
+
+<hr>
+
+<h2>Recorded Call Properties</h2>
+
+<p>Each stub records the parameters passed to it as named properties on the call object.</p>
+
+<div class="note">
+    <b>Special case:</b> <code>FileInstall</code> requires a different approach to be testable,
+    as such, there is no testable either stub for this function.
+    See <a href="fileinstall.htm">FileInstall Special Case</a> for details.
+</div>
+
+<h3>Dialogs</h3>
+<table>
+<tr><td>MsgBox</td><td><code>iFlag</code>, <code>sTitle</code>, <code>sText</code></td></tr>
+<tr><td>InputBox</td><td><code>sTitle</code>, <code>sPrompt</code></td></tr>
+<tr><td>FileOpenDialog</td><td><code>sTitle</code></td></tr>
+<tr><td>FileSaveDialog</td><td><code>sTitle</code></td></tr>
+<tr><td>FileSelectFolder</td><td><code>sMsg</code></td></tr>
+</table>
+
+<h3>File System</h3>
+<table>
+<tr><td>FileExists</td><td><code>sPath</code></td></tr>
+<tr><td>FileDelete</td><td><code>sPath</code></td></tr>
+<tr><td>FileCopy</td><td><code>sSource</code>, <code>sDest</code></td></tr>
+<tr><td>FileMove</td><td><code>sSource</code>, <code>sDest</code></td></tr>
+<tr><td>FileGetAttrib</td><td><code>sPath</code></td></tr>
+<tr><td>FileGetSize</td><td><code>sPath</code></td></tr>
+<tr><td>FileGetTime</td><td><code>sPath</code>, <code>iType</code>, <code>iFormat</code></td></tr>
+<tr><td>FileGetVersion</td><td><code>sPath</code></td></tr>
+<tr><td>FileRead</td><td><code>hFile</code></td></tr>
+<tr><td>FileWrite</td><td><code>hFile</code>, <code>sText</code></td></tr>
+<tr><td>FileOpen</td><td><code>sFilename</code>, <code>iMode</code></td></tr>
+<tr><td>FileClose</td><td><code>hFile</code></td></tr>
+<tr><td>FileReadLine</td><td><code>hFile</code></td></tr>
+<tr><td>FileWriteLine</td><td><code>hFile</code>, <code>sLine</code></td></tr>
+<tr><td>FileReadToArray</td><td><code>sFilePath</code></td></tr>
+<tr><td>FileCreateShortcut</td><td><code>sFile</code>, <code>sLnk</code></td></tr>
+<tr><td>FileSetAttrib</td><td><code>sPath</code>, <code>sAttrib</code></td></tr>
+<tr><td>FileSetTime</td><td><code>sPath</code>, <code>sTime</code></td></tr>
+<tr><td>DirCreate</td><td><code>sPath</code></td></tr>
+<tr><td>DirRemove</td><td><code>sPath</code></td></tr>
+<tr><td>DirCopy</td><td><code>sSource</code>, <code>sDest</code></td></tr>
+<tr><td>DirMove</td><td><code>sSource</code>, <code>sDest</code></td></tr>
+<tr><td>DirGetSize</td><td><code>sPath</code></td></tr>
+</table>
+
+<h3>INI Files</h3>
+<table>
+<tr><td>IniRead</td><td><code>sFilename</code>, <code>sSection</code>, <code>sKey</code></td></tr>
+<tr><td>IniWrite</td><td><code>sFilename</code>, <code>sSection</code>, <code>sKey</code>, <code>sValue</code></td></tr>
+<tr><td>IniDelete</td><td><code>sFilename</code>, <code>sSection</code>, <code>sKey</code></td></tr>
+<tr><td>IniReadSection</td><td><code>sFilename</code>, <code>sSection</code></td></tr>
+<tr><td>IniReadSectionNames</td><td><code>sFilename</code></td></tr>
+<tr><td>IniWriteSection</td><td><code>sFilename</code>, <code>sSection</code></td></tr>
+<tr><td>IniRenameSection</td><td><code>sFilename</code>, <code>sSection</code>, <code>sNewSection</code></td></tr>
+</table>
+
+<h3>Registry</h3>
+<table>
+<tr><td>RegRead</td><td><code>sKeyname</code>, <code>sValuename</code></td></tr>
+<tr><td>RegWrite</td><td><code>sKeyname</code>, <code>sValuename</code>, <code>sType</code>, <code>vValue</code></td></tr>
+<tr><td>RegDelete</td><td><code>sKeyname</code>, <code>sValuename</code></td></tr>
+<tr><td>RegEnumKey</td><td><code>sKeyname</code>, <code>iInstance</code></td></tr>
+<tr><td>RegEnumVal</td><td><code>sKeyname</code>, <code>iInstance</code></td></tr>
+</table>
+
+<h3>Shell and Process</h3>
+<table>
+<tr><td>ShellExecute</td><td><code>sFilename</code>, <code>sParams</code></td></tr>
+<tr><td>ShellExecuteWait</td><td><code>sFilename</code>, <code>sParams</code></td></tr>
+<tr><td>Run</td><td><code>sProgram</code></td></tr>
+<tr><td>RunWait</td><td><code>sProgram</code></td></tr>
+<tr><td>ProcessExists</td><td><code>sProcess</code></td></tr>
+<tr><td>ProcessClose</td><td><code>sProcess</code></td></tr>
+<tr><td>ProcessWait</td><td><code>sProcess</code></td></tr>
+<tr><td>ProcessWaitClose</td><td><code>sProcess</code></td></tr>
+<tr><td>ProcessList</td><td><code>sProcess</code></td></tr>
+<tr><td>StdoutRead</td><td><code>hProcess</code></td></tr>
+<tr><td>StderrRead</td><td><code>hProcess</code></td></tr>
+<tr><td>StdinWrite</td><td><code>hProcess</code>, <code>sData</code></td></tr>
+</table>
+
+<h3>GUI</h3>
+<table>
+<tr><td>GUICreate</td><td><code>sTitle</code></td></tr>
+<tr><td>GUIDelete</td><td>(no properties recorded)</td></tr>
+<tr><td>GUISetState</td><td><code>iState</code></td></tr>
+<tr><td>GUISetBkColor</td><td><code>iColor</code></td></tr>
+<tr><td>GUISetFont</td><td><code>iSize</code>, <code>sName</code></td></tr>
+<tr><td>GUIGetMsg</td><td>(no properties recorded)</td></tr>
+<tr><td>GUISwitch</td><td>(no properties recorded)</td></tr>
+<tr><td>GUICtrlCreate*</td><td><code>sText</code> (where applicable)</td></tr>
+<tr><td>GUICtrlSetState</td><td><code>idCtrl</code>, <code>iState</code></td></tr>
+<tr><td>GUICtrlGetState</td><td><code>idCtrl</code></td></tr>
+<tr><td>GUICtrlSetData</td><td><code>idCtrl</code>, <code>vData</code></td></tr>
+<tr><td>GUICtrlRead</td><td><code>idCtrl</code></td></tr>
+<tr><td>GUICtrlDelete</td><td><code>idCtrl</code></td></tr>
+<tr><td>GUICtrlSetFont</td><td><code>idCtrl</code>, <code>iSize</code>, <code>sName</code></td></tr>
+<tr><td>GUICtrlSetColor</td><td><code>idCtrl</code>, <code>iColor</code></td></tr>
+<tr><td>GUICtrlSetBkColor</td><td><code>idCtrl</code>, <code>iColor</code></td></tr>
+<tr><td>GUICtrlSetPos</td><td><code>idCtrl</code>, <code>iLeft</code>, <code>iTop</code></td></tr>
+<tr><td>GUICtrlSetTip</td><td><code>idCtrl</code>, <code>sTooltip</code></td></tr>
+</table>
+
+<h3>Network</h3>
+<table>
+<tr><td>InetGet</td><td><code>sURL</code>, <code>sFilename</code></td></tr>
+<tr><td>InetRead</td><td><code>sURL</code></td></tr>
+<tr><td>InetClose</td><td>(no properties recorded)</td></tr>
+<tr><td>InetGetSize</td><td><code>sURL</code></td></tr>
+<tr><td>Ping</td><td><code>sHost</code></td></tr>
+</table>
+
+<h3>System</h3>
+<table>
+<tr><td>Sleep</td><td><code>iDelay</code></td></tr>
+<tr><td>Shutdown</td><td><code>iCode</code></td></tr>
+<tr><td>IsAdmin</td><td>(no properties recorded)</td></tr>
+<tr><td>EnvGet</td><td><code>sEnvVarName</code></td></tr>
+<tr><td>EnvSet</td><td><code>sEnvVarName</code>, <code>sValue</code></td></tr>
+<tr><td>DriveGetDrive</td><td><code>sType</code></td></tr>
+<tr><td>DriveGetFileSystem</td><td><code>sDrive</code></td></tr>
+<tr><td>DriveSpaceFree</td><td><code>sPath</code></td></tr>
+<tr><td>DriveSpaceTotal</td><td><code>sPath</code></td></tr>
+<tr><td>DriveStatus</td><td><code>sDrive</code></td></tr>
+<tr><td>DriveGetLabel</td><td><code>sDrive</code></td></tr>
+<tr><td>DriveGetType</td><td><code>sDrive</code></td></tr>
+<tr><td>ConsoleWrite</td><td><code>sText</code></td></tr>
+<tr><td>ConsoleWriteError</td><td><code>sText</code></td></tr>
+</table>
+
+<h3>Clipboard</h3>
+<table>
+<tr><td>ClipGet</td><td>(no properties recorded)</td></tr>
+<tr><td>ClipPut</td><td><code>sClip</code></td></tr>
+</table>
+
+<h3>Input</h3>
+<table>
+<tr><td>Send</td><td><code>sKeys</code>, <code>iFlag</code></td></tr>
+<tr><td>MouseClick</td><td><code>sButton</code>, <code>iX</code>, <code>iY</code></td></tr>
+<tr><td>MouseMove</td><td><code>iX</code>, <code>iY</code></td></tr>
+<tr><td>MouseGetPos</td><td>(no properties recorded)</td></tr>
+<tr><td>ControlClick</td><td><code>sTitle</code>, <code>sControl</code>, <code>sButton</code></td></tr>
+<tr><td>ControlSetText</td><td><code>sTitle</code>, <code>sControl</code>, <code>sNewText</code></td></tr>
+<tr><td>ControlGetText</td><td><code>sTitle</code>, <code>sControl</code></td></tr>
+<tr><td>ControlSend</td><td><code>sTitle</code>, <code>sControl</code>, <code>sKeys</code></td></tr>
+<tr><td>ControlFocus</td><td><code>sTitle</code>, <code>sControl</code></td></tr>
+</table>
+
+<h3>Window Management</h3>
+<table>
+<tr><td>WinExists</td><td><code>sTitle</code></td></tr>
+<tr><td>WinActive</td><td><code>sTitle</code></td></tr>
+<tr><td>WinActivate</td><td><code>sTitle</code></td></tr>
+<tr><td>WinWait</td><td><code>sTitle</code></td></tr>
+<tr><td>WinWaitActive</td><td><code>sTitle</code></td></tr>
+<tr><td>WinWaitClose</td><td><code>sTitle</code></td></tr>
+<tr><td>WinClose</td><td><code>sTitle</code></td></tr>
+<tr><td>WinKill</td><td><code>sTitle</code></td></tr>
+<tr><td>WinGetText</td><td><code>sTitle</code></td></tr>
+<tr><td>WinGetTitle</td><td><code>sTitle</code></td></tr>
+<tr><td>WinGetState</td><td><code>sTitle</code></td></tr>
+<tr><td>WinSetState</td><td><code>sTitle</code>, <code>iFlags</code></td></tr>
+<tr><td>WinSetTitle</td><td><code>sTitle</code>, <code>sNewTitle</code></td></tr>
+<tr><td>WinMove</td><td><code>sTitle</code>, <code>iX</code>, <code>iY</code></td></tr>
+<tr><td>WinGetPos</td><td><code>sTitle</code></td></tr>
+</table>
+
+<h3>Splash and Progress</h3>
+<table>
+<tr><td>SplashTextOn</td><td><code>sTitle</code>, <code>sText</code></td></tr>
+<tr><td>SplashImageOn</td><td><code>sTitle</code>, <code>sFile</code></td></tr>
+<tr><td>SplashOff</td><td>(no properties recorded)</td></tr>
+<tr><td>ProgressOn</td><td><code>sTitle</code>, <code>sText</code></td></tr>
+<tr><td>ProgressSet</td><td><code>iPercent</code>, <code>sText</code></td></tr>
+<tr><td>ProgressOff</td><td>(no properties recorded)</td></tr>
+</table>
+
+<h3>Sound</h3>
+<table>
+<tr><td>SoundPlay</td><td><code>sFilename</code>, <code>bWait</code></td></tr>
+</table>
+
+<h3>Tray</h3>
+<table>
+<tr><td>TrayTip</td><td><code>sTitle</code>, <code>sText</code></td></tr>
+<tr><td>TrayGetMsg</td><td>(no properties recorded)</td></tr>
+<tr><td>TrayCreateItem</td><td><code>sText</code></td></tr>
+<tr><td>TrayCreateMenu</td><td><code>sText</code></td></tr>
+<tr><td>TrayItemSetState</td><td><code>hItem</code>, <code>iState</code></td></tr>
+<tr><td>TrayItemSetText</td><td><code>hItem</code>, <code>sText</code></td></tr>
+<tr><td>TrayItemGetState</td><td><code>hItem</code></td></tr>
+<tr><td>TrayItemGetText</td><td><code>hItem</code></td></tr>
+</table>
+
+<hr>
+
+<h2>Remarks</h2>
+
+<p><b>1-based indexing.</b>
+Call indexes start at 1. The first call to a stub is index 1, the second is index 2, and so on.
+<code>$g_StubCalls["MsgBox"].count</code> reflects the total number of calls and also equals
+the index of the last call.</p>
+
+<p><b>Checking for stubs never called.</b>
+If a stub was never called its entry does not exist in <code>$g_StubCalls</code>. Use
+<code>MapExists($g_StubCalls, "TypeName")</code> to check safely rather than accessing
+<code>.count</code> directly, which would cause a runtime error.</p>
+
+<p><b>Simulating @error.</b>
+For stubs that support it (currently <code>RegRead</code>), pass <code>"__ERROR__"</code>
+as the return value to <code>_SetStubReturn()</code>. The stub will call <code>SetError(1)</code>
+before returning, simulating a failed registry read.</p>
+
+<p><b>FileInstall.</b>
+<code>FileInstall</code> requires a different approach to be testable, as such, there is
+no testable either stub for this function. See
+<a href="fileinstall.htm">FileInstall Special Case</a> for details.</p>
+
+</body>
+</html>

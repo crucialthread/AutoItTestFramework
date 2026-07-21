@@ -10,6 +10,8 @@
     <a href="index.htm">Welcome</a>
     <a href="getting-started.htm">Getting Started</a>
     <a href="functions.htm">Function Reference</a>
+    <a href="testable.htm">Testable Reference</a>
+    <a href="stubs.htm">Stubs Reference</a>
     <a href="constants.htm">Constants</a>
 </div>
 
@@ -25,11 +27,25 @@
 <div class="signature">#include &lt;TestFramework.au3&gt;</div>
 
 <p>
-    If you are using TestFramework.au3 without installing it (for example, by placing it alongside
+    The installer also places <code>Testable.au3</code> and <code>Stubs.au3</code> in the same
+    directory, so they are available the same way:
+</p>
+
+<div class="signature">#include &lt;Testable.au3&gt;<br>#include &lt;Stubs.au3&gt;</div>
+
+<p>
+    If you are using the files without installing them (for example, by placing them alongside
     your own scripts), use the quoted form with a relative or full path:
 </p>
 
 <div class="signature">#include "TestFramework.au3"</div>
+
+<p>
+    <code>Testable.au3</code> and <code>Stubs.au3</code> are opt-in libraries for testing code
+    that uses GUI controls, dialogs, file system, registry, and other side-effecting AutoIt
+    built-ins. See the <a href="testable.htm">Testable Reference</a> and
+    <a href="stubs.htm">Stubs Reference</a> for details.
+</p>
 
 <hr>
 
@@ -171,6 +187,172 @@ _RunAllTests()
 
 <hr>
 
+<h2>Testing Scripts with GUI and User Interaction</h2>
+
+<p>
+    AutoIt Test Framework also supports testing scripts that use GUI controls, dialogs, file system,
+    registry, and other side-effecting built-ins through the <code>Testable.au3</code> and
+    <code>Stubs.au3</code> libraries.
+</p>
+
+<p>
+    The pattern has two sides. In script code, use <code>_Tstbl_*</code> wrappers instead of
+    AutoIt built-ins directly. In test files, include <code>Stubs.au3</code> which automatically
+    rewires all wrappers to stubs that record calls and return controlled values.
+</p>
+
+<h3>Script code (FileCleanup.au3)</h3>
+<pre>
+#include &lt;Testable.au3&gt;
+#include &lt;MsgBoxConstants.au3&gt;
+
+If Not IsDeclared("__FILECLEANUP_TEST_MODE") Then
+    _Main()
+EndIf
+
+Func _Main()
+    Local $sPath = "C:\temp\myfile.txt"
+    If DeleteFileWithConfirmation($sPath) Then
+        ConsoleWrite("File deleted." & @CRLF)
+    EndIf
+EndFunc
+
+Func DeleteFileWithConfirmation($sPath)
+    If Not _Tstbl_FileExists($sPath) Then
+        _Tstbl_MsgBox($MB_OK + $MB_ICONERROR, "File Cleanup", "File not found:" & @CRLF & $sPath)
+        Return False
+    EndIf
+
+    Local $iResult = _Tstbl_MsgBox($MB_YESNO + $MB_ICONQUESTION, "File Cleanup", _
+        "Are you sure you want to delete:" & @CRLF & $sPath & "?")
+
+    If $iResult = $IDYES Then
+        _Tstbl_FileDelete($sPath)
+        _Tstbl_MsgBox($MB_OK + $MB_ICONINFORMATION, "File Cleanup", "File deleted successfully.")
+        Return True
+    EndIf
+
+    _Tstbl_MsgBox($MB_OK + $MB_ICONINFORMATION, "File Cleanup", "Deletion cancelled.")
+    Return False
+EndFunc
+</pre>
+
+<h3>Test file (FileCleanupTests.au3)</h3>
+<pre>
+Global $__FILECLEANUP_TEST_MODE = True
+#include &lt;TestFramework.au3&gt;
+#include &lt;Stubs.au3&gt;
+#include "FileCleanup.au3"
+
+Func _TestDeleteFileWithConfirmation_FileNotFound()
+    _TestFmkHeader("Test: DeleteFileWithConfirmation() - file not found")
+
+    _ResetStubs()
+    _SetStubReturn("FileExists", 1, False)
+
+    Local $bResult = DeleteFileWithConfirmation("C:\temp\myfile.txt")
+
+    _TestFmkAssert($bResult = False, "Returns False when file not found", $bResult, False)
+    _TestFmkAssert($g_StubCalls["MsgBox"].count = 1, "Shows one MsgBox", $g_StubCalls["MsgBox"].count, 1)
+    _TestFmkAssert(Not MapExists($g_StubCalls, "FileDelete"), "FileDelete not called", MapExists($g_StubCalls, "FileDelete"), False)
+EndFunc
+
+Func _TestDeleteFileWithConfirmation_UserConfirms()
+    _TestFmkHeader("Test: DeleteFileWithConfirmation() - user confirms")
+
+    _ResetStubs()
+    _SetStubReturn("FileExists", 1, True)
+    _SetStubReturn("MsgBox", 1, $IDYES)
+
+    Local $bResult = DeleteFileWithConfirmation("C:\temp\myfile.txt")
+
+    _TestFmkAssert($bResult = True, "Returns True when confirmed", $bResult, True)
+    _TestFmkAssert($g_StubCalls["FileDelete"].count = 1, "FileDelete called once", $g_StubCalls["FileDelete"].count, 1)
+    _TestFmkAssert($g_StubCalls["FileDelete"][1]["sPath"] = "C:\temp\myfile.txt", _
+        "Correct file deleted", $g_StubCalls["FileDelete"][1]["sPath"], "C:\temp\myfile.txt")
+EndFunc
+
+Func _TestDeleteFileWithConfirmation_UserCancels()
+    _TestFmkHeader("Test: DeleteFileWithConfirmation() - user cancels")
+
+    _ResetStubs()
+    _SetStubReturn("FileExists", 1, True)
+    _SetStubReturn("MsgBox", 1, $IDNO)
+
+    Local $bResult = DeleteFileWithConfirmation("C:\temp\myfile.txt")
+
+    _TestFmkAssert($bResult = False, "Returns False when cancelled", $bResult, False)
+    _TestFmkAssert(Not MapExists($g_StubCalls, "FileDelete"), "FileDelete not called", MapExists($g_StubCalls, "FileDelete"), False)
+EndFunc
+
+Func _RunAllTests()
+    Local $bAllPassed = True
+    $bAllPassed = _TestFmkRun(_TestDeleteFileWithConfirmation_FileNotFound, $bAllPassed)
+    $bAllPassed = _TestFmkRun(_TestDeleteFileWithConfirmation_UserConfirms, $bAllPassed)
+    $bAllPassed = _TestFmkRun(_TestDeleteFileWithConfirmation_UserCancels,  $bAllPassed)
+    _TestFmkSummary()
+    Return $bAllPassed
+EndFunc
+
+_RunAllTests()
+</pre>
+
+<div class="note">
+    <b>Note:</b> <code>_SetStubReturn("MsgBox", 1, $IDYES)</code> pre-configures what the first
+    MsgBox call returns. <code>$g_StubCalls["MsgBox"].count</code> returns how many times it was called.
+    <code>$g_StubCalls["FileDelete"][1]["sPath"]</code> reads the <code>sPath</code> argument of the
+    first FileDelete call. Stub indexes are 1-based. Call <code>_ResetStubs()</code> between tests
+    to clear all recorded calls and returns. To assert a stub was never called use
+    <code>Not MapExists($g_StubCalls, "TypeName")</code> rather than checking <code>.count = 0</code>,
+    since if a stub was never called its map entry does not exist yet.
+</div>
+
+<h3>Compiled scripts and #pragma compile</h3>
+
+<p>
+    Scripts that use <code>#RequireAdmin</code> trigger a UAC prompt at interpreted runtime, which
+    breaks testing. Replace it with the compile-time directive instead:
+</p>
+
+<pre>
+#pragma compile(ExecLevel, requireAdministrator)
+</pre>
+
+<p>
+    This applies the elevation requirement only to the compiled <code>.exe</code>, not to the
+    interpreted script, so tests run without a UAC prompt.
+</p>
+
+<h3>FileInstall in compiled scripts</h3>
+
+<p>
+    <code>FileInstall</code> cannot be called through a function pointer because Aut2Exe requires
+    a string literal as the source path at compile time to embed the file into the exe. The
+    workaround is a wrapper function with a <code>Select</code> block containing all literal
+    <code>FileInstall</code> calls. Aut2Exe finds the literals at compile time, and the wrapper
+    can be stubbed in tests via a function pointer:
+</p>
+
+<pre>
+Func __FileInstall($sSrc, $sDest, $iFlag)
+    Select
+        Case $sSrc = "path\to\file1.au3"
+            FileInstall("path\to\file1.au3", $sDest, $iFlag)
+        Case $sSrc = "path\to\file2.au3"
+            FileInstall("path\to\file2.au3", $sDest, $iFlag)
+    EndSelect
+EndFunc
+
+Global $g_hFn_FileInstall = __FileInstall
+</pre>
+
+<p>
+    See the <a href="testable.htm">Testable Reference</a> and <a href="stubs.htm">Stubs Reference</a>
+    for the full list of supported wrappers and stubs.
+</p>
+
+<hr>
+
 <h2>Tips</h2>
 
 <p><b>Always pass actual and expected values to _TestFmkAssert().</b>
@@ -190,6 +372,13 @@ As shown in the <code>_TestDivide()</code> example above, testing that <code>@er
 correctly set on failure is just as important as testing correct return values on success.
 Remember: capture <code>@error</code> into a local variable immediately after the call, since
 any subsequent function call resets it.</p>
+
+<p><b>Write tests before fixing bugs (TDD).</b>
+When a test fails because a stub was called fewer times than expected, accessing
+<code>$g_StubCalls["TypeName"][index]["property"]</code> on a non-existent index returns
+an empty string gracefully rather than crashing the script. This means you can write
+tests against code that does not yet do what it should, and the test suite will report failures
+cleanly without breaking the test run.</p>
 
 </body>
 </html>

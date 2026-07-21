@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Testable Reference - AutoIt Test Framework</title>
+<link rel="stylesheet" type="text/css" href="css/default.css">
+</head>
+<body>
+<div class="topnav">
+    <a href="index.htm">Welcome</a>
+    <a href="getting-started.htm">Getting Started</a>
+    <a href="functions.htm">Function Reference</a>
+    <a href="testable.htm">Testable Reference</a>
+    <a href="stubs.htm">Stubs Reference</a>
+    <a href="constants.htm">Constants</a>
+</div>
+
+<h1>Testable Reference</h1>
+
+<h2>Overview</h2>
+
+<p>
+    <code>Testable.au3</code> provides wrapper functions for AutoIt built-ins that have side
+    effects or return values that affect program flow. Each wrapper routes the call through a
+    function pointer global (<code>$g_hFn_*</code>), which in script code points to the real
+    AutoIt built-in, and in test code is rewired by <code>Stubs.au3</code> to a stub that
+    records calls and returns controlled values.
+</p>
+
+<p>
+    This allows tests to verify that the correct functions were called with the correct
+    parameters, and to control what those functions return, without any real GUI being created,
+    no files being written or deleted, and no registry entries being touched.
+</p>
+
+<h2>Usage</h2>
+
+<p>Include <code>Testable.au3</code> in your script code and use <code>_Tstbl_*</code> wrappers
+instead of AutoIt built-ins directly:</p>
+
+<pre>
+#include &lt;Testable.au3&gt;
+
+Func DeleteFileWithConfirmation($sPath)
+    If Not _Tstbl_FileExists($sPath) Then
+        _Tstbl_MsgBox($MB_OK + $MB_ICONERROR, "Cleanup", "File not found.")
+        Return False
+    EndIf
+    Local $iResult = _Tstbl_MsgBox($MB_YESNO + $MB_ICONQUESTION, "Cleanup", "Delete " & $sPath & "?")
+    If $iResult = $IDYES Then
+        _Tstbl_FileDelete($sPath)
+        Return True
+    EndIf
+    Return False
+EndFunc
+</pre>
+
+<p>
+    In test files, include <code>Stubs.au3</code> instead of <code>Testable.au3</code>.
+    <code>Stubs.au3</code> includes <code>Testable.au3</code> automatically and rewires
+    all function pointers to stubs. See the <a href="stubs.htm">Stubs Reference</a> for details.
+</p>
+
+<p>
+    You can also include individual category files directly instead of the full
+    <code>Testable.au3</code>, for example <code>#include &lt;Testable_Dialogs.au3&gt;</code>,
+    if you only need wrappers for a specific category.
+</p>
+
+<h2>Remarks</h2>
+
+<p>
+    All <code>_Tstbl_*</code> wrappers propagate <code>@error</code> and <code>@extended</code>
+    from the underlying call back to the caller using <code>SetError(@error, @extended, $vResult)</code>.
+    This means code that checks <code>@error</code> after a built-in call will work correctly
+    when using the testable wrapper.
+</p>
+
+<div class="note">
+    <b>Note:</b> <code>Testable.au3</code> is an umbrella file that includes all
+    <code>Testable_*.au3</code> category files. The category files can also be included
+    individually if only a subset of wrappers is needed.
+</div>
+
+<hr>
+
+<h2>Wrapper Functions</h2>
+
+<p>
+    All <code>_Tstbl_*</code> wrappers accept exactly the same parameters as their AutoIt
+    built-in equivalents and behave identically in script code. For parameter details and
+    usage refer to the <a href="https://www.autoitscript.com/autoit3/docs/functions.htm">AutoIt documentation</a>.
+</p>
+
+<div class="note">
+    <b>Special case:</b> <code>FileInstall</code> cannot be routed through a function pointer
+    and requires a different approach to be testable. See <a href="fileinstall.htm">FileInstall Special Case</a>
+    for details.
+</div>
+
+<h2>Dialogs</h2>
+<p>Included via <code>Testable_Dialogs.au3</code>.</p>
+<table>
+<tr><td>_Tstbl_MsgBox</td><td>Wrapper for <code>MsgBox</code>.</td></tr>
+<tr><td>_Tstbl_InputBox</td><td>Wrapper for <code>InputBox</code>.</td></tr>
+<tr><td>_Tstbl_FileOpenDialog</td><td>Wrapper for <code>FileOpenDialog</code>.</td></tr>
+<tr><td>_Tstbl_FileSaveDialog</td><td>Wrapper for <code>FileSaveDialog</code>.</td></tr>
+<tr><td>_Tstbl_FileSelectFolder</td><td>Wrapper for <code>FileSelectFolder</code>.</td></tr>
+</table>
+
+<h2>File System</h2>
+<p>Included via <code>Testable_FileSystem.au3</code>.</p>
+<table>
+<tr><td>_Tstbl_FileExists</td><td>Wrapper for <code>FileExists</code>.</td></tr>
+<tr><td>_Tstbl_FileDelete</td><td>Wrapper for <code>FileDelete</code>.</td></tr>
+<tr><td>_Tstbl_FileCopy</td><td>Wrapper for <code>FileCopy</code>.</td></tr>
+<tr><td>_Tstbl_FileMove</td><td>Wrapper for <code>FileMove</code>.</td></tr>
+<tr><td>_Tstbl_FileGetAttrib</td><td>Wrapper for <code>FileGetAttrib</code>.</td></tr>
+<tr><td>_Tstbl_FileGetSize</td><td>Wrapper for <code>FileGetSize</code>.</td></tr>
+<tr><td>_Tstbl_FileGetTime</td><td>Wrapper for <code>FileGetTime</code>.</td></tr>
+<tr><td>_Tstbl_FileGetVersion</td><td>Wrapper for <code>FileGetVersion</code>.</td></tr>
+<tr><td>_Tstbl_FileRead</td><td>Wrapper for <code>FileRead</code>.</td></tr>
+<tr><td>_Tstbl_FileWrite</td><td>Wrapper for <code>FileWrite</code>.</td></tr>
+<tr><td>_Tstbl_FileOpen</td><td>Wrapper for <code>FileOpen</code>.</td></tr>
+<tr><td>_Tstbl_FileClose</td><td>Wrapper for <code>FileClose</code>.</td></tr>
+<tr><td>_Tstbl_FileReadLine</td><td>Wrapper for <code>FileReadLine</code>.</td></tr>
+<tr><td>_Tstbl_FileWriteLine</td><td>Wrapper for <code>FileWriteLine</code>.</td></tr>
+<tr><td>_Tstbl_FileReadToArray</td><td>Wrapper for <code>FileReadToArray</code>.</td></tr>
+<tr><td>_Tstbl_FileCreateShortcut</td><td>Wrapper for <code>FileCreateShortcut</code>.</td></tr>
+<tr><td>_Tstbl_FileSetAttrib</td><td>Wrapper for <code>FileSetAttrib</code>.</td></tr>
+<tr><td>_Tstbl_FileSetTime</td><td>Wrapper for <code>FileSetTime</code>.</td></tr>
+<tr><td>_Tstbl_DirCreate</td><td>Wrapper for <code>DirCreate</code>.</td></tr>
+<tr><td>_Tstbl_DirRemove</td><td>Wrapper for <code>DirRemove</code>.</td></tr>
+<tr><td>_Tstbl_DirCopy</td><td>Wrapper for <code>DirCopy</code>.</td></tr>
+<tr><td>_Tstbl_DirMove</td><td>Wrapper for <code>DirMove</code>.</td></tr>
+<tr><td>_Tstbl_DirGetSize</td><td>Wrapper for <code>DirGetSize</code>.</td></tr>
+</table>
+
+<h2>INI Files</h2>
+<p>Included via <code>Testable_Ini.au3</code>.</p>
+<table>
+<tr><td>_Tstbl_IniRead</td><td>Wrapper for <code>IniRead</code>.</td></tr>
+<tr><td>_Tstbl_IniWrite</td><td>Wrapper for <code>IniWrite</code>.</td></tr>
+<tr><td>_Tstbl_IniDelete</td><td>Wrapper for <code>IniDelete</code>.</td></tr>
+<tr><td>_Tstbl_IniReadSection</td><td>Wrapper for <code>IniReadSection</code>.</td></tr>
+<tr><td>_Tstbl_IniReadSectionNames</td><td>Wrapper for <code>IniReadSectionNames</code>.</td></tr>
+<tr><td>_Tstbl_IniWriteSection</td><td>Wrapper for <code>IniWriteSection</code>.</td></tr>
+<tr><td>_Tstbl_IniRenameSection</td><td>Wrapper for <code>IniRenameSection</code>.</td></tr>
+</table>
+
+<h2>Registry</h2>
+<p>Included via <code>Testable_Registry.au3</code>.</p>
+<table>
+<tr><td>_Tstbl_RegRead</td><td>Wrapper for <code>RegRead</code>.</td></tr>
+<tr><td>_Tstbl_RegWrite</td><td>Wrapper for <code>RegWrite</code>.</td></tr>
+<tr><td>_Tstbl_RegDelete</td><td>Wrapper for <code>RegDelete</code>.</td></tr>
+<tr><td>_Tstbl_RegEnumKey</td><td>Wrapper for <code>RegEnumKey</code>.</td></tr>
+<tr><td>_Tstbl_RegEnumVal</td><td>Wrapper for <code>RegEnumVal</code>.</td></tr>
+</table>
+
+<h2>Shell and Process</h2>
+<p>Included via <code>Testable_Process.au3</code>.</p>
+<table>
+<tr><td>_Tstbl_ShellExecute</td><td>Wrapper for <code>ShellExecute</code>.</td></tr>
+<tr><td>_Tstbl_ShellExecuteWait</td><td>Wrapper for <code>ShellExecuteWait</code>.</td></tr>
+<tr><td>_Tstbl_Run</td><td>Wrapper for <code>Run</code>.</td></tr>
+<tr><td>_Tstbl_RunWait</td><td>Wrapper for <code>RunWait</code>.</td></tr>
+<tr><td>_Tstbl_ProcessExists</td><td>Wrapper for <code>ProcessExists</code>.</td></tr>
+<tr><td>_Tstbl_ProcessClose</td><td>Wrapper for <code>ProcessClose</code>.</td></tr>
+<tr><td>_Tstbl_ProcessWait</td><td>Wrapper for <code>ProcessWait</code>.</td></tr>
+<tr><td>_Tstbl_ProcessWaitClose</td><td>Wrapper for <code>ProcessWaitClose</code>.</td></tr>
+<tr><td>_Tstbl_ProcessList</td><td>Wrapper for <code>ProcessList</code>.</td></tr>
+<tr><td>_Tstbl_StdoutRead</td><td>Wrapper for <code>StdoutRead</code>.</td></tr>
+<tr><td>_Tstbl_StderrRead</td><td>Wrapper for <code>StderrRead</code>.</td></tr>
+<tr><td>_Tstbl_StdinWrite</td><td>Wrapper for <code>StdinWrite</code>.</td></tr>
+</table>
+
+<h2>GUI</h2>
+<p>Included via <code>Testable_GUI.au3</code>.</p>
+<table>
+<tr><td>_Tstbl_GUICreate</td><td>Wrapper for <code>GUICreate</code>.</td></tr>
+<tr><td>_Tstbl_GUIDelete</td><td>Wrapper for <code>GUIDelete</code>.</td></tr>
+<tr><td>_Tstbl_GUISetState</td><td>Wrapper for <code>GUISetState</code>.</td></tr>
+<tr><td>_Tstbl_GUISetBkColor</td><td>Wrapper for <code>GUISetBkColor</code>.</td></tr>
+<tr><td>_Tstbl_GUISetFont</td><td>Wrapper for <code>GUISetFont</code>.</td></tr>
+<tr><td>_Tstbl_GUIGetMsg</td><td>Wrapper for <code>GUIGetMsg</code>.</td></tr>
+<tr><td>_Tstbl_GUISwitch</td><td>Wrapper for <code>GUISwitch</code>.</td></tr>
+<tr><td>_Tstbl_GUICtrlCreateLabel</td><td>Wrapper for <code>GUICtrlCreateLabel</code>.</td></tr>
+<tr><td>_Tstbl_GUICtrlCreateButton</td><td>Wrapper for <code>GUICtrlCreateButton</code>.</td></tr>
+<tr><td>_Tstbl_GUICtrlCreateInput</td><td>Wrapper for <code>GUICtrlCreateInput</code>.</td></tr>
+<tr><td>_Tstbl_GUICtrlCreateEdit</td><td>Wrapper for <code>GUICtrlCreateEdit</code>.</td></tr>
+<tr><td>_Tstbl_GUICtrlCreateCheckbox</td><td>Wrapper for <code>GUICtrlCreateCheckbox</code>.</td></tr>
+<tr><td>_Tstbl_GUICtrlCreateRadio</td><td>Wrapper for <code>GUICtrlCreateRadio</code>.</td></tr>
+<tr><td>_Tstbl_GUICtrlCreateCombo</td><td>Wrapper for <code>GUICtrlCreateCombo</code>.</td></tr>
+<tr><td>_Tstbl_GUICtrlCreateList</td><td>Wrapper for <code>GUICtrlCreateList</code>.</td></tr>
+<tr><td>_Tstbl_GUICtrlCreateListView</td><td>Wrapper for <code>GUICtrlCreateListView</code>.</td></tr>
+<tr><td>_Tstbl_GUICtrlCreateListViewItem</td><td>Wrapper for <code>GUICtrlCreateListViewItem</code>.</td></tr>
+<tr><td>_Tstbl_GUICtrlCreateTreeView</td><td>Wrapper for <code>GUICtrlCreateTreeView</code>.</td></tr>
+<tr><td>_Tstbl_GUICtrlCreateTreeViewItem</td><td>Wrapper for <code>GUICtrlCreateTreeViewItem</code>.</td></tr>
+<tr><td>_Tstbl_GUICtrlCreateProgress</td><td>Wrapper for <code>GUICtrlCreateProgress</code>.</td></tr>
+<tr><td>_Tstbl_GUICtrlCreateTab</td><td>Wrapper for <code>GUICtrlCreateTab</code>.</td></tr>
+<tr><td>_Tstbl_GUICtrlCreateTabItem</td><td>Wrapper for <code>GUICtrlCreateTabItem</code>.</td></tr>
+<tr><td>_Tstbl_GUICtrlCreateDate</td><td>Wrapper for <code>GUICtrlCreateDate</code>.</td></tr>
+<tr><td>_Tstbl_GUICtrlCreateUpdown</td><td>Wrapper for <code>GUICtrlCreateUpdown</code>.</td></tr>
+<tr><td>_Tstbl_GUICtrlCreateGroup</td><td>Wrapper for <code>GUICtrlCreateGroup</code>.</td></tr>
+<tr><td>_Tstbl_GUICtrlCreateMenu</td><td>Wrapper for <code>GUICtrlCreateMenu</code>.</td></tr>
+<tr><td>_Tstbl_GUICtrlCreateMenuItem</td><td>Wrapper for <code>GUICtrlCreateMenuItem</code>.</td></tr>
+<tr><td>_Tstbl_GUICtrlCreateSlider</td><td>Wrapper for <code>GUICtrlCreateSlider</code>.</td></tr>
+<tr><td>_Tstbl_GUICtrlCreatePic</td><td>Wrapper for <code>GUICtrlCreatePic</code>.</td></tr>
+<tr><td>_Tstbl_GUICtrlSetState</td><td>Wrapper for <code>GUICtrlSetState</code>.</td></tr>
+<tr><td>_Tstbl_GUICtrlGetState</td><td>Wrapper for <code>GUICtrlGetState</code>.</td></tr>
+<tr><td>_Tstbl_GUICtrlSetData</td><td>Wrapper for <code>GUICtrlSetData</code>.</td></tr>
+<tr><td>_Tstbl_GUICtrlRead</td><td>Wrapper for <code>GUICtrlRead</code>.</td></tr>
+<tr><td>_Tstbl_GUICtrlDelete</td><td>Wrapper for <code>GUICtrlDelete</code>.</td></tr>
+<tr><td>_Tstbl_GUICtrlSetFont</td><td>Wrapper for <code>GUICtrlSetFont</code>.</td></tr>
+<tr><td>_Tstbl_GUICtrlSetColor</td><td>Wrapper for <code>GUICtrlSetColor</code>.</td></tr>
+<tr><td>_Tstbl_GUICtrlSetBkColor</td><td>Wrapper for <code>GUICtrlSetBkColor</code>.</td></tr>
+<tr><td>_Tstbl_GUICtrlSetPos</td><td>Wrapper for <code>GUICtrlSetPos</code>.</td></tr>
+<tr><td>_Tstbl_GUICtrlSetTip</td><td>Wrapper for <code>GUICtrlSetTip</code>.</td></tr>
+</table>
+
+<h2>Network</h2>
+<p>Included via <code>Testable_Network.au3</code>.</p>
+<table>
+<tr><td>_Tstbl_InetGet</td><td>Wrapper for <code>InetGet</code>.</td></tr>
+<tr><td>_Tstbl_InetRead</td><td>Wrapper for <code>InetRead</code>.</td></tr>
+<tr><td>_Tstbl_InetClose</td><td>Wrapper for <code>InetClose</code>.</td></tr>
+<tr><td>_Tstbl_InetGetSize</td><td>Wrapper for <code>InetGetSize</code>.</td></tr>
+<tr><td>_Tstbl_Ping</td><td>Wrapper for <code>Ping</code>.</td></tr>
+</table>
+
+<h2>System</h2>
+<p>Included via <code>Testable_System.au3</code>.</p>
+<table>
+<tr><td>_Tstbl_Sleep</td><td>Wrapper for <code>Sleep</code>.</td></tr>
+<tr><td>_Tstbl_Shutdown</td><td>Wrapper for <code>Shutdown</code>.</td></tr>
+<tr><td>_Tstbl_IsAdmin</td><td>Wrapper for <code>IsAdmin</code>.</td></tr>
+<tr><td>_Tstbl_EnvGet</td><td>Wrapper for <code>EnvGet</code>.</td></tr>
+<tr><td>_Tstbl_EnvSet</td><td>Wrapper for <code>EnvSet</code>.</td></tr>
+<tr><td>_Tstbl_DriveGetDrive</td><td>Wrapper for <code>DriveGetDrive</code>.</td></tr>
+<tr><td>_Tstbl_DriveGetFileSystem</td><td>Wrapper for <code>DriveGetFileSystem</code>.</td></tr>
+<tr><td>_Tstbl_DriveSpaceFree</td><td>Wrapper for <code>DriveSpaceFree</code>.</td></tr>
+<tr><td>_Tstbl_DriveSpaceTotal</td><td>Wrapper for <code>DriveSpaceTotal</code>.</td></tr>
+<tr><td>_Tstbl_DriveStatus</td><td>Wrapper for <code>DriveStatus</code>.</td></tr>
+<tr><td>_Tstbl_DriveGetLabel</td><td>Wrapper for <code>DriveGetLabel</code>.</td></tr>
+<tr><td>_Tstbl_DriveGetType</td><td>Wrapper for <code>DriveGetType</code>.</td></tr>
+<tr><td>_Tstbl_ConsoleWrite</td><td>Wrapper for <code>ConsoleWrite</code>.</td></tr>
+<tr><td>_Tstbl_ConsoleWriteError</td><td>Wrapper for <code>ConsoleWriteError</code>.</td></tr>
+</table>
+
+<h2>Clipboard</h2>
+<p>Included via <code>Testable_Clipboard.au3</code>.</p>
+<table>
+<tr><td>_Tstbl_ClipGet</td><td>Wrapper for <code>ClipGet</code>.</td></tr>
+<tr><td>_Tstbl_ClipPut</td><td>Wrapper for <code>ClipPut</code>.</td></tr>
+</table>
+
+<h2>Input</h2>
+<p>Included via <code>Testable_Input.au3</code>.</p>
+<table>
+<tr><td>_Tstbl_Send</td><td>Wrapper for <code>Send</code>.</td></tr>
+<tr><td>_Tstbl_MouseClick</td><td>Wrapper for <code>MouseClick</code>.</td></tr>
+<tr><td>_Tstbl_MouseMove</td><td>Wrapper for <code>MouseMove</code>.</td></tr>
+<tr><td>_Tstbl_MouseGetPos</td><td>Wrapper for <code>MouseGetPos</code>.</td></tr>
+<tr><td>_Tstbl_ControlClick</td><td>Wrapper for <code>ControlClick</code>.</td></tr>
+<tr><td>_Tstbl_ControlSetText</td><td>Wrapper for <code>ControlSetText</code>.</td></tr>
+<tr><td>_Tstbl_ControlGetText</td><td>Wrapper for <code>ControlGetText</code>.</td></tr>
+<tr><td>_Tstbl_ControlSend</td><td>Wrapper for <code>ControlSend</code>.</td></tr>
+<tr><td>_Tstbl_ControlFocus</td><td>Wrapper for <code>ControlFocus</code>.</td></tr>
+</table>
+
+<h2>Window Management</h2>
+<p>Included via <code>Testable_Window.au3</code>.</p>
+<table>
+<tr><td>_Tstbl_WinExists</td><td>Wrapper for <code>WinExists</code>.</td></tr>
+<tr><td>_Tstbl_WinActive</td><td>Wrapper for <code>WinActive</code>.</td></tr>
+<tr><td>_Tstbl_WinActivate</td><td>Wrapper for <code>WinActivate</code>.</td></tr>
+<tr><td>_Tstbl_WinWait</td><td>Wrapper for <code>WinWait</code>.</td></tr>
+<tr><td>_Tstbl_WinWaitActive</td><td>Wrapper for <code>WinWaitActive</code>.</td></tr>
+<tr><td>_Tstbl_WinWaitClose</td><td>Wrapper for <code>WinWaitClose</code>.</td></tr>
+<tr><td>_Tstbl_WinClose</td><td>Wrapper for <code>WinClose</code>.</td></tr>
+<tr><td>_Tstbl_WinKill</td><td>Wrapper for <code>WinKill</code>.</td></tr>
+<tr><td>_Tstbl_WinGetText</td><td>Wrapper for <code>WinGetText</code>.</td></tr>
+<tr><td>_Tstbl_WinGetTitle</td><td>Wrapper for <code>WinGetTitle</code>.</td></tr>
+<tr><td>_Tstbl_WinGetState</td><td>Wrapper for <code>WinGetState</code>.</td></tr>
+<tr><td>_Tstbl_WinSetState</td><td>Wrapper for <code>WinSetState</code>.</td></tr>
+<tr><td>_Tstbl_WinSetTitle</td><td>Wrapper for <code>WinSetTitle</code>.</td></tr>
+<tr><td>_Tstbl_WinMove</td><td>Wrapper for <code>WinMove</code>.</td></tr>
+<tr><td>_Tstbl_WinGetPos</td><td>Wrapper for <code>WinGetPos</code>.</td></tr>
+</table>
+
+<h2>Splash and Progress</h2>
+<p>Included via <code>Testable_Splash.au3</code>.</p>
+<table>
+<tr><td>_Tstbl_SplashTextOn</td><td>Wrapper for <code>SplashTextOn</code>.</td></tr>
+<tr><td>_Tstbl_SplashImageOn</td><td>Wrapper for <code>SplashImageOn</code>.</td></tr>
+<tr><td>_Tstbl_SplashOff</td><td>Wrapper for <code>SplashOff</code>.</td></tr>
+<tr><td>_Tstbl_ProgressOn</td><td>Wrapper for <code>ProgressOn</code>.</td></tr>
+<tr><td>_Tstbl_ProgressSet</td><td>Wrapper for <code>ProgressSet</code>.</td></tr>
+<tr><td>_Tstbl_ProgressOff</td><td>Wrapper for <code>ProgressOff</code>.</td></tr>
+</table>
+
+<h2>Sound</h2>
+<p>Included via <code>Testable_Sound.au3</code>.</p>
+<table>
+<tr><td>_Tstbl_SoundPlay</td><td>Wrapper for <code>SoundPlay</code>.</td></tr>
+</table>
+
+<h2>Tray</h2>
+<p>Included via <code>Testable_Tray.au3</code>.</p>
+<table>
+<tr><td>_Tstbl_TrayTip</td><td>Wrapper for <code>TrayTip</code>.</td></tr>
+<tr><td>_Tstbl_TrayGetMsg</td><td>Wrapper for <code>TrayGetMsg</code>.</td></tr>
+<tr><td>_Tstbl_TrayCreateItem</td><td>Wrapper for <code>TrayCreateItem</code>.</td></tr>
+<tr><td>_Tstbl_TrayCreateMenu</td><td>Wrapper for <code>TrayCreateMenu</code>.</td></tr>
+<tr><td>_Tstbl_TrayItemSetState</td><td>Wrapper for <code>TrayItemSetState</code>.</td></tr>
+<tr><td>_Tstbl_TrayItemSetText</td><td>Wrapper for <code>TrayItemSetText</code>.</td></tr>
+<tr><td>_Tstbl_TrayItemGetState</td><td>Wrapper for <code>TrayItemGetState</code>.</td></tr>
+<tr><td>_Tstbl_TrayItemGetText</td><td>Wrapper for <code>TrayItemGetText</code>.</td></tr>
+</table>
+
+</body>
+</html>
