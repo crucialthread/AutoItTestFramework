@@ -1,12 +1,10 @@
 ; #INDEX# =======================================================================================================================
-; Title .........: AutoIt Test Framework - Stubs_Core.au3 library
+; Title .........: AutoIt Test Framework - Stubs_Core.au3
 ; Version .......: 0.0.1
 ; AutoIt Version : 3.3.18.0
 ; Author ........: Crucial Thread
-; Description ...: Core stub infrastructure shared by all stub category files.
-;                  Provides the global stub stores, __StubInitType helper,
-;                  _ResetStubs(), _SetStubReturn(), _StubCall() and _StubCallCount().
-;                  Can be included via Stubs.au3, or via specific stubs like Stubs_Dialogs.au3 and others
+; Description ...: Core stub infrastructure shared by all Stubs_*.au3 category files.
+;                  Provides $g_StubCalls, $g_StubReturns, __StubInitType and _ResetStubs.
 ; ===============================================================================================================================
 
 #include-once
@@ -36,7 +34,7 @@ Func __StubInitType($sType)
 EndFunc
 
 ; ===============================================================================================================================
-; Public API
+; Reset - call between tests to clear all recorded calls and returns
 ; ===============================================================================================================================
 
 Func _ResetStubs()
@@ -44,6 +42,10 @@ Func _ResetStubs()
     $g_StubCalls   = $oEmpty
     $g_StubReturns = $oEmpty
 EndFunc
+
+; ===============================================================================================================================
+; Set Stub value helper - set a stub return value to be used on a test
+; ===============================================================================================================================
 
 Func _SetStubReturn($sType, $iIdx, $vValue)
     If Not MapExists($g_StubReturns, $sType) Then
@@ -53,13 +55,3 @@ Func _SetStubReturn($sType, $iIdx, $vValue)
     $g_StubReturns[$sType][$iIdx] = $vValue
 EndFunc
 
-Func _StubCallCount($sType)
-    If Not MapExists($g_StubCalls, $sType) Then Return 0
-    Return $g_StubCalls[$sType].count
-EndFunc
-
-Func _StubCall($sType, $iIdx, $sProperty)
-    If Not MapExists($g_StubCalls, $sType) Then Return ""
-    If Not MapExists($g_StubCalls[$sType], $iIdx) Then Return ""
-    Return $g_StubCalls[$sType][$iIdx][$sProperty]
-EndFunc
