@@ -31,7 +31,10 @@
 ;                  compile time. The compiled .exe is fully self-contained.
 ; ===============================================================================================================================
 
+; This install script requires admin but a #RequireAdmin trigger a UAC prompt at interpreted runtime, which breaks testing
+; So it is using a compile-time directive instead
 #pragma compile(ExecLevel, requireAdministrator)
+
 #include <FontConstants.au3>
 #include <GUIConstantsEx.au3>
 #include <WindowsConstants.au3>
@@ -78,12 +81,16 @@ Global $g_sIncludePath = ""
 Global $g_sChmPath     = ""
 Global $g_bIsUpgrade   = False
 
+; $g_hFn_FileInstall points to __FileInstall (a wrapper function) rather than FileInstall directly
+; This allows stubbing on tests while keeping literal FileInstall calls visible to Aut2Exe for embedding.
+; See "Special Case: FileInstall wrap" comments below
 Global $g_hFn_FileInstall = __FileInstall
 
 ; ===============================================================================================================================
 ; Entry point
 ; ===============================================================================================================================
 
+; Do not run Main in test mode, only the functions to be tested
 If Not IsDeclared("__INSTALLER_TEST_MODE") Then
     _Main()
 EndIf
@@ -378,12 +385,24 @@ Func __UpdateReadyPage($idLabel)
 EndFunc
 
 ; ===============================================================================================================================
-; Installation logic
+; Special Case: FileInstall wrap
 ; ===============================================================================================================================
-
 ; __FileInstall wraps FileInstall with literal string paths so Aut2Exe can find
 ; and embed all files at compile time, while still allowing the function to be
 ; called through $g_hFn_FileInstall and stubbed in tests.
+;
+; ***
+; NOTE: It cannot be set inside a library file like the other testables due the nature how FileInstall works
+;
+;       > For reference, this is from AutoIt official documentation what explains why:
+;		  - The source file must be specified using a string literal and can not be a variable,
+;           a macro, a calculation nor function call.
+;		  - The file must be able to be found during compiling, however variables,
+;           calculations and function calls do not get resolved until the script itself is running,
+;           long after compiling, making them unsuitable to define the source file.
+;
+;         https://www.autoitscript.com/autoit3/docs/functions/FileInstall.htm
+; ***
 Func __FileInstall($sSrc, $sDest, $iFlag)
     Select
         Case $sSrc = "..\core\TestFramework.au3"
@@ -456,6 +475,10 @@ Func __FileInstall($sSrc, $sDest, $iFlag)
             FileInstall("..\..\.out\TestFrameworkUninstaller.exe", $sDest, $iFlag)
     EndSelect
 EndFunc
+
+; ===============================================================================================================================
+; Installation logic
+; ===============================================================================================================================
 
 Func __RunInstall($idStatusLabel, $idProgress)
     Local $iStep  = 0
