@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Concepts - AutoIt Test Framework</title>
+<link rel="stylesheet" type="text/css" href="css/default.css">
+</head>
+<body>
+<div class="topnav">
+    <a href="index.htm">Welcome</a>
+    <a href="concepts.htm">Concepts</a>
+    <a href="getting-started.htm">Getting Started</a>
+    <a href="functions.htm">Function Reference</a>
+    <a href="testable.htm">Testable Reference</a>
+    <a href="stubs.htm">Stubs Reference</a>
+    <a href="constants.htm">Constants</a>
+</div>
+
+<h1>Concepts</h1>
+
+<h2>How the Solution Works</h2>
+
+<p>
+    When developing an AutoIt script, the natural instinct is to verify it works by
+    running it and checking the output manually. This works for a while, but as the
+    codebase grows, manual verification becomes slow, error-prone, and incomplete. A change
+    in one function can silently break another, and without a systematic way to check every
+    behavior after every change, regressions go unnoticed until they cause real problems.
+</p>
+
+<p>
+    Unit tests solve this by encoding expected behavior as code. Each test calls a specific
+    function with specific inputs and asserts that the output matches what is expected. The
+    tests run in seconds, cover every case every time, and fail immediately when something
+    breaks. This makes it safe to change and refactor code - if the tests still pass,
+    the behavior is still correct.
+</p>
+
+<p>
+    AutoIt Test Framework is a unit test runner for AutoIt. You write test functions that
+    call your code and assert expected outcomes. The framework runs those functions, tracks
+    which assertions pass or fail, prints colored results to the SciTE console, and prints
+    a final summary of totals.
+</p>
+
+<p>
+    For code that interacts with the user or manipulates external state - showing a dialog,
+    reading or writing files, creating registry entries, building a GUI - the framework also
+    includes testable wrappers and stubs. These allow tests to verify that the right
+    built-ins were called with the right arguments, and to control what those built-ins
+    return, without anything actually executing. No dialog appears, no file is written,
+    no registry entry is created.
+</p>
+
+<p>
+    The sections below explain each concept in detail.
+</p>
+
+<hr>
+
+<h2>The Standard Path</h2>
+
+<p>
+    The standard path uses <code>TestFramework.au3</code> only. It provides four functions
+    that together form a complete test runner:
+</p>
+
+<ul>
+    <li><code>_TestFmkHeader()</code> - labels a group of related assertions</li>
+    <li><code>_TestFmkAssert()</code> - evaluates a condition and records pass or fail</li>
+    <li><code>_TestFmkRun()</code> - runs a test function and accumulates its result</li>
+    <li><code>_TestFmkSummary()</code> - prints the final totals</li>
+</ul>
+
+<p>
+    The key design is cumulative pass/fail tracking. <code>_TestFmkRun()</code> takes a
+    <code>$bAllPassed</code> boolean and returns a new one - if any test function fails,
+    <code>$bAllPassed</code> becomes <code>False</code> and stays <code>False</code> for
+    the rest of the suite. This means every test function always runs regardless of whether
+    earlier ones failed, giving you a complete picture of the suite state in one run.
+</p>
+
+<p>
+    <code>_RunAllTests()</code> returns the final <code>$bAllPassed</code> value, which
+    reflects the overall suite result. This makes it straightforward to integrate with
+    automated workflows - a build pipeline that runs the test script can check this value
+    to know whether any test in the suite has failed and act accordingly.
+</p>
+
+<pre>
+Func _RunAllTests()
+    Local $bAllPassed = True
+    $bAllPassed = _TestFmkRun(_TestAdd,      $bAllPassed)
+    $bAllPassed = _TestFmkRun(_TestSubtract, $bAllPassed)
+    $bAllPassed = _TestFmkRun(_TestMultiply, $bAllPassed)
+    _TestFmkSummary()
+    Return $bAllPassed
+EndFunc
+</pre>
+
+<hr>
+
+<h2 id="testable-stubs-path">The Testable/Stubs Path</h2>
+
+<p>
+    When a script calls AutoIt built-ins that interact with the user or manipulate external
+    state - such as MsgBox, FileDelete, RegWrite, or GUICreate - those built-ins execute
+    for real during a test run. A dialog appears, a file is deleted, a registry entry is
+    written. This makes it impossible to test such code in isolation using assertions alone.
+</p>
+
+<p>
+    The Testable/Stubs pattern solves this. In script code, <code>_Tstbl_*</code> wrapper
+    functions replace direct built-in calls. In test files, stubs intercept those wrappers 
+	recording every call with its arguments and returning controlled values instead of
+    executing the real built-in. The script code itself never changes between normal use
+    and test use. The only difference is whether the wrappers point to the real built-ins
+    or to stubs.
+</p>
+
+<div class="note">
+    Built-in functions and third-party UDFs are already tested and guaranteed by their
+    authors to behave correctly for given inputs. What unit tests should verify is the code
+    built on top of them: whether the right function was called, with the right arguments,
+    and whether the surrounding logic handles the return value correctly, which is exactly
+    what the Testable/Stubs pattern provides.
+</div>
+
+<hr>
+
+<h2>The Function Pointer Pattern</h2>
+
+<p>
+    Every <code>_Tstbl_*</code> wrapper is backed by a global function pointer:
+</p>
+
+<pre>
+Global $g_hFn_MsgBox = MsgBox
+
+Func _Tstbl_MsgBox($iFlag, $sTitle, $sText, $iTimeout = 0, $hWnd = 0)
+    Local $vResult = $g_hFn_MsgBox($iFlag, $sTitle, $sText, $iTimeout, $hWnd)
+    Return SetError(@error, @extended, $vResult)
+EndFunc
+</pre>
+
+<p>
+    By default, <code>$g_hFn_MsgBox</code> points to the real AutoIt <code>MsgBox</code>
+    function. When <code>Stubs.au3</code> is included in a test file, it immediately
+    reassigns all pointers to stub functions:
+</p>
+
+<pre>
+$g_hFn_MsgBox = _Stub_MsgBox
+</pre>
+
+<p>
+    From that point on, any call to <code>_Tstbl_MsgBox()</code> in the code under test
+    goes to the stub instead. The script code never changes - only the pointer changes.
+    This is why <code>Stubs.au3</code> must be included before the script under test in
+    a test file.
+</p>
+
+<div class="note">
+    <b>Why a wrapper rather than calling the variable function pointer directly?</b><br>
+    <code>_Tstbl_*</code> wrappers are proper AutoIt functions with declared parameters. As such, 
+    SciTE picks them up for autocomplete and parameter hints just like any built-in,
+    which calling the variable function pointer globals directly would not.<br>
+	Besides, they also follow a consistent naming pattern where the <code>_Tstbl_</code> prefix makes them immediately
+    recognizable while keeping the original built-in name, so they read and behave exactly
+    like the functions they replace.
+</div>
+
+<hr>
+
+<h2>@error Propagation</h2>
+
+<p>
+    AutoIt clears <code>@error</code> after every function call, including a function
+    called through the <code>Return</code> statement. This means a naive wrapper like
+    this loses the error:
+</p>
+
+<pre>
+; Wrong - @error from RegRead is cleared when _Tstbl_RegRead returns to its caller
+Func _Tstbl_RegRead($sKeyname, $sValuename)
+    Return $g_hFn_RegRead($sKeyname, $sValuename)
+EndFunc
+</pre>
+
+<p>
+    The correct pattern captures the return value into a local variable, then returns 
+    the current <code>@error</code> alongside it through <code>SetError()</code>:
+</p>
+
+<pre>
+; Correct - return value captured locally, @error read immediately before anything clears it
+Func _Tstbl_RegRead($sKeyname, $sValuename)
+    Local $vResult = $g_hFn_RegRead($sKeyname, $sValuename)
+    Return SetError(@error, @extended, $vResult)
+EndFunc
+</pre>
+
+<p>
+    All <code>_Tstbl_*</code> wrappers follow this pattern. This means code that checks
+    <code>@error</code> after a built-in call works identically when using the testable
+    wrapper.
+</p>
+
+<hr>
+
+<h2>The Two-Stream Design</h2>
+
+<p>
+    Stubs operate on two independent data streams: recorded calls and configured returns.
+</p>
+
+<p>
+    <b>$g_StubCalls</b> records every call made to a stub automatically. Each entry is
+    keyed by stub type name and 1-based call index, and holds the arguments passed to that
+    call. Tests read from this after running the code under test to verify what was called
+    and with what arguments:
+</p>
+
+<pre>
+; How many times was FileDelete called?
+$g_StubCalls["FileDelete"].count ; returns 1
+
+; What path was passed to the first FileDelete call?
+$g_StubCalls["FileDelete"][1].sPath ; returns "C:\temp\myfile.txt"
+</pre>
+
+<p>
+    <b>$g_StubReturns</b> holds pre-configured return values. Tests write to this before
+    running the code under test to control which branches execute:
+</p>
+
+<pre>
+; Make the first MsgBox call return IDYES
+_SetStubReturn("MsgBox", 1, $IDYES)
+</pre>
+
+<p>
+    The two streams are independent by design. Recording happens automatically on every
+    call. Return configuration is optional - if no return is configured for a given call
+    index, the stub falls back to a sensible default. This means a test can assert on calls
+    without needing to configure returns, and can configure returns without asserting on calls.
+</p>
+
+<p>
+    Call <code>_ResetStubs()</code> between tests to clear both streams. This ensures
+    each test starts with a clean state and recorded calls from one test do not bleed
+    into the next.
+</p>
+
+<hr>
+
+<h2>1-based Indexing</h2>
+
+<p>
+    Stub call indexes are 1-based. The first call to any stub is index 1, the second is
+    index 2, and so on. The <code>.count</code> property on a stub type reflects the total
+    number of calls recorded, which also equals the index of the last call:
+</p>
+
+<pre>
+; Three FileDelete calls were made
+$g_StubCalls["FileDelete"].count = 3
+
+; Access the first, second, and third calls
+$g_StubCalls["FileDelete"][1].sPath
+$g_StubCalls["FileDelete"][2].sPath
+$g_StubCalls["FileDelete"][3].sPath
+</pre>
+
+<p>
+    If a stub was never called, its entry does not exist in <code>$g_StubCalls</code> at
+    all. Accessing <code>.count</code> on a non-existent entry causes a runtime error.
+    Always use <code>MapExists()</code> to check whether a stub was ever called before
+    accessing its data:
+</p>
+
+<pre>
+; Correct way to assert a stub was never called
+_TestFmkAssert(Not MapExists($g_StubCalls, "FileDelete"), "FileDelete not called", _
+    MapExists($g_StubCalls, "FileDelete"), False)
+</pre>
+
+<p>
+    The same 1-based convention applies to <code>_SetStubReturn()</code> - index 1
+    configures the return for the first call, index 2 for the second, and so on.
+</p>
+
+<hr>
+
+<h2>The Test Mode Sentinel</h2>
+
+<p>
+    Scripts that have an entry point (a top-level function call that starts execution)
+    must guard that entry point so test files can include them without triggering execution:
+</p>
+
+<pre>
+If Not IsDeclared("__MYSCRIPT_TEST_MODE") Then
+    _Main()
+EndIf
+</pre>
+
+<p>
+    In the test file, declare the sentinel before all includes:
+</p>
+
+<pre>
+Global $__MYSCRIPT_TEST_MODE = True
+#include &lt;TestFramework.au3&gt;
+#include &lt;Stubs.au3&gt;
+#include "MyScript.au3"
+</pre>
+
+<p>
+    The sentinel must be declared before the script under test is included because AutoIt
+    evaluates the guard at include time. Declaring it after the include would be too late -
+    <code>_Main()</code> would have already executed.
+</p>
+
+<p>
+    Not all scripts need this guard. Library scripts that only define functions and declare
+    globals have no entry point and can be included in test files directly. The guard is
+    only needed when a script calls a function or runs code at the top level.
+</p>
+
+</body>
+</html>
