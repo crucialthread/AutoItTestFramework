@@ -1,6 +1,6 @@
 # AutoIt Test Framework
 
-A simple, lightweight unit test framework for AutoIt. Provides colored console output, pass/fail tracking, and cumulative test result accumulation. Includes `Testable.au3` and `Stubs.au3` for testing scripts that require user interaction or return values that affect program flow (dialogs, file system, registry, GUI, shell, etc.).
+A simple, lightweight unit test framework for AutoIt. Provides colored console output, pass/fail tracking, and cumulative test result accumulation. Includes testable wrappers and stubs for testing scripts that require user interaction or return values that affect program flow (dialogs, file system, registry, GUI, shell, etc.).
 
 See the full [documentation](https://crucialthread.github.io/AutoItTestFramework/) for more details.
 
@@ -157,14 +157,7 @@ Generates complete, ready-to-run AutoIt unit test files. Works from any input - 
 
 Audits, suggests, or converts AutoIt scripts to use `_Tstbl_*` testable wrappers, making them compatible with the Testable/Stubs pattern. Supports interactive mode (audit and suggest) and approved mode for autonomous AI agent workflows.
 
-### Install Via Claude Desktop UI
-
-Download the `SKILL.md` file for each skill from this repository, then go to Settings, select Skills from the left menu, click Add at the top right, and choose Upload a Skill. Select the downloaded `SKILL.md` file. The skill becomes available in both Claude Code and Cowork automatically.
-
-- `autoit-testframework`: `.claude/skills/autoit-testframework/SKILL.md`
-- `autoit-testable-converter`: `.claude/skills/autoit-testable-converter/SKILL.md`
-
-### Manual Installation
+### Manual Installation (Recommended)
 
 Copy the skill folders to your skills directory:
 
@@ -173,6 +166,13 @@ Copy the skill folders to your skills directory:
 - **macOS/Linux:** `~/.claude/skills/`
 
 The skills become available in both Claude Code and Cowork automatically.
+
+### Install Via Claude Desktop UI
+
+Download the `SKILL.md` file for each skill from this repository, then go to Settings, select Skills from the left menu, click Add at the top right, and choose Upload a Skill. Select the downloaded `SKILL.md` file. The skill becomes available in both Claude Code and Cowork automatically.
+
+- `autoit-testframework`: `.claude/skills/autoit-testframework/SKILL.md`
+- `autoit-testable-converter`: `.claude/skills/autoit-testable-converter/SKILL.md`
 
 ### Usage
 
