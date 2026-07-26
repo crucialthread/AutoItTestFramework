@@ -128,7 +128,7 @@ EndFunc
 
 <hr>
 
-<h2>The Function Pointer Pattern</h2>
+<h3>The Function Pointer Pattern</h3>
 
 <p>
     Every <code>_Tstbl_*</code> wrapper is backed by a global function pointer:
@@ -172,7 +172,7 @@ $g_hFn_MsgBox = _Stub_MsgBox
 
 <hr>
 
-<h2>@error Propagation</h2>
+<h3>@error Propagation</h3>
 
 <p>
     AutoIt clears <code>@error</code> after every function call, including a function
@@ -208,7 +208,7 @@ EndFunc
 
 <hr>
 
-<h2>The Two-Stream Design</h2>
+<h3>The Two-Stream Design</h3>
 
 <p>
     Stubs operate on two independent data streams: recorded calls and configured returns.
@@ -242,7 +242,7 @@ _SetStubReturn("MsgBox", 1, $IDYES)
 <p>
     The two streams are independent by design. Recording happens automatically on every
     call. Return configuration is optional - if no return is configured for a given call
-    index, the stub falls back to a sensible default. This means a test can assert on calls
+    index, the stub falls back to a default. This means a test can assert on calls
     without needing to configure returns, and can configure returns without asserting on calls.
 </p>
 
@@ -254,7 +254,7 @@ _SetStubReturn("MsgBox", 1, $IDYES)
 
 <hr>
 
-<h2>1-based Indexing</h2>
+<h3>1-based Indexing</h3>
 
 <p>
     Stub call indexes are 1-based. The first call to any stub is index 1, the second is

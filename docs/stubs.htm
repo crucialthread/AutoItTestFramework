@@ -55,7 +55,7 @@ Func _TestSomething()
     MyFunction()
 
     _TestFmkAssert($g_StubCalls["MsgBox"].count = 1, "MsgBox called once", $g_StubCalls["MsgBox"].count, 1)
-    _TestFmkAssert($g_StubCalls["MsgBox"][1]["sTitle"] = "Confirm", "MsgBox title correct", $g_StubCalls["MsgBox"][1]["sTitle"], "Confirm")
+    _TestFmkAssert($g_StubCalls["MsgBox"][1].sTitle = "Confirm", "MsgBox title correct", $g_StubCalls["MsgBox"][1].sTitle, "Confirm")
 EndFunc
 </pre>
 
@@ -124,10 +124,10 @@ _SetStubReturn("RegRead", 1, "__ERROR__")
 $g_StubCalls["FileDelete"].count
 
 ; Read the sPath argument of the first FileDelete call
-$g_StubCalls["FileDelete"][1]["sPath"]
+$g_StubCalls["FileDelete"][1].sPath
 
 ; Read the sTitle argument of the second MsgBox call
-$g_StubCalls["MsgBox"][2]["sTitle"]
+$g_StubCalls["MsgBox"][2].sTitle
 </pre>
 
 <div class="note">
@@ -350,25 +350,12 @@ _TestFmkAssert(Not MapExists($g_StubCalls, "FileDelete"), "FileDelete not called
 
 <h2>Remarks</h2>
 
-<p><b>1-based indexing.</b>
-Call indexes start at 1. The first call to a stub is index 1, the second is index 2, and so on.
-<code>$g_StubCalls["MsgBox"].count</code> reflects the total number of calls and also equals
-the index of the last call.</p>
-
-<p><b>Checking for stubs never called.</b>
-If a stub was never called its entry does not exist in <code>$g_StubCalls</code>. Use
-<code>MapExists($g_StubCalls, "TypeName")</code> to check safely rather than accessing
-<code>.count</code> directly, which would cause a runtime error.</p>
-
-<p><b>Simulating @error.</b>
-For stubs that support it (currently <code>RegRead</code>), pass <code>"__ERROR__"</code>
-as the return value to <code>_SetStubReturn()</code>. The stub will call <code>SetError(1)</code>
-before returning, simulating a failed registry read.</p>
-
-<p><b>FileInstall.</b>
-<code>FileInstall</code> requires a different approach to be testable, as such, there is
-no testable either stub for this function. See
-<a href="fileinstall.htm">FileInstall Special Case</a> for details.</p>
+<ul style="font-size: 12px; line-height: 1.8;">
+    <li><b>1-based indexing.</b> Call indexes start at 1. The first call to a stub is index 1, the second is index 2, and so on. <code>$g_StubCalls["MsgBox"].count</code> reflects the total number of calls and also equals the index of the last call.</li>
+    <li><b>Checking for stubs never called.</b> If a stub was never called its entry does not exist in <code>$g_StubCalls</code>. Use <code>MapExists($g_StubCalls, "TypeName")</code> to check safely rather than accessing <code>.count</code> directly, which would cause a runtime error.</li>
+    <li><b>Simulating @error.</b> For stubs that support it (currently <code>RegRead</code>), pass <code>"__ERROR__"</code> as the return value to <code>_SetStubReturn()</code>. The stub will call <code>SetError(1)</code> before returning, simulating a failed registry read.</li>
+    <li><b>FileInstall.</b> <code>FileInstall</code> requires a different approach to be testable, as such, there is no testable either stub for this function. See <a href="fileinstall.htm">FileInstall Special Case</a> for details.</li>
+</ul>
 
 </body>
 </html>

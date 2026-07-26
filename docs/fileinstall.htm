@@ -77,7 +77,8 @@ Global $__MY_SCRIPT_TEST_MODE = True
 #include &lt;Stubs.au3&gt;
 #include "MyScript.au3"
 
-; Stub wired after the installer include since $g_hFn_FileInstall is declared inside it
+; Stub wired after the script under test #include directive
+; since $g_hFn_FileInstall is declared inside it
 Func _Stub_FileInstall($sSrc, $sDest, $iFlag)
     __StubInitType("FileInstall")
     Local $iIdx = $g_StubCalls["FileInstall"].count + 1
@@ -100,8 +101,8 @@ Func _TestMyInstall()
     __RunInstall(1, 2)
 
     _TestFmkAssert($g_StubCalls["FileInstall"].count = 3, "Installs 3 files", $g_StubCalls["FileInstall"].count, 3)
-    _TestFmkAssert($g_StubCalls["FileInstall"][1]["sSrc"] = "path\to\file1.au3", _
-        "First file correct", $g_StubCalls["FileInstall"][1]["sSrc"], "path\to\file1.au3")
+    _TestFmkAssert($g_StubCalls["FileInstall"][1].sSrc = "path\to\file1.au3", _
+        "First file correct", $g_StubCalls["FileInstall"][1].sSrc, "path\to\file1.au3")
 EndFunc
 </pre>
 

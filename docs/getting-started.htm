@@ -18,35 +18,28 @@
 
 <h1>Getting Started</h1>
 
-<h2>Installation</h2>
+<h2>Usage</h2>
 
 <p>
-    If you installed AutoIt Test Framework via the provided installer, it is placed in AutoIt's
-    standard include directory and can be referenced from any project using the angle-bracket form:
+    If you installed AutoIt Test Framework via the provided installer, all files are placed in
+    an AutoIt's include directory and can be referenced from any project:
 </p>
 
-<div class="signature">#include &lt;TestFramework.au3&gt;</div>
+<div class="signature">
+#include &lt;TestFramework.au3&gt;<br>
+#include &lt;Testable.au3&gt;<br>
+#include &lt;Stubs.au3&gt;
+</div>
 
 <p>
-    The installer also places <code>Testable.au3</code> and <code>Stubs.au3</code> in the same
-    directory, so they are available the same way:
+    If you placed the files manually rather than using the installer, use the quoted form with a relative or absolute path:
 </p>
 
-<div class="signature">#include &lt;Testable.au3&gt;<br>#include &lt;Stubs.au3&gt;</div>
-
-<p>
-    If you are using the files without installing them (for example, by placing them alongside
-    your own scripts), use the quoted form with a relative or full path:
-</p>
-
-<div class="signature">#include "TestFramework.au3"</div>
-
-<p>
-    <code>Testable.au3</code> and <code>Stubs.au3</code> are opt-in libraries for testing code
-    that uses GUI controls, dialogs, file system, registry, and other side-effecting AutoIt
-    built-ins. See the <a href="testable.htm">Testable Reference</a> and
-    <a href="stubs.htm">Stubs Reference</a> for details.
-</p>
+<div class="signature">
+#include "TestFramework.au3"<br>
+#include "Testable.au3"<br>
+#include "Stubs.au3"
+</div>
 
 <hr>
 
@@ -141,9 +134,10 @@ Func _TestDivide()
     _TestFmkAssert(Divide(10, 2) = 5,  "Divide(10, 2) returns 5",  Divide(10, 2),  "5")
     _TestFmkAssert(Divide(7, 2) = 3.5, "Divide(7, 2) returns 3.5", Divide(7, 2),   "3.5")
 
-    ; Test divide by zero - expect @error to be set
+    ; Test divide by zero - capture @error immediately before any other call resets it
     Divide(1, 0)
-    _TestFmkAssert(@error = 1, "Divide(1, 0) sets @error = 1", @error, "1")
+    Local $iErr = @error
+    _TestFmkAssert($iErr = 1, "Divide(1, 0) sets @error = 1", $iErr, "1")
 EndFunc
 
 Func _RunAllTests()
@@ -191,32 +185,22 @@ _RunAllTests()
 <h2>Testing Scripts with GUI and User Interaction</h2>
 
 <p>
-    AutoIt Test Framework also supports testing scripts that use GUI controls, dialogs, file system,
-    registry, and other side-effecting built-ins through the <code>Testable.au3</code> and
-    <code>Stubs.au3</code> libraries.
+    When a script calls AutoIt built-ins that require user interaction or return values that
+    affect program flow (such as dialogs, file system, registry, or GUI functions), the
+    standard path alone is not enough. AutoIt Test Framework provides <code>Testable.au3</code>
+    and <code>Stubs.au3</code> to handle these cases.
 </p>
+
+<h3>Step 1 - Use _Tstbl_* wrappers in your script</h3>
 
 <p>
-    The pattern has two sides. In script code, use <code>_Tstbl_*</code> wrappers instead of
-    AutoIt built-ins directly. In test files, include <code>Stubs.au3</code> which automatically
-    rewires all wrappers to stubs that record calls and return controlled values.
+    Include <code>Testable.au3</code> in your script and replace AutoIt built-in calls with
+    their <code>_Tstbl_*</code> equivalents. The wrappers behave identically to the built-ins
+    in normal use, the only difference is that they can be intercepted by stubs in tests.
 </p>
 
-<h3>Script code (FileCleanup.au3)</h3>
 <pre>
 #include &lt;Testable.au3&gt;
-#include &lt;MsgBoxConstants.au3&gt;
-
-If Not IsDeclared("__FILECLEANUP_TEST_MODE") Then
-    _Main()
-EndIf
-
-Func _Main()
-    Local $sPath = "C:\temp\myfile.txt"
-    If DeleteFileWithConfirmation($sPath) Then
-        ConsoleWrite("File deleted." & @CRLF)
-    EndIf
-EndFunc
 
 Func DeleteFileWithConfirmation($sPath)
     If Not _Tstbl_FileExists($sPath) Then
@@ -238,9 +222,15 @@ Func DeleteFileWithConfirmation($sPath)
 EndFunc
 </pre>
 
-<h3>Test file (FileCleanupTests.au3)</h3>
+<h3>Step 2 - Write tests with stubs</h3>
+
+<p>
+    In the test file, include <code>Stubs.au3</code> (it includes <code>Testable.au3</code>
+    automatically), then use <code>_ResetStubs()</code> and <code>_SetStubReturn()</code>
+    to control what each stub returns, and read <code>$g_StubCalls</code> to verify calls.
+</p>
+
 <pre>
-Global $__FILECLEANUP_TEST_MODE = True
 #include &lt;TestFramework.au3&gt;
 #include &lt;Stubs.au3&gt;
 #include "FileCleanup.au3"
@@ -263,14 +253,14 @@ Func _TestDeleteFileWithConfirmation_UserConfirms()
 
     _ResetStubs()
     _SetStubReturn("FileExists", 1, True)
-    _SetStubReturn("MsgBox", 1, $IDYES)
+    _SetStubReturn("MsgBox",     1, $IDYES)
 
     Local $bResult = DeleteFileWithConfirmation("C:\temp\myfile.txt")
 
     _TestFmkAssert($bResult = True, "Returns True when confirmed", $bResult, True)
     _TestFmkAssert($g_StubCalls["FileDelete"].count = 1, "FileDelete called once", $g_StubCalls["FileDelete"].count, 1)
-    _TestFmkAssert($g_StubCalls["FileDelete"][1]["sPath"] = "C:\temp\myfile.txt", _
-        "Correct file deleted", $g_StubCalls["FileDelete"][1]["sPath"], "C:\temp\myfile.txt")
+    _TestFmkAssert($g_StubCalls["FileDelete"][1].sPath = "C:\temp\myfile.txt", _
+        "Correct file deleted", $g_StubCalls["FileDelete"][1].sPath, "C:\temp\myfile.txt")
 EndFunc
 
 Func _TestDeleteFileWithConfirmation_UserCancels()
@@ -278,7 +268,7 @@ Func _TestDeleteFileWithConfirmation_UserCancels()
 
     _ResetStubs()
     _SetStubReturn("FileExists", 1, True)
-    _SetStubReturn("MsgBox", 1, $IDNO)
+    _SetStubReturn("MsgBox",     1, $IDNO)
 
     Local $bResult = DeleteFileWithConfirmation("C:\temp\myfile.txt")
 
@@ -299,87 +289,82 @@ _RunAllTests()
 </pre>
 
 <div class="note">
-    <b>Note:</b> <code>_SetStubReturn("MsgBox", 1, $IDYES)</code> pre-configures what the first
-    MsgBox call returns. <code>$g_StubCalls["MsgBox"].count</code> returns how many times it was called.
-    <code>$g_StubCalls["FileDelete"][1]["sPath"]</code> reads the <code>sPath</code> argument of the
-    first FileDelete call. Stub indexes are 1-based. Call <code>_ResetStubs()</code> between tests
-    to clear all recorded calls and returns. To assert a stub was never called use
-    <code>Not MapExists($g_StubCalls, "TypeName")</code> rather than checking <code>.count = 0</code>,
-    since if a stub was never called its map entry does not exist yet.
+    <b>Note:</b>
+    <ul style="margin: 4px 0; padding-left: 20px;">
+		<li>Stub indexes are 1-based.</li>
+        <li><code>_SetStubReturn("MsgBox", 1, $IDYES)</code> - pre-configures what the first MsgBox call returns.</li>
+        <li><code>$g_StubCalls["MsgBox"].count</code> - returns how many times a stub was called.</li>
+        <li><code>$g_StubCalls["FileDelete"][1].sPath</code> - reads the <code>sPath</code> argument of the first FileDelete call.</li>
+        <li>Call <code>_ResetStubs()</code> between tests to clear all recorded calls and returns.</li>
+        <li>To assert a stub was never called use <code>Not MapExists($g_StubCalls, "TypeName")</code> rather than checking <code>.count = 0</code>, since if a stub was never called its map entry does not exist yet.</li>
+    </ul>
 </div>
 
-<h3>Compiled scripts and #pragma compile</h3>
+<hr>
+
+<h2>Making Scripts Testable</h2>
 
 <p>
-    Scripts that use <code>#RequireAdmin</code> trigger a UAC prompt at interpreted runtime, which
-    breaks testing. Replace it with the compile-time directive instead:
+    Some scripts have characteristics that require additional steps before they can be included
+    in a test file.
+</p>
+
+<h3>Scripts with an entry point</h3>
+
+<p>
+    If the script you are writing tests for runs a function once executed (i.e. it has an
+    entry point), including it in a test file would execute that script code immediately.
+    Guard the entry point with a test mode sentinel so the test file can include the script
+    without running it:
+</p>
+
+<pre>
+If Not IsDeclared("__MYSCRIPT_TEST_MODE") Then
+    _Main()
+EndIf
+</pre>
+
+<p>
+    In the test file, declare the sentinel before all includes:
+</p>
+
+<pre>
+Global $__MYSCRIPT_TEST_MODE = True
+#include &lt;TestFramework.au3&gt;
+#include "MyScript.au3"
+</pre>
+
+<h3>Scripts that require administrator rights</h3>
+
+<p>
+    Scripts that use <code>#RequireAdmin</code> trigger a UAC prompt at interpreted runtime,
+    which breaks testing. Replace it with the compile-time directive - this applies the
+    elevation requirement only to the compiled <code>.exe</code>, not to the interpreted script:
 </p>
 
 <pre>
 #pragma compile(ExecLevel, requireAdministrator)
 </pre>
 
-<p>
-    This applies the elevation requirement only to the compiled <code>.exe</code>, not to the
-    interpreted script, so tests run without a UAC prompt.
-</p>
-
-<h3>FileInstall in compiled scripts</h3>
+<h3>Scripts that use FileInstall</h3>
 
 <p>
-    <code>FileInstall</code> cannot be called through a function pointer because Aut2Exe requires
-    a string literal as the source path at compile time to embed the file into the exe. The
-    workaround is a wrapper function with a <code>Select</code> block containing all literal
-    <code>FileInstall</code> calls. Aut2Exe finds the literals at compile time, and the wrapper
-    can be stubbed in tests via a function pointer:
-</p>
-
-<pre>
-Func __FileInstall($sSrc, $sDest, $iFlag)
-    Select
-        Case $sSrc = "path\to\file1.au3"
-            FileInstall("path\to\file1.au3", $sDest, $iFlag)
-        Case $sSrc = "path\to\file2.au3"
-            FileInstall("path\to\file2.au3", $sDest, $iFlag)
-    EndSelect
-EndFunc
-
-Global $g_hFn_FileInstall = __FileInstall
-</pre>
-
-<p>
-    See the <a href="testable.htm">Testable Reference</a> and <a href="stubs.htm">Stubs Reference</a>
-    for the full list of supported wrappers and stubs.
+    <code>FileInstall</code> requires special handling to be testable. See
+    <a href="fileinstall.htm">FileInstall Special Case</a> for details.
 </p>
 
 <hr>
 
 <h2>Tips</h2>
 
-<p><b>Always pass actual and expected values to _TestFmkAssert().</b>
-The 3rd and 4th arguments are optional, but without them a failure only tells you the
-description failed, not what the actual result was. Always include them.</p>
-
-<p><b>Keep test functions focused.</b>
-One test function per unit of behavior. If a function has 20 assertions, consider splitting
-it into smaller, more specific test functions with clearer headers.</p>
-
-<p><b>Name test functions descriptively.</b>
-<code>_TestAdd_NegativeNumbers()</code> is more useful than <code>_TestAdd2()</code> when
-reading the console output after a failure.</p>
-
-<p><b>Test both the happy path and the error path.</b>
-As shown in the <code>_TestDivide()</code> example above, testing that <code>@error</code> is
-correctly set on failure is just as important as testing correct return values on success.
-Remember: capture <code>@error</code> into a local variable immediately after the call, since
-any subsequent function call resets it.</p>
-
-<p><b>Write tests before fixing bugs (TDD).</b>
-When a test fails because a stub was called fewer times than expected, accessing
-<code>$g_StubCalls["TypeName"][index]["property"]</code> on a non-existent index returns
-an empty string gracefully rather than crashing the script. This means you can write
-tests against code that does not yet do what it should, and the test suite will report failures
-cleanly without breaking the test run.</p>
+<ul style="font-size: 12px; line-height: 1.8;">
+    <li><b>Always pass actual and expected values to _TestFmkAssert().</b> The 3rd and 4th arguments are optional, but without them a failure only tells you the description failed, not what the actual result was. Always include them.</li>
+    <li><b>Keep test functions focused.</b> One test function per unit of behavior. If a function has 20 assertions, consider splitting it into smaller, more specific test functions with clearer headers.</li>
+    <li><b>Name test functions descriptively.</b> <code>_TestAdd_NegativeNumbers()</code> is more useful than <code>_TestAdd2()</code> when reading the console output after a failure.</li>
+    <li><b>Test both the happy path and the error path.</b> As shown in the <code>_TestDivide()</code> example above, testing that <code>@error</code> is correctly set on failure is just as important as testing correct return values on success. Always capture <code>@error</code> into a local variable immediately after the call, since any subsequent function call resets it.</li>
+    <li><b>Write tests first (TDD).</b> AutoIt Test Framework supports a test-first workflow - write the tests before the implementation exists. The test suite will report all failures cleanly without stopping, so you get a clear picture of what needs to be built.</li>
+    <li><b>Stub access is safe when a stub was never called.</b> Accessing <code>$g_StubCalls["TypeName"][index]["property"]</code> on a call that was never recorded returns an empty string gracefully rather than crashing the script. This means tests that assert on stub calls will fail cleanly with a meaningful result rather than a runtime error (specially useful in TDD workflows where the implementation does not exist yet).</li>
+</ul>
 
 </body>
 </html>
