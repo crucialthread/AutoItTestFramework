@@ -15,6 +15,7 @@ Main="AutoIt Test Framework","TestFramework.hhc","TestFramework.hhk","html/index
 
 [FILES]
 html\index.htm
+html\concepts.htm
 html\getting-started.htm
 html\functions.htm
 html\functions\TestFmkHeader.htm

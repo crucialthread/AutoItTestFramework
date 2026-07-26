@@ -62,12 +62,20 @@
 <param name="Local" value="html/functions/TestFmkAssert.htm">
 </OBJECT>
 <LI><OBJECT type="text/sitemap">
+<param name="Name" value="concepts">
+<param name="Local" value="html/concepts.htm">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
 <param name="Name" value="constants">
 <param name="Local" value="html/constants.htm">
 </OBJECT>
 <LI><OBJECT type="text/sitemap">
 <param name="Name" value="FileInstall">
 <param name="Local" value="html/fileinstall.htm">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="function pointer">
+<param name="Local" value="html/concepts.htm">
 </OBJECT>
 <LI><OBJECT type="text/sitemap">
 <param name="Name" value="getting started">
@@ -86,12 +94,24 @@
 <param name="Local" value="html/functions/TestFmkSummary.htm">
 </OBJECT>
 <LI><OBJECT type="text/sitemap">
+<param name="Name" value="test mode sentinel">
+<param name="Local" value="html/concepts.htm">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
 <param name="Name" value="testable">
 <param name="Local" value="html/testable.htm">
 </OBJECT>
 <LI><OBJECT type="text/sitemap">
+<param name="Name" value="testable wrappers">
+<param name="Local" value="html/concepts.htm">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
 <param name="Name" value="unit test">
 <param name="Local" value="html/getting-started.htm">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
+<param name="Name" value="@error propagation">
+<param name="Local" value="html/concepts.htm">
 </OBJECT>
 </UL>
 </BODY>

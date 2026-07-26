@@ -14,6 +14,10 @@
 <param name="Local" value="html/index.htm">
 </OBJECT>
 <LI><OBJECT type="text/sitemap">
+<param name="Name" value="Concepts">
+<param name="Local" value="html/concepts.htm">
+</OBJECT>
+<LI><OBJECT type="text/sitemap">
 <param name="Name" value="Getting Started">
 <param name="Local" value="html/getting-started.htm">
 </OBJECT>
