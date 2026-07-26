@@ -157,7 +157,7 @@ Generates complete, ready-to-run AutoIt unit test files. Works from any input - 
 
 Audits, suggests, or converts AutoIt scripts to use `_Tstbl_*` testable wrappers, making them compatible with the Testable/Stubs pattern. Supports interactive mode (audit and suggest) and approved mode for autonomous AI agent workflows.
 
-### Manual Installation (Recommended)
+### Claude Code - Manual Installation (Recommended)
 
 Copy the skill folders to your skills directory:
 
@@ -165,11 +165,11 @@ Copy the skill folders to your skills directory:
   (the `.claude` folder is hidden - enable hidden items in Explorer or paste the path directly into the address bar)
 - **macOS/Linux:** `~/.claude/skills/`
 
-The skills become available in both Claude Code and Cowork automatically.
+Claude Code picks up any skill folder placed there automatically.
 
 ### Install Via Claude Desktop UI
 
-Download the `SKILL.md` file for each skill from this repository, then go to Settings, select Skills from the left menu, click Add at the top right, and choose Upload a Skill. Select the downloaded `SKILL.md` file. The skill becomes available in both Claude Code and Cowork automatically.
+Download the `SKILL.md` file for each skill from this repository, then go to Settings, select Skills from the left menu, click Add at the top right, and choose Upload a Skill. Select the downloaded `SKILL.md` file.
 
 - `autoit-testframework`: `.claude/skills/autoit-testframework/SKILL.md`
 - `autoit-testable-converter`: `.claude/skills/autoit-testable-converter/SKILL.md`
