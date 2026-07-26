@@ -245,8 +245,8 @@ Func _TestMyFunction_UserConfirms()
 
     _TestFmkAssert($bResult = True, "Returns True when confirmed", $bResult, True)
     _TestFmkAssert($g_StubCalls["FileDelete"].count = 1, "FileDelete called once", $g_StubCalls["FileDelete"].count, 1)
-    _TestFmkAssert($g_StubCalls["FileDelete"][1]["sPath"] = "C:\temp\myfile.txt", _
-        "Correct file deleted", $g_StubCalls["FileDelete"][1]["sPath"], "C:\temp\myfile.txt")
+    _TestFmkAssert($g_StubCalls["FileDelete"][1].sPath = "C:\temp\myfile.txt", _
+        "Correct file deleted", $g_StubCalls["FileDelete"][1].sPath, "C:\temp\myfile.txt")
 EndFunc
 
 Func _RunAllTests()
@@ -272,7 +272,7 @@ _SetStubReturn("TypeName", iIdx, vValue)
 
 ; Recorded calls - populated automatically by stubs during test run
 ; $g_StubCalls["TypeName"].count     - how many times the stub was called
-; $g_StubCalls["TypeName"][N]["prop"] - argument passed on the Nth call
+; $g_StubCalls["TypeName"][N].prop - argument passed on the Nth call
 ```
 
 ### Stub type names and recorded properties
@@ -350,7 +350,7 @@ be runnable.
 check `.count = 0` directly since if a stub was never called the map entry does not exist
 and accessing `.count` causes a runtime error.
 - Do NOT use `_StubCall()` or `_StubCallCount()` - these do not exist. Access stub data
-directly via `$g_StubCalls["TypeName"].count` and `$g_StubCalls["TypeName"][N]["prop"]`.
+directly via `$g_StubCalls["TypeName"].count` and `$g_StubCalls["TypeName"][N].prop`.
 
 ## Test cases to always consider
 
