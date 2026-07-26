@@ -58,7 +58,6 @@ a:hover {
     text-decoration: underline;
 }
 
-/* Function signature / syntax block */
 .signature {
     font-family: "Courier New", monospace;
     font-size: 12px;
@@ -68,7 +67,6 @@ a:hover {
     margin: 8px 0;
 }
 
-/* Code example block */
 pre {
     font-family: "Courier New", monospace;
     font-size: 12px;
@@ -85,7 +83,6 @@ code {
     font-size: 12px;
 }
 
-/* Parameters and return value tables */
 table {
     border-collapse: collapse;
     width: 100%;
@@ -107,7 +104,6 @@ table td:first-child {
     background-color: #F4F4F4;
 }
 
-/* Top navigation bar - zero margin so it works in both CHM and web */
 .topnav {
     font-size: 12px;
     background-color: #F0F0F0;
@@ -121,14 +117,12 @@ table td:first-child {
     margin-right: 12px;
 }
 
-/* Section divider */
 hr {
     border: none;
     border-top: 1px solid #AAAAAA;
     margin: 10px 0;
 }
 
-/* Note/remark callout */
 .note {
     background-color: #FFFFF0;
     border-left: 3px solid #CCCC00;
@@ -147,7 +141,6 @@ hr {
     margin: 2px 0;
 }
 
-/* Console output sample */
 .console {
     font-family: "Courier New", monospace;
     font-size: 12px;
