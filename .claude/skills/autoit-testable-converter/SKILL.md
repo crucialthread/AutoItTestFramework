@@ -280,17 +280,33 @@ execution; the pragma applies only to the compiled exe.
 
 ### What NOT to convert
 
-- `FileInstall` - requires special handling. See the FileInstall Special Case in the
-  AutoIt Test Framework documentation. Flag it in the audit report but do not attempt
-  to convert it automatically.
-- Calls that are already using `_Tstbl_*` wrappers - skip these.
+- `FileInstall` - requires special handling but can be converted automatically.
+  When `FileInstall("literal", ...)` calls are found:
+  1. Collect all literal source paths from every `FileInstall()` call in the script
+  2. Generate a `__FileInstall` wrapper function with a `Select` block where each
+     `Case` matches one source path and calls `FileInstall()` with that literal path:
+     ```autoit
+     Func __FileInstall($sSource, $sDest, $iFlag)
+         Select
+             Case $sSource = "path\to\file1.au3"
+                 FileInstall("path\to\file1.au3", $sDest, $iFlag)
+             Case $sSource = "..\path\to\file2.au3"
+                 FileInstall("..\path\to\file2.au3", $sDest, $iFlag)
+         EndSelect
+     EndFunc
+     ```
+  3. Add `_Tstbl_Implement_FileInstall(__FileInstall)` at script level immediately
+     after the `__FileInstall` function definition
+  4. Replace all `FileInstall(...)` calls in script code with `_Tstbl_FileInstall(...)`
+  In the audit report, describe this conversion clearly so the user understands what
+  was generated and why.
 - Calls inside comments - skip these.
 - String literals that happen to contain built-in names - skip these.
 
 ## Rules
 
 - Default to interactive mode unless approved mode is explicitly active.
-- Never convert `FileInstall` - always flag it and direct the user to the documentation.
+- For `FileInstall`, always generate the `__FileInstall` wrapper and `_Tstbl_Implement_FileInstall()` call - never leave raw `FileInstall()` calls unconverted.
 - Always preserve the original logic, parameters, and return value handling exactly.
   The only change is the function name prefix.
 - In interactive mode, always end with a clear prompt asking whether the user wants to

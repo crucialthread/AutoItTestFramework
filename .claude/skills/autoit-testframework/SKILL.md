@@ -291,6 +291,7 @@ Common stub types and the properties they record:
 | `"RegRead"` | `sKeyname`, `sValuename` |
 | `"RegWrite"` | `sKeyname`, `sValuename`, `sType`, `vValue` |
 | `"RegDelete"` | `sKeyname`, `sValuename` |
+| `"FileInstall"` | `sSource`, `sDest` |
 | `"ShellExecute"` | `sFilename`, `sParams` |
 | `"GUICreate"` | `sTitle` |
 | `"GUIGetMsg"` | (none) |
@@ -298,6 +299,25 @@ Common stub types and the properties they record:
 | `"GUICtrlRead"` | `idCtrl` |
 
 See the full list at https://crucialthread.github.io/AutoItTestFramework/stubs.htm
+
+### FileInstall special case
+
+`FileInstall` cannot be routed through a function pointer like other testable wrappers.
+The script must define a custom wrapper function with a Select/Case block containing all
+literal FileInstall calls, then register it via `_Tstbl_Implement_FileInstall()`. The
+stub records calls normally once an implementation is registered.
+
+When generating tests for a script that uses `FileInstall`:
+
+- If the script has raw `FileInstall()` calls without the pattern, the autoit-testable-converter
+  skill will handle the conversion automatically as part of its normal flow - no need to flag
+  it separately.
+- If the pattern is already in place, verify the script has a custom wrapper function
+  (typically `__FileInstall`) with literal paths in a Select/Case block, that it calls
+  `_Tstbl_Implement_FileInstall(__FileInstall)` at script level, and that it uses
+  `_Tstbl_FileInstall(...)` instead of `FileInstall(...)` directly.
+- In test code, access recorded calls via `$g_StubCalls["FileInstall"][N].sSource` and
+  `$g_StubCalls["FileInstall"][N].sDest`.
 
 ### Simulating @error with stubs
 
