@@ -94,8 +94,10 @@ EndFunc
 </p>
 
 <div class="note">
-    <b>Special case:</b> <code>FileInstall</code> cannot be routed through a function pointer
-    and requires a different approach to be testable. See <a href="fileinstall.htm">FileInstall Special Case</a>
+    <b>Special case:</b> <code>FileInstall</code> requires a different approach to be testable.
+    Unlike other wrappers, <code>_Tstbl_FileInstall()</code> is not linked to the real built-in
+    by default and requires the script to register a custom implementation via
+    <code>_Tstbl_Implement_FileInstall()</code>. See <a href="fileinstall.htm">FileInstall Special Case</a>
     for details.
 </div>
 

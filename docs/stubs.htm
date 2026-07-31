@@ -155,10 +155,16 @@ _TestFmkAssert(Not MapExists($g_StubCalls, "FileDelete"), "FileDelete not called
 <p>Each stub records the parameters passed to it as named properties on the call object.</p>
 
 <div class="note">
-    <b>Special case:</b> <code>FileInstall</code> requires a different approach to be testable,
-    as such, there is no testable either stub for this function.
-    See <a href="fileinstall.htm">FileInstall Special Case</a> for details.
+    <b>Special case:</b> <code>FileInstall</code> requires a different approach to be testable.
+    The stub records calls only when the script has registered a custom implementation via
+    <code>_Tstbl_Implement_FileInstall()</code>. See <a href="fileinstall.htm">FileInstall Special Case</a>
+    for details.
 </div>
+
+<h3>File Install</h3>
+<table>
+<tr><td>FileInstall</td><td><code>sSource</code>, <code>sDest</code></td></tr>
+</table>
 
 <h3>Dialogs</h3>
 <table>
@@ -354,7 +360,7 @@ _TestFmkAssert(Not MapExists($g_StubCalls, "FileDelete"), "FileDelete not called
     <li><b>1-based indexing.</b> Call indexes start at 1. The first call to a stub is index 1, the second is index 2, and so on. <code>$g_StubCalls["MsgBox"].count</code> reflects the total number of calls and also equals the index of the last call.</li>
     <li><b>Checking for stubs never called.</b> If a stub was never called its entry does not exist in <code>$g_StubCalls</code>. Use <code>MapExists($g_StubCalls, "TypeName")</code> to check safely rather than accessing <code>.count</code> directly, which would cause a runtime error.</li>
     <li><b>Simulating @error.</b> For stubs that support it (currently <code>RegRead</code>), pass <code>"__ERROR__"</code> as the return value to <code>_SetStubReturn()</code>. The stub will call <code>SetError(1)</code> before returning, simulating a failed registry read.</li>
-    <li><b>FileInstall.</b> <code>FileInstall</code> requires a different approach to be testable, as such, there is no testable either stub for this function. See <a href="fileinstall.htm">FileInstall Special Case</a> for details.</li>
+    <li><b>FileInstall.</b> <code>FileInstall</code> requires a different approach to be testable. The stub records calls only when the script has registered a custom implementation via <code>_Tstbl_Implement_FileInstall()</code>. See <a href="fileinstall.htm">FileInstall Special Case</a> for details.</li>
 </ul>
 
 </body>
