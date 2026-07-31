@@ -81,11 +81,6 @@ Global $g_sIncludePath = ""
 Global $g_sChmPath     = ""
 Global $g_bIsUpgrade   = False
 
-; $g_hFn_FileInstall points to __FileInstall (a wrapper function) rather than FileInstall directly
-; This allows stubbing on tests while keeping literal FileInstall calls visible to Aut2Exe for embedding.
-; See "Special Case: FileInstall wrap" comments below
-Global $g_hFn_FileInstall = __FileInstall
-
 ; ===============================================================================================================================
 ; Entry point
 ; ===============================================================================================================================
@@ -384,97 +379,86 @@ Func __UpdateReadyPage($idLabel)
     _Tstbl_GUICtrlSetData($idLabel, $sText)
 EndFunc
 
-; ===============================================================================================================================
-; Special Case: FileInstall wrap
-; ===============================================================================================================================
-; __FileInstall wraps FileInstall with literal string paths so Aut2Exe can find
-; and embed all files at compile time, while still allowing the function to be
-; called through $g_hFn_FileInstall and stubbed in tests.
-;
-; ***
-; NOTE: It cannot be set inside a library file like the other testables due the nature how FileInstall works
-;
-;       > For reference, this is from AutoIt official documentation what explains why:
-;		  - The source file must be specified using a string literal and can not be a variable,
-;           a macro, a calculation nor function call.
-;		  - The file must be able to be found during compiling, however variables,
-;           calculations and function calls do not get resolved until the script itself is running,
-;           long after compiling, making them unsuitable to define the source file.
-;
-;         https://www.autoitscript.com/autoit3/docs/functions/FileInstall.htm
-; ***
-Func __FileInstall($sSrc, $sDest, $iFlag)
+; __FileInstall wraps FileInstall with literal string paths as required by Testable_FileInstall.au3 so Aut2Exe can find
+; and embed all files at compile time, while still allowing the function to be stubbed in tests.
+Func __FileInstall($sSource, $sDest, $iFlag)
     Select
-        Case $sSrc = "..\core\TestFramework.au3"
+        Case $sSource = "..\core\TestFramework.au3"
             FileInstall("..\core\TestFramework.au3", $sDest, $iFlag)
-        Case $sSrc = "..\core\Testable.au3"
+        Case $sSource = "..\core\Testable.au3"
             FileInstall("..\core\Testable.au3", $sDest, $iFlag)
-        Case $sSrc = "..\core\Testable_Clipboard.au3"
+        Case $sSource = "..\core\Testable_Clipboard.au3"
             FileInstall("..\core\Testable_Clipboard.au3", $sDest, $iFlag)
-        Case $sSrc = "..\core\Testable_Dialogs.au3"
+        Case $sSource = "..\core\Testable_Dialogs.au3"
             FileInstall("..\core\Testable_Dialogs.au3", $sDest, $iFlag)
-        Case $sSrc = "..\core\Testable_FileSystem.au3"
+        Case $sSource = "..\core\Testable_FileInstall.au3"
+            FileInstall("..\core\Testable_FileInstall.au3", $sDest, $iFlag)
+        Case $sSource = "..\core\Testable_FileSystem.au3"
             FileInstall("..\core\Testable_FileSystem.au3", $sDest, $iFlag)
-        Case $sSrc = "..\core\Testable_GUI.au3"
+        Case $sSource = "..\core\Testable_GUI.au3"
             FileInstall("..\core\Testable_GUI.au3", $sDest, $iFlag)
-        Case $sSrc = "..\core\Testable_Ini.au3"
+        Case $sSource = "..\core\Testable_Ini.au3"
             FileInstall("..\core\Testable_Ini.au3", $sDest, $iFlag)
-        Case $sSrc = "..\core\Testable_Input.au3"
+        Case $sSource = "..\core\Testable_Input.au3"
             FileInstall("..\core\Testable_Input.au3", $sDest, $iFlag)
-        Case $sSrc = "..\core\Testable_Network.au3"
+        Case $sSource = "..\core\Testable_Network.au3"
             FileInstall("..\core\Testable_Network.au3", $sDest, $iFlag)
-        Case $sSrc = "..\core\Testable_Process.au3"
+        Case $sSource = "..\core\Testable_Process.au3"
             FileInstall("..\core\Testable_Process.au3", $sDest, $iFlag)
-        Case $sSrc = "..\core\Testable_Registry.au3"
+        Case $sSource = "..\core\Testable_Registry.au3"
             FileInstall("..\core\Testable_Registry.au3", $sDest, $iFlag)
-        Case $sSrc = "..\core\Testable_Sound.au3"
+        Case $sSource = "..\core\Testable_Sound.au3"
             FileInstall("..\core\Testable_Sound.au3", $sDest, $iFlag)
-        Case $sSrc = "..\core\Testable_Splash.au3"
+        Case $sSource = "..\core\Testable_Splash.au3"
             FileInstall("..\core\Testable_Splash.au3", $sDest, $iFlag)
-        Case $sSrc = "..\core\Testable_System.au3"
+        Case $sSource = "..\core\Testable_System.au3"
             FileInstall("..\core\Testable_System.au3", $sDest, $iFlag)
-        Case $sSrc = "..\core\Testable_Tray.au3"
+        Case $sSource = "..\core\Testable_Tray.au3"
             FileInstall("..\core\Testable_Tray.au3", $sDest, $iFlag)
-        Case $sSrc = "..\core\Testable_Window.au3"
+        Case $sSource = "..\core\Testable_Window.au3"
             FileInstall("..\core\Testable_Window.au3", $sDest, $iFlag)
-        Case $sSrc = "..\core\Stubs.au3"
+        Case $sSource = "..\core\Stubs.au3"
             FileInstall("..\core\Stubs.au3", $sDest, $iFlag)
-        Case $sSrc = "..\core\Stubs_Core.au3"
+        Case $sSource = "..\core\Stubs_Core.au3"
             FileInstall("..\core\Stubs_Core.au3", $sDest, $iFlag)
-        Case $sSrc = "..\core\Stubs_Clipboard.au3"
+        Case $sSource = "..\core\Stubs_Clipboard.au3"
             FileInstall("..\core\Stubs_Clipboard.au3", $sDest, $iFlag)
-        Case $sSrc = "..\core\Stubs_Dialogs.au3"
+        Case $sSource = "..\core\Stubs_Dialogs.au3"
             FileInstall("..\core\Stubs_Dialogs.au3", $sDest, $iFlag)
-        Case $sSrc = "..\core\Stubs_FileSystem.au3"
+        Case $sSource = "..\core\Stubs_FileInstall.au3"
+            FileInstall("..\core\Stubs_FileInstall.au3", $sDest, $iFlag)
+        Case $sSource = "..\core\Stubs_FileSystem.au3"
             FileInstall("..\core\Stubs_FileSystem.au3", $sDest, $iFlag)
-        Case $sSrc = "..\core\Stubs_GUI.au3"
+        Case $sSource = "..\core\Stubs_GUI.au3"
             FileInstall("..\core\Stubs_GUI.au3", $sDest, $iFlag)
-        Case $sSrc = "..\core\Stubs_Ini.au3"
+        Case $sSource = "..\core\Stubs_Ini.au3"
             FileInstall("..\core\Stubs_Ini.au3", $sDest, $iFlag)
-        Case $sSrc = "..\core\Stubs_Input.au3"
+        Case $sSource = "..\core\Stubs_Input.au3"
             FileInstall("..\core\Stubs_Input.au3", $sDest, $iFlag)
-        Case $sSrc = "..\core\Stubs_Network.au3"
+        Case $sSource = "..\core\Stubs_Network.au3"
             FileInstall("..\core\Stubs_Network.au3", $sDest, $iFlag)
-        Case $sSrc = "..\core\Stubs_Process.au3"
+        Case $sSource = "..\core\Stubs_Process.au3"
             FileInstall("..\core\Stubs_Process.au3", $sDest, $iFlag)
-        Case $sSrc = "..\core\Stubs_Registry.au3"
+        Case $sSource = "..\core\Stubs_Registry.au3"
             FileInstall("..\core\Stubs_Registry.au3", $sDest, $iFlag)
-        Case $sSrc = "..\core\Stubs_Sound.au3"
+        Case $sSource = "..\core\Stubs_Sound.au3"
             FileInstall("..\core\Stubs_Sound.au3", $sDest, $iFlag)
-        Case $sSrc = "..\core\Stubs_Splash.au3"
+        Case $sSource = "..\core\Stubs_Splash.au3"
             FileInstall("..\core\Stubs_Splash.au3", $sDest, $iFlag)
-        Case $sSrc = "..\core\Stubs_System.au3"
+        Case $sSource = "..\core\Stubs_System.au3"
             FileInstall("..\core\Stubs_System.au3", $sDest, $iFlag)
-        Case $sSrc = "..\core\Stubs_Tray.au3"
+        Case $sSource = "..\core\Stubs_Tray.au3"
             FileInstall("..\core\Stubs_Tray.au3", $sDest, $iFlag)
-        Case $sSrc = "..\core\Stubs_Window.au3"
+        Case $sSource = "..\core\Stubs_Window.au3"
             FileInstall("..\core\Stubs_Window.au3", $sDest, $iFlag)
-        Case $sSrc = "..\..\chm\TestFramework.chm"
+        Case $sSource = "..\..\chm\TestFramework.chm"
             FileInstall("..\..\chm\TestFramework.chm", $sDest, $iFlag)
-        Case $sSrc = "..\..\.out\TestFrameworkUninstaller.exe"
+        Case $sSource = "..\..\.out\TestFrameworkUninstaller.exe"
             FileInstall("..\..\.out\TestFrameworkUninstaller.exe", $sDest, $iFlag)
     EndSelect
 EndFunc
+
+_Tstbl_Implement_FileInstall(__FileInstall)
 
 ; ===============================================================================================================================
 ; Installation logic
@@ -490,52 +474,54 @@ Func __RunInstall($idStatusLabel, $idProgress)
     $iStep += 1
 
     __ProgressStep($idStatusLabel, $idProgress, $iStep, $iSteps, "Copying TestFramework.au3...")
-    $g_hFn_FileInstall("..\core\TestFramework.au3", $g_sIncludePath & "\TestFramework.au3", $FC_OVERWRITE)
+    _Tstbl_FileInstall("..\core\TestFramework.au3", $g_sIncludePath & "\TestFramework.au3", $FC_OVERWRITE)
     $iStep += 1
 
     __ProgressStep($idStatusLabel, $idProgress, $iStep, $iSteps, "Copying Testable library...")
-    $g_hFn_FileInstall("..\core\Testable.au3",          $g_sIncludePath & "\Testable.au3",          $FC_OVERWRITE)
-    $g_hFn_FileInstall("..\core\Testable_Clipboard.au3", $g_sIncludePath & "\Testable_Clipboard.au3", $FC_OVERWRITE)
-    $g_hFn_FileInstall("..\core\Testable_Dialogs.au3",  $g_sIncludePath & "\Testable_Dialogs.au3",  $FC_OVERWRITE)
-    $g_hFn_FileInstall("..\core\Testable_FileSystem.au3", $g_sIncludePath & "\Testable_FileSystem.au3", $FC_OVERWRITE)
-    $g_hFn_FileInstall("..\core\Testable_GUI.au3",      $g_sIncludePath & "\Testable_GUI.au3",      $FC_OVERWRITE)
-    $g_hFn_FileInstall("..\core\Testable_Ini.au3",      $g_sIncludePath & "\Testable_Ini.au3",      $FC_OVERWRITE)
-    $g_hFn_FileInstall("..\core\Testable_Input.au3",    $g_sIncludePath & "\Testable_Input.au3",    $FC_OVERWRITE)
-    $g_hFn_FileInstall("..\core\Testable_Network.au3",  $g_sIncludePath & "\Testable_Network.au3",  $FC_OVERWRITE)
-    $g_hFn_FileInstall("..\core\Testable_Process.au3",  $g_sIncludePath & "\Testable_Process.au3",  $FC_OVERWRITE)
-    $g_hFn_FileInstall("..\core\Testable_Registry.au3", $g_sIncludePath & "\Testable_Registry.au3", $FC_OVERWRITE)
-    $g_hFn_FileInstall("..\core\Testable_Sound.au3",    $g_sIncludePath & "\Testable_Sound.au3",    $FC_OVERWRITE)
-    $g_hFn_FileInstall("..\core\Testable_Splash.au3",   $g_sIncludePath & "\Testable_Splash.au3",   $FC_OVERWRITE)
-    $g_hFn_FileInstall("..\core\Testable_System.au3",   $g_sIncludePath & "\Testable_System.au3",   $FC_OVERWRITE)
-    $g_hFn_FileInstall("..\core\Testable_Tray.au3",     $g_sIncludePath & "\Testable_Tray.au3",     $FC_OVERWRITE)
-    $g_hFn_FileInstall("..\core\Testable_Window.au3",   $g_sIncludePath & "\Testable_Window.au3",   $FC_OVERWRITE)
+    _Tstbl_FileInstall("..\core\Testable.au3",             $g_sIncludePath & "\Testable.au3",             $FC_OVERWRITE)
+    _Tstbl_FileInstall("..\core\Testable_Clipboard.au3",   $g_sIncludePath & "\Testable_Clipboard.au3",   $FC_OVERWRITE)
+    _Tstbl_FileInstall("..\core\Testable_Dialogs.au3",     $g_sIncludePath & "\Testable_Dialogs.au3",     $FC_OVERWRITE)
+	_Tstbl_FileInstall("..\core\Testable_FileInstall.au3", $g_sIncludePath & "\Testable_FileInstall.au3", $FC_OVERWRITE)
+    _Tstbl_FileInstall("..\core\Testable_FileSystem.au3",  $g_sIncludePath & "\Testable_FileSystem.au3",  $FC_OVERWRITE)
+    _Tstbl_FileInstall("..\core\Testable_GUI.au3",         $g_sIncludePath & "\Testable_GUI.au3",         $FC_OVERWRITE)
+    _Tstbl_FileInstall("..\core\Testable_Ini.au3",         $g_sIncludePath & "\Testable_Ini.au3",         $FC_OVERWRITE)
+    _Tstbl_FileInstall("..\core\Testable_Input.au3",       $g_sIncludePath & "\Testable_Input.au3",       $FC_OVERWRITE)
+    _Tstbl_FileInstall("..\core\Testable_Network.au3",     $g_sIncludePath & "\Testable_Network.au3",     $FC_OVERWRITE)
+    _Tstbl_FileInstall("..\core\Testable_Process.au3",     $g_sIncludePath & "\Testable_Process.au3",     $FC_OVERWRITE)
+    _Tstbl_FileInstall("..\core\Testable_Registry.au3",    $g_sIncludePath & "\Testable_Registry.au3",    $FC_OVERWRITE)
+    _Tstbl_FileInstall("..\core\Testable_Sound.au3",       $g_sIncludePath & "\Testable_Sound.au3",       $FC_OVERWRITE)
+    _Tstbl_FileInstall("..\core\Testable_Splash.au3",      $g_sIncludePath & "\Testable_Splash.au3",      $FC_OVERWRITE)
+    _Tstbl_FileInstall("..\core\Testable_System.au3",      $g_sIncludePath & "\Testable_System.au3",      $FC_OVERWRITE)
+    _Tstbl_FileInstall("..\core\Testable_Tray.au3",        $g_sIncludePath & "\Testable_Tray.au3",        $FC_OVERWRITE)
+    _Tstbl_FileInstall("..\core\Testable_Window.au3",      $g_sIncludePath & "\Testable_Window.au3",      $FC_OVERWRITE)
     $iStep += 1
 
     __ProgressStep($idStatusLabel, $idProgress, $iStep, $iSteps, "Copying Stubs library...")
-    $g_hFn_FileInstall("..\core\Stubs.au3",          $g_sIncludePath & "\Stubs.au3",          $FC_OVERWRITE)
-    $g_hFn_FileInstall("..\core\Stubs_Core.au3",     $g_sIncludePath & "\Stubs_Core.au3",     $FC_OVERWRITE)
-    $g_hFn_FileInstall("..\core\Stubs_Clipboard.au3", $g_sIncludePath & "\Stubs_Clipboard.au3", $FC_OVERWRITE)
-    $g_hFn_FileInstall("..\core\Stubs_Dialogs.au3",  $g_sIncludePath & "\Stubs_Dialogs.au3",  $FC_OVERWRITE)
-    $g_hFn_FileInstall("..\core\Stubs_FileSystem.au3", $g_sIncludePath & "\Stubs_FileSystem.au3", $FC_OVERWRITE)
-    $g_hFn_FileInstall("..\core\Stubs_GUI.au3",      $g_sIncludePath & "\Stubs_GUI.au3",      $FC_OVERWRITE)
-    $g_hFn_FileInstall("..\core\Stubs_Ini.au3",      $g_sIncludePath & "\Stubs_Ini.au3",      $FC_OVERWRITE)
-    $g_hFn_FileInstall("..\core\Stubs_Input.au3",    $g_sIncludePath & "\Stubs_Input.au3",    $FC_OVERWRITE)
-    $g_hFn_FileInstall("..\core\Stubs_Network.au3",  $g_sIncludePath & "\Stubs_Network.au3",  $FC_OVERWRITE)
-    $g_hFn_FileInstall("..\core\Stubs_Process.au3",  $g_sIncludePath & "\Stubs_Process.au3",  $FC_OVERWRITE)
-    $g_hFn_FileInstall("..\core\Stubs_Registry.au3", $g_sIncludePath & "\Stubs_Registry.au3", $FC_OVERWRITE)
-    $g_hFn_FileInstall("..\core\Stubs_Sound.au3",    $g_sIncludePath & "\Stubs_Sound.au3",    $FC_OVERWRITE)
-    $g_hFn_FileInstall("..\core\Stubs_Splash.au3",   $g_sIncludePath & "\Stubs_Splash.au3",   $FC_OVERWRITE)
-    $g_hFn_FileInstall("..\core\Stubs_System.au3",   $g_sIncludePath & "\Stubs_System.au3",   $FC_OVERWRITE)
-    $g_hFn_FileInstall("..\core\Stubs_Tray.au3",     $g_sIncludePath & "\Stubs_Tray.au3",     $FC_OVERWRITE)
-    $g_hFn_FileInstall("..\core\Stubs_Window.au3",   $g_sIncludePath & "\Stubs_Window.au3",   $FC_OVERWRITE)
+    _Tstbl_FileInstall("..\core\Stubs.au3",             $g_sIncludePath & "\Stubs.au3",             $FC_OVERWRITE)
+    _Tstbl_FileInstall("..\core\Stubs_Core.au3",        $g_sIncludePath & "\Stubs_Core.au3",        $FC_OVERWRITE)
+    _Tstbl_FileInstall("..\core\Stubs_Clipboard.au3",   $g_sIncludePath & "\Stubs_Clipboard.au3",   $FC_OVERWRITE)
+    _Tstbl_FileInstall("..\core\Stubs_Dialogs.au3",     $g_sIncludePath & "\Stubs_Dialogs.au3",     $FC_OVERWRITE)
+	_Tstbl_FileInstall("..\core\Stubs_FileInstall.au3", $g_sIncludePath & "\Stubs_FileInstall.au3", $FC_OVERWRITE)
+    _Tstbl_FileInstall("..\core\Stubs_FileSystem.au3",  $g_sIncludePath & "\Stubs_FileSystem.au3",  $FC_OVERWRITE)
+    _Tstbl_FileInstall("..\core\Stubs_GUI.au3",         $g_sIncludePath & "\Stubs_GUI.au3",         $FC_OVERWRITE)
+    _Tstbl_FileInstall("..\core\Stubs_Ini.au3",         $g_sIncludePath & "\Stubs_Ini.au3",         $FC_OVERWRITE)
+    _Tstbl_FileInstall("..\core\Stubs_Input.au3",       $g_sIncludePath & "\Stubs_Input.au3",       $FC_OVERWRITE)
+    _Tstbl_FileInstall("..\core\Stubs_Network.au3",     $g_sIncludePath & "\Stubs_Network.au3",     $FC_OVERWRITE)
+    _Tstbl_FileInstall("..\core\Stubs_Process.au3",     $g_sIncludePath & "\Stubs_Process.au3",     $FC_OVERWRITE)
+    _Tstbl_FileInstall("..\core\Stubs_Registry.au3",    $g_sIncludePath & "\Stubs_Registry.au3",    $FC_OVERWRITE)
+    _Tstbl_FileInstall("..\core\Stubs_Sound.au3",       $g_sIncludePath & "\Stubs_Sound.au3",       $FC_OVERWRITE)
+    _Tstbl_FileInstall("..\core\Stubs_Splash.au3",      $g_sIncludePath & "\Stubs_Splash.au3",      $FC_OVERWRITE)
+    _Tstbl_FileInstall("..\core\Stubs_System.au3",      $g_sIncludePath & "\Stubs_System.au3",      $FC_OVERWRITE)
+    _Tstbl_FileInstall("..\core\Stubs_Tray.au3",        $g_sIncludePath & "\Stubs_Tray.au3",        $FC_OVERWRITE)
+    _Tstbl_FileInstall("..\core\Stubs_Window.au3",      $g_sIncludePath & "\Stubs_Window.au3",      $FC_OVERWRITE)
     $iStep += 1
 
     __ProgressStep($idStatusLabel, $idProgress, $iStep, $iSteps, "Copying TestFramework.chm...")
-    $g_hFn_FileInstall("..\..\chm\TestFramework.chm", $g_sChmPath & "\TestFramework.chm", $FC_OVERWRITE)
+    _Tstbl_FileInstall("..\..\chm\TestFramework.chm", $g_sChmPath & "\TestFramework.chm", $FC_OVERWRITE)
     $iStep += 1
 
     __ProgressStep($idStatusLabel, $idProgress, $iStep, $iSteps, "Copying TestFrameworkUninstaller.exe...")
-    $g_hFn_FileInstall("..\..\.out\TestFrameworkUninstaller.exe", $g_sChmPath & "\TestFrameworkUninstaller.exe", $FC_OVERWRITE)
+    _Tstbl_FileInstall("..\..\.out\TestFrameworkUninstaller.exe", $g_sChmPath & "\TestFrameworkUninstaller.exe", $FC_OVERWRITE)
     $iStep += 1
 
     __ProgressStep($idStatusLabel, $idProgress, $iStep, $iSteps, "Writing AutoIt include registry entry...")

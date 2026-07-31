@@ -18,24 +18,6 @@ Global $__INSTALLER_TEST_MODE = True
 #include "..\src\installer\TestFrameworkInstaller.au3"
 
 ; ===============================================================================================================================
-; FileInstall stub - wired after installer include so $g_hFn_FileInstall exists
-; ===============================================================================================================================
-
-Func _Stub_FileInstall($sSrc, $sDest, $iFlag)
-    __StubInitType("FileInstall")
-    Local $iIdx = $g_StubCalls["FileInstall"].count + 1
-    Local $oCall[]
-    $oCall.sSrc  = $sSrc
-    $oCall.sDest = $sDest
-    $g_StubCalls["FileInstall"][$iIdx] = $oCall
-    $g_StubCalls["FileInstall"].count  = $iIdx
-    Local $bReturn = MapExists($g_StubReturns["FileInstall"], $iIdx) ? $g_StubReturns["FileInstall"][$iIdx] : True
-    Return $bReturn
-EndFunc
-
-$g_hFn_FileInstall = _Stub_FileInstall
-
-; ===============================================================================================================================
 ; Tests - __DetectPaths
 ; ===============================================================================================================================
 
@@ -143,7 +125,6 @@ Func _TestRunInstall_CreatesFolders()
     _TestFmkHeader("Test: __RunInstall() - creates install folders")
 
     _ResetStubs()
-    $g_hFn_FileInstall = _Stub_FileInstall
     $g_sIncludePath = "C:\AutoIt3\Include\Vendor"
     $g_sChmPath     = "C:\AutoIt3\TestFramework"
 
@@ -160,66 +141,66 @@ Func _TestRunInstall_InstallsAllFiles()
     _TestFmkHeader("Test: __RunInstall() - installs all expected files")
 
     _ResetStubs()
-    $g_hFn_FileInstall = _Stub_FileInstall
     $g_sIncludePath = "C:\AutoIt3\Include\Vendor"
     $g_sChmPath     = "C:\AutoIt3\TestFramework"
 
     __RunInstall(1, 2)
 
-    ; Total: 1 TestFramework + 15 Testable + 16 Stubs + 1 chm + 1 uninstaller = 34
-    _TestFmkAssert($g_StubCalls["FileInstall"].count = 34, "Installs 34 files total", $g_StubCalls["FileInstall"].count, 34)
+    ; Total: 1 TestFramework + 16 Testable + 17 Stubs + 1 chm + 1 uninstaller = 36
+    _TestFmkAssert($g_StubCalls["FileInstall"].count = 36, "Installs 36 files total", $g_StubCalls["FileInstall"].count, 34)
 
     ; TestFramework.au3
-    _TestFmkAssert($g_StubCalls["FileInstall"][1].sSrc  = "..\core\TestFramework.au3", "Installs TestFramework.au3 src", $g_StubCalls["FileInstall"][1].sSrc, "..\core\TestFramework.au3")
+    _TestFmkAssert($g_StubCalls["FileInstall"][1].sSource  = "..\core\TestFramework.au3", "Installs TestFramework.au3 source", $g_StubCalls["FileInstall"][1].sSource, "..\core\TestFramework.au3")
     _TestFmkAssert($g_StubCalls["FileInstall"][1].sDest = "C:\AutoIt3\Include\Vendor\TestFramework.au3", "Installs TestFramework.au3 dest", $g_StubCalls["FileInstall"][1].sDest, "C:\AutoIt3\Include\Vendor\TestFramework.au3")
 
     ; Testable library
-    _TestFmkAssert($g_StubCalls["FileInstall"][2].sSrc  = "..\core\Testable.au3",             "Installs Testable.au3",             $g_StubCalls["FileInstall"][2].sSrc,  "..\core\Testable.au3")
-    _TestFmkAssert($g_StubCalls["FileInstall"][3].sSrc  = "..\core\Testable_Clipboard.au3",   "Installs Testable_Clipboard.au3",   $g_StubCalls["FileInstall"][3].sSrc,  "..\core\Testable_Clipboard.au3")
-    _TestFmkAssert($g_StubCalls["FileInstall"][4].sSrc  = "..\core\Testable_Dialogs.au3",     "Installs Testable_Dialogs.au3",     $g_StubCalls["FileInstall"][4].sSrc,  "..\core\Testable_Dialogs.au3")
-    _TestFmkAssert($g_StubCalls["FileInstall"][5].sSrc  = "..\core\Testable_FileSystem.au3",  "Installs Testable_FileSystem.au3",  $g_StubCalls["FileInstall"][5].sSrc,  "..\core\Testable_FileSystem.au3")
-    _TestFmkAssert($g_StubCalls["FileInstall"][6].sSrc  = "..\core\Testable_GUI.au3",         "Installs Testable_GUI.au3",         $g_StubCalls["FileInstall"][6].sSrc,  "..\core\Testable_GUI.au3")
-    _TestFmkAssert($g_StubCalls["FileInstall"][7].sSrc  = "..\core\Testable_Ini.au3",         "Installs Testable_Ini.au3",         $g_StubCalls["FileInstall"][7].sSrc,  "..\core\Testable_Ini.au3")
-    _TestFmkAssert($g_StubCalls["FileInstall"][8].sSrc  = "..\core\Testable_Input.au3",       "Installs Testable_Input.au3",       $g_StubCalls["FileInstall"][8].sSrc,  "..\core\Testable_Input.au3")
-    _TestFmkAssert($g_StubCalls["FileInstall"][9].sSrc  = "..\core\Testable_Network.au3",     "Installs Testable_Network.au3",     $g_StubCalls["FileInstall"][9].sSrc,  "..\core\Testable_Network.au3")
-    _TestFmkAssert($g_StubCalls["FileInstall"][10].sSrc = "..\core\Testable_Process.au3",     "Installs Testable_Process.au3",     $g_StubCalls["FileInstall"][10].sSrc, "..\core\Testable_Process.au3")
-    _TestFmkAssert($g_StubCalls["FileInstall"][11].sSrc = "..\core\Testable_Registry.au3",    "Installs Testable_Registry.au3",    $g_StubCalls["FileInstall"][11].sSrc, "..\core\Testable_Registry.au3")
-    _TestFmkAssert($g_StubCalls["FileInstall"][12].sSrc = "..\core\Testable_Sound.au3",       "Installs Testable_Sound.au3",       $g_StubCalls["FileInstall"][12].sSrc, "..\core\Testable_Sound.au3")
-    _TestFmkAssert($g_StubCalls["FileInstall"][13].sSrc = "..\core\Testable_Splash.au3",      "Installs Testable_Splash.au3",      $g_StubCalls["FileInstall"][13].sSrc, "..\core\Testable_Splash.au3")
-    _TestFmkAssert($g_StubCalls["FileInstall"][14].sSrc = "..\core\Testable_System.au3",      "Installs Testable_System.au3",      $g_StubCalls["FileInstall"][14].sSrc, "..\core\Testable_System.au3")
-    _TestFmkAssert($g_StubCalls["FileInstall"][15].sSrc = "..\core\Testable_Tray.au3",        "Installs Testable_Tray.au3",        $g_StubCalls["FileInstall"][15].sSrc, "..\core\Testable_Tray.au3")
-    _TestFmkAssert($g_StubCalls["FileInstall"][16].sSrc = "..\core\Testable_Window.au3",      "Installs Testable_Window.au3",      $g_StubCalls["FileInstall"][16].sSrc, "..\core\Testable_Window.au3")
+    _TestFmkAssert($g_StubCalls["FileInstall"][2].sSource  = "..\core\Testable.au3",             "Installs Testable.au3",             $g_StubCalls["FileInstall"][2].sSource,  "..\core\Testable.au3")
+    _TestFmkAssert($g_StubCalls["FileInstall"][3].sSource  = "..\core\Testable_Clipboard.au3",   "Installs Testable_Clipboard.au3",   $g_StubCalls["FileInstall"][3].sSource,  "..\core\Testable_Clipboard.au3")
+    _TestFmkAssert($g_StubCalls["FileInstall"][4].sSource  = "..\core\Testable_Dialogs.au3",     "Installs Testable_Dialogs.au3",     $g_StubCalls["FileInstall"][4].sSource,  "..\core\Testable_Dialogs.au3")
+    _TestFmkAssert($g_StubCalls["FileInstall"][5].sSource  = "..\core\Testable_FileInstall.au3", "Installs Testable_FileInstall.au3", $g_StubCalls["FileInstall"][5].sSource,  "..\core\Testable_FileInstall.au3")
+	_TestFmkAssert($g_StubCalls["FileInstall"][6].sSource  = "..\core\Testable_FileSystem.au3",  "Installs Testable_FileSystem.au3",  $g_StubCalls["FileInstall"][6].sSource,  "..\core\Testable_FileSystem.au3")
+    _TestFmkAssert($g_StubCalls["FileInstall"][7].sSource  = "..\core\Testable_GUI.au3",         "Installs Testable_GUI.au3",         $g_StubCalls["FileInstall"][7].sSource,  "..\core\Testable_GUI.au3")
+    _TestFmkAssert($g_StubCalls["FileInstall"][8].sSource  = "..\core\Testable_Ini.au3",         "Installs Testable_Ini.au3",         $g_StubCalls["FileInstall"][8].sSource,  "..\core\Testable_Ini.au3")
+    _TestFmkAssert($g_StubCalls["FileInstall"][9].sSource  = "..\core\Testable_Input.au3",       "Installs Testable_Input.au3",       $g_StubCalls["FileInstall"][9].sSource,  "..\core\Testable_Input.au3")
+    _TestFmkAssert($g_StubCalls["FileInstall"][10].sSource = "..\core\Testable_Network.au3",     "Installs Testable_Network.au3",     $g_StubCalls["FileInstall"][10].sSource, "..\core\Testable_Network.au3")
+    _TestFmkAssert($g_StubCalls["FileInstall"][11].sSource = "..\core\Testable_Process.au3",     "Installs Testable_Process.au3",     $g_StubCalls["FileInstall"][11].sSource, "..\core\Testable_Process.au3")
+    _TestFmkAssert($g_StubCalls["FileInstall"][12].sSource = "..\core\Testable_Registry.au3",    "Installs Testable_Registry.au3",    $g_StubCalls["FileInstall"][12].sSource, "..\core\Testable_Registry.au3")
+    _TestFmkAssert($g_StubCalls["FileInstall"][13].sSource = "..\core\Testable_Sound.au3",       "Installs Testable_Sound.au3",       $g_StubCalls["FileInstall"][13].sSource, "..\core\Testable_Sound.au3")
+    _TestFmkAssert($g_StubCalls["FileInstall"][14].sSource = "..\core\Testable_Splash.au3",      "Installs Testable_Splash.au3",      $g_StubCalls["FileInstall"][14].sSource, "..\core\Testable_Splash.au3")
+    _TestFmkAssert($g_StubCalls["FileInstall"][15].sSource = "..\core\Testable_System.au3",      "Installs Testable_System.au3",      $g_StubCalls["FileInstall"][15].sSource, "..\core\Testable_System.au3")
+    _TestFmkAssert($g_StubCalls["FileInstall"][16].sSource = "..\core\Testable_Tray.au3",        "Installs Testable_Tray.au3",        $g_StubCalls["FileInstall"][16].sSource, "..\core\Testable_Tray.au3")
+    _TestFmkAssert($g_StubCalls["FileInstall"][17].sSource = "..\core\Testable_Window.au3",      "Installs Testable_Window.au3",      $g_StubCalls["FileInstall"][17].sSource, "..\core\Testable_Window.au3")
 
     ; Stubs library
-    _TestFmkAssert($g_StubCalls["FileInstall"][17].sSrc = "..\core\Stubs.au3",           "Installs Stubs.au3",           $g_StubCalls["FileInstall"][17].sSrc, "..\core\Stubs.au3")
-    _TestFmkAssert($g_StubCalls["FileInstall"][18].sSrc = "..\core\Stubs_Core.au3",      "Installs Stubs_Core.au3",      $g_StubCalls["FileInstall"][18].sSrc, "..\core\Stubs_Core.au3")
-    _TestFmkAssert($g_StubCalls["FileInstall"][19].sSrc = "..\core\Stubs_Clipboard.au3", "Installs Stubs_Clipboard.au3", $g_StubCalls["FileInstall"][19].sSrc, "..\core\Stubs_Clipboard.au3")
-    _TestFmkAssert($g_StubCalls["FileInstall"][20].sSrc = "..\core\Stubs_Dialogs.au3",   "Installs Stubs_Dialogs.au3",   $g_StubCalls["FileInstall"][20].sSrc, "..\core\Stubs_Dialogs.au3")
-    _TestFmkAssert($g_StubCalls["FileInstall"][21].sSrc = "..\core\Stubs_FileSystem.au3", "Installs Stubs_FileSystem.au3", $g_StubCalls["FileInstall"][21].sSrc, "..\core\Stubs_FileSystem.au3")
-    _TestFmkAssert($g_StubCalls["FileInstall"][22].sSrc = "..\core\Stubs_GUI.au3",       "Installs Stubs_GUI.au3",       $g_StubCalls["FileInstall"][22].sSrc, "..\core\Stubs_GUI.au3")
-    _TestFmkAssert($g_StubCalls["FileInstall"][23].sSrc = "..\core\Stubs_Ini.au3",       "Installs Stubs_Ini.au3",       $g_StubCalls["FileInstall"][23].sSrc, "..\core\Stubs_Ini.au3")
-    _TestFmkAssert($g_StubCalls["FileInstall"][24].sSrc = "..\core\Stubs_Input.au3",     "Installs Stubs_Input.au3",     $g_StubCalls["FileInstall"][24].sSrc, "..\core\Stubs_Input.au3")
-    _TestFmkAssert($g_StubCalls["FileInstall"][25].sSrc = "..\core\Stubs_Network.au3",   "Installs Stubs_Network.au3",   $g_StubCalls["FileInstall"][25].sSrc, "..\core\Stubs_Network.au3")
-    _TestFmkAssert($g_StubCalls["FileInstall"][26].sSrc = "..\core\Stubs_Process.au3",   "Installs Stubs_Process.au3",   $g_StubCalls["FileInstall"][26].sSrc, "..\core\Stubs_Process.au3")
-    _TestFmkAssert($g_StubCalls["FileInstall"][27].sSrc = "..\core\Stubs_Registry.au3",  "Installs Stubs_Registry.au3",  $g_StubCalls["FileInstall"][27].sSrc, "..\core\Stubs_Registry.au3")
-    _TestFmkAssert($g_StubCalls["FileInstall"][28].sSrc = "..\core\Stubs_Sound.au3",     "Installs Stubs_Sound.au3",     $g_StubCalls["FileInstall"][28].sSrc, "..\core\Stubs_Sound.au3")
-    _TestFmkAssert($g_StubCalls["FileInstall"][29].sSrc = "..\core\Stubs_Splash.au3",    "Installs Stubs_Splash.au3",    $g_StubCalls["FileInstall"][29].sSrc, "..\core\Stubs_Splash.au3")
-    _TestFmkAssert($g_StubCalls["FileInstall"][30].sSrc = "..\core\Stubs_System.au3",    "Installs Stubs_System.au3",    $g_StubCalls["FileInstall"][30].sSrc, "..\core\Stubs_System.au3")
-    _TestFmkAssert($g_StubCalls["FileInstall"][31].sSrc = "..\core\Stubs_Tray.au3",      "Installs Stubs_Tray.au3",      $g_StubCalls["FileInstall"][31].sSrc, "..\core\Stubs_Tray.au3")
-    _TestFmkAssert($g_StubCalls["FileInstall"][32].sSrc = "..\core\Stubs_Window.au3",    "Installs Stubs_Window.au3",    $g_StubCalls["FileInstall"][32].sSrc, "..\core\Stubs_Window.au3")
+    _TestFmkAssert($g_StubCalls["FileInstall"][18].sSource = "..\core\Stubs.au3",             "Installs Stubs.au3",             $g_StubCalls["FileInstall"][18].sSource, "..\core\Stubs.au3")
+    _TestFmkAssert($g_StubCalls["FileInstall"][19].sSource = "..\core\Stubs_Core.au3",        "Installs Stubs_Core.au3",        $g_StubCalls["FileInstall"][19].sSource, "..\core\Stubs_Core.au3")
+    _TestFmkAssert($g_StubCalls["FileInstall"][20].sSource = "..\core\Stubs_Clipboard.au3",   "Installs Stubs_Clipboard.au3",   $g_StubCalls["FileInstall"][20].sSource, "..\core\Stubs_Clipboard.au3")
+    _TestFmkAssert($g_StubCalls["FileInstall"][21].sSource = "..\core\Stubs_Dialogs.au3",     "Installs Stubs_Dialogs.au3",     $g_StubCalls["FileInstall"][21].sSource, "..\core\Stubs_Dialogs.au3")
+    _TestFmkAssert($g_StubCalls["FileInstall"][22].sSource = "..\core\Stubs_FileInstall.au3", "Installs Stubs_FileInstall.au3", $g_StubCalls["FileInstall"][22].sSource, "..\core\Stubs_FileInstall.au3")
+    _TestFmkAssert($g_StubCalls["FileInstall"][23].sSource = "..\core\Stubs_FileSystem.au3",  "Installs Stubs_FileSystem.au3",  $g_StubCalls["FileInstall"][23].sSource, "..\core\Stubs_FileSystem.au3")
+    _TestFmkAssert($g_StubCalls["FileInstall"][24].sSource = "..\core\Stubs_GUI.au3",         "Installs Stubs_GUI.au3",         $g_StubCalls["FileInstall"][24].sSource, "..\core\Stubs_GUI.au3")
+    _TestFmkAssert($g_StubCalls["FileInstall"][25].sSource = "..\core\Stubs_Ini.au3",         "Installs Stubs_Ini.au3",         $g_StubCalls["FileInstall"][25].sSource, "..\core\Stubs_Ini.au3")
+    _TestFmkAssert($g_StubCalls["FileInstall"][26].sSource = "..\core\Stubs_Input.au3",       "Installs Stubs_Input.au3",       $g_StubCalls["FileInstall"][26].sSource, "..\core\Stubs_Input.au3")
+    _TestFmkAssert($g_StubCalls["FileInstall"][27].sSource = "..\core\Stubs_Network.au3",     "Installs Stubs_Network.au3",     $g_StubCalls["FileInstall"][27].sSource, "..\core\Stubs_Network.au3")
+    _TestFmkAssert($g_StubCalls["FileInstall"][28].sSource = "..\core\Stubs_Process.au3",     "Installs Stubs_Process.au3",     $g_StubCalls["FileInstall"][28].sSource, "..\core\Stubs_Process.au3")
+    _TestFmkAssert($g_StubCalls["FileInstall"][29].sSource = "..\core\Stubs_Registry.au3",    "Installs Stubs_Registry.au3",    $g_StubCalls["FileInstall"][29].sSource, "..\core\Stubs_Registry.au3")
+    _TestFmkAssert($g_StubCalls["FileInstall"][30].sSource = "..\core\Stubs_Sound.au3",       "Installs Stubs_Sound.au3",       $g_StubCalls["FileInstall"][30].sSource, "..\core\Stubs_Sound.au3")
+    _TestFmkAssert($g_StubCalls["FileInstall"][31].sSource = "..\core\Stubs_Splash.au3",      "Installs Stubs_Splash.au3",      $g_StubCalls["FileInstall"][31].sSource, "..\core\Stubs_Splash.au3")
+    _TestFmkAssert($g_StubCalls["FileInstall"][32].sSource = "..\core\Stubs_System.au3",      "Installs Stubs_System.au3",      $g_StubCalls["FileInstall"][32].sSource, "..\core\Stubs_System.au3")
+    _TestFmkAssert($g_StubCalls["FileInstall"][33].sSource = "..\core\Stubs_Tray.au3",        "Installs Stubs_Tray.au3",        $g_StubCalls["FileInstall"][33].sSource, "..\core\Stubs_Tray.au3")
+    _TestFmkAssert($g_StubCalls["FileInstall"][34].sSource = "..\core\Stubs_Window.au3",      "Installs Stubs_Window.au3",      $g_StubCalls["FileInstall"][34].sSource, "..\core\Stubs_Window.au3")
 
     ; CHM and uninstaller
-    _TestFmkAssert($g_StubCalls["FileInstall"][33].sSrc  = "..\..\chm\TestFramework.chm",              "Installs TestFramework.chm src",           $g_StubCalls["FileInstall"][33].sSrc,  "..\..\chm\TestFramework.chm")
-    _TestFmkAssert($g_StubCalls["FileInstall"][33].sDest = "C:\AutoIt3\TestFramework\TestFramework.chm", "Installs TestFramework.chm dest",         $g_StubCalls["FileInstall"][33].sDest, "C:\AutoIt3\TestFramework\TestFramework.chm")
-    _TestFmkAssert($g_StubCalls["FileInstall"][34].sSrc  = "..\..\.out\TestFrameworkUninstaller.exe",   "Installs TestFrameworkUninstaller.exe src", $g_StubCalls["FileInstall"][34].sSrc,  "..\..\.out\TestFrameworkUninstaller.exe")
-    _TestFmkAssert($g_StubCalls["FileInstall"][34].sDest = "C:\AutoIt3\TestFramework\TestFrameworkUninstaller.exe", "Installs TestFrameworkUninstaller.exe dest", $g_StubCalls["FileInstall"][34].sDest, "C:\AutoIt3\TestFramework\TestFrameworkUninstaller.exe")
+    _TestFmkAssert($g_StubCalls["FileInstall"][35].sSource = "..\..\chm\TestFramework.chm", "Installs TestFramework.chm src", $g_StubCalls["FileInstall"][35].sSource, "..\..\chm\TestFramework.chm")
+    _TestFmkAssert($g_StubCalls["FileInstall"][35].sDest = "C:\AutoIt3\TestFramework\TestFramework.chm", "Installs TestFramework.chm dest", $g_StubCalls["FileInstall"][35].sDest, "C:\AutoIt3\TestFramework\TestFramework.chm")
+    _TestFmkAssert($g_StubCalls["FileInstall"][36].sSource = "..\..\.out\TestFrameworkUninstaller.exe", "Installs TestFrameworkUninstaller.exe src", $g_StubCalls["FileInstall"][36].sSource, "..\..\.out\TestFrameworkUninstaller.exe")
+    _TestFmkAssert($g_StubCalls["FileInstall"][36].sDest = "C:\AutoIt3\TestFramework\TestFrameworkUninstaller.exe", "Installs TestFrameworkUninstaller.exe dest", $g_StubCalls["FileInstall"][36].sDest, "C:\AutoIt3\TestFramework\TestFrameworkUninstaller.exe")
 EndFunc
 
 Func _TestRunInstall_WritesRegistry()
     _TestFmkHeader("Test: __RunInstall() - writes registry entries")
 
     _ResetStubs()
-    $g_hFn_FileInstall = _Stub_FileInstall
     $g_sIncludePath = "C:\AutoIt3\Include\Vendor"
     $g_sChmPath     = "C:\AutoIt3\TestFramework"
 
