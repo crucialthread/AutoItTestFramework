@@ -24,3 +24,4 @@
 #include "Testable_Splash.au3"
 #include "Testable_Sound.au3"
 #include "Testable_Tray.au3"
+#include "Testable_FileInstall.au3"

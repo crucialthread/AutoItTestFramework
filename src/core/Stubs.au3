@@ -29,3 +29,4 @@
 #include "Stubs_Splash.au3"
 #include "Stubs_Sound.au3"
 #include "Stubs_Tray.au3"
+#include "Stubs_FileInstall.au3"
