@@ -21,8 +21,8 @@
 <h2>Overview</h2>
 
 <p>
-    <code>Testable.au3</code> provides wrapper functions for AutoIt built-ins that requires
-    user interaction or return values that affect program flow. Each wrapper routes the call through a
+    <code>Testable.au3</code> provides wrapper functions for AutoIt built-ins that have side
+    effects or return values that affect program flow. Each wrapper routes the call through a
     function pointer global (<code>$g_hFn_*</code>), which in script code points to the real
     AutoIt built-in, and in test code is rewired by <code>Stubs.au3</code> to a stub that
     records calls and returns controlled values.
@@ -100,6 +100,12 @@ EndFunc
     <code>_Tstbl_Implement_FileInstall()</code>. See <a href="fileinstall.htm">FileInstall Special Case</a>
     for details.
 </div>
+
+<h2>File Install</h2>
+<p>Included via <code>Testable_FileInstall.au3</code>.</p>
+<table>
+<tr><td>_Tstbl_FileInstall</td><td>Wrapper for <code>FileInstall</code>. Requires a custom implementation registered via <code>_Tstbl_Implement_FileInstall()</code>. See <a href="fileinstall.htm">FileInstall Special Case</a>.</td></tr>
+</table>
 
 <h2>Dialogs</h2>
 <p>Included via <code>Testable_Dialogs.au3</code>.</p>
