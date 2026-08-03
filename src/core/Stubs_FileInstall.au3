@@ -18,15 +18,7 @@
 
 Func _Stub_FileInstall($sSource, $sDest, $iFlag = 0)
     If Not __Tstbl_IsFileInstallImplemented() Then Return False
-    __StubInitType("FileInstall")
-    Local $iIdx = $g_StubCalls["FileInstall"].count + 1
-    Local $oCall[]
-    $oCall.sSource = $sSource
-    $oCall.sDest   = $sDest
-    $g_StubCalls["FileInstall"][$iIdx] = $oCall
-    $g_StubCalls["FileInstall"].count  = $iIdx
-    Local $bReturn = MapExists($g_StubReturns["FileInstall"], $iIdx) ? $g_StubReturns["FileInstall"][$iIdx] : True
-    Return $bReturn
+	Return __DefineStub("FileInstall", __CallArgs("sSource = " & $sSource, "sDest = " & $sDest), 1)
 EndFunc
 
 $g_hFn_FileInstall = _Stub_FileInstall

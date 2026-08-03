@@ -11,87 +11,35 @@
 #include "Stubs_Core.au3"
 
 Func _Stub_TrayTip($sTitle, $sText, $iTimeout, $iOption = 0)
-    __StubInitType("TrayTip")
-    Local $iIdx = $g_StubCalls["TrayTip"].count + 1
-    Local $oCall[]
-    $oCall["sTitle"] = $sTitle
-    $oCall["sText"]  = $sText
-    $g_StubCalls["TrayTip"][$iIdx] = $oCall
-    $g_StubCalls["TrayTip"].count  = $iIdx
+	Return __DefineStub("TrayTip", __CallArgs("sTitle = " & $sTitle, "sText = " & $sText))
 EndFunc
 
 Func _Stub_TrayGetMsg()
-    __StubInitType("TrayGetMsg")
-    Local $iIdx = $g_StubCalls["TrayGetMsg"].count + 1
-    Local $oCall[]
-    $g_StubCalls["TrayGetMsg"][$iIdx] = $oCall
-    $g_StubCalls["TrayGetMsg"].count  = $iIdx
-    Local $iReturn = MapExists($g_StubReturns["TrayGetMsg"], $iIdx) ? $g_StubReturns["TrayGetMsg"][$iIdx] : 0
-    Return $iReturn
+	Return __DefineStub("TrayGetMsg", __CallArgs(), 0)
 EndFunc
 
 Func _Stub_TrayCreateItem($sText, $hMenu = -1, $iMenuItemID = -1, $iStyle = -1)
-    __StubInitType("TrayCreateItem")
-    Local $iIdx = $g_StubCalls["TrayCreateItem"].count + 1
-    Local $oCall[]
-    $oCall["sText"] = $sText
-    $g_StubCalls["TrayCreateItem"][$iIdx] = $oCall
-    $g_StubCalls["TrayCreateItem"].count  = $iIdx
-    Local $iReturn = MapExists($g_StubReturns["TrayCreateItem"], $iIdx) ? $g_StubReturns["TrayCreateItem"][$iIdx] : $iIdx
-    Return $iReturn
+	Return __DefineStub("TrayCreateItem", __CallArgs("sText = " & $sText), 1)
 EndFunc
 
 Func _Stub_TrayCreateMenu($sText, $hMenu = -1, $iMenuItemID = -1)
-    __StubInitType("TrayCreateMenu")
-    Local $iIdx = $g_StubCalls["TrayCreateMenu"].count + 1
-    Local $oCall[]
-    $oCall["sText"] = $sText
-    $g_StubCalls["TrayCreateMenu"][$iIdx] = $oCall
-    $g_StubCalls["TrayCreateMenu"].count  = $iIdx
-    Local $iReturn = MapExists($g_StubReturns["TrayCreateMenu"], $iIdx) ? $g_StubReturns["TrayCreateMenu"][$iIdx] : $iIdx
-    Return $iReturn
+	Return __DefineStub("TrayCreateMenu", __CallArgs("sText = " & $sText), 1)
 EndFunc
 
 Func _Stub_TrayItemSetState($hItem, $iState)
-    __StubInitType("TrayItemSetState")
-    Local $iIdx = $g_StubCalls["TrayItemSetState"].count + 1
-    Local $oCall[]
-    $oCall["hItem"]  = $hItem
-    $oCall["iState"] = $iState
-    $g_StubCalls["TrayItemSetState"][$iIdx] = $oCall
-    $g_StubCalls["TrayItemSetState"].count  = $iIdx
+	Return __DefineStub("TrayItemSetState", __CallArgs("hItem = " & $hItem, "iState = " & $iState), 1)
 EndFunc
 
 Func _Stub_TrayItemSetText($hItem, $sText)
-    __StubInitType("TrayItemSetText")
-    Local $iIdx = $g_StubCalls["TrayItemSetText"].count + 1
-    Local $oCall[]
-    $oCall["hItem"] = $hItem
-    $oCall["sText"] = $sText
-    $g_StubCalls["TrayItemSetText"][$iIdx] = $oCall
-    $g_StubCalls["TrayItemSetText"].count  = $iIdx
+	Return __DefineStub("TrayItemSetText", __CallArgs("hItem = " & $hItem, "sText = " & $sText), 1)
 EndFunc
 
 Func _Stub_TrayItemGetState($hItem)
-    __StubInitType("TrayItemGetState")
-    Local $iIdx = $g_StubCalls["TrayItemGetState"].count + 1
-    Local $oCall[]
-    $oCall["hItem"] = $hItem
-    $g_StubCalls["TrayItemGetState"][$iIdx] = $oCall
-    $g_StubCalls["TrayItemGetState"].count  = $iIdx
-    Local $iReturn = MapExists($g_StubReturns["TrayItemGetState"], $iIdx) ? $g_StubReturns["TrayItemGetState"][$iIdx] : 0
-    Return $iReturn
+	Return __DefineStub("TrayItemGetState", __CallArgs("hItem = " & $hItem), 0)
 EndFunc
 
 Func _Stub_TrayItemGetText($hItem)
-    __StubInitType("TrayItemGetText")
-    Local $iIdx = $g_StubCalls["TrayItemGetText"].count + 1
-    Local $oCall[]
-    $oCall["hItem"] = $hItem
-    $g_StubCalls["TrayItemGetText"][$iIdx] = $oCall
-    $g_StubCalls["TrayItemGetText"].count  = $iIdx
-    Local $sReturn = MapExists($g_StubReturns["TrayItemGetText"], $iIdx) ? $g_StubReturns["TrayItemGetText"][$iIdx] : ""
-    Return $sReturn
+	Return __DefineStub("TrayItemGetText", __CallArgs("hItem = " & $hItem), "")
 EndFunc
 
 $g_hFn_TrayTip          = _Stub_TrayTip

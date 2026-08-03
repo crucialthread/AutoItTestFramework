@@ -11,56 +11,23 @@
 #include "Stubs_Core.au3"
 
 Func _Stub_InetGet($sURL, $sFilename, $iOptions = 0, $hDownloadCallback = 0)
-    __StubInitType("InetGet")
-    Local $iIdx = $g_StubCalls["InetGet"].count + 1
-    Local $oCall[]
-    $oCall["sURL"]      = $sURL
-    $oCall["sFilename"] = $sFilename
-    $g_StubCalls["InetGet"][$iIdx] = $oCall
-    $g_StubCalls["InetGet"].count  = $iIdx
-    Local $iReturn = MapExists($g_StubReturns["InetGet"], $iIdx) ? $g_StubReturns["InetGet"][$iIdx] : 1
-    Return $iReturn
+	Return __DefineStub("InetGet", __CallArgs("sURL = " & $sURL, "sFilename = " & $sFilename), 1)
 EndFunc
 
 Func _Stub_InetRead($sURL, $iOptions = 0)
-    __StubInitType("InetRead")
-    Local $iIdx = $g_StubCalls["InetRead"].count + 1
-    Local $oCall[]
-    $oCall["sURL"] = $sURL
-    $g_StubCalls["InetRead"][$iIdx] = $oCall
-    $g_StubCalls["InetRead"].count  = $iIdx
-    Local $vReturn = MapExists($g_StubReturns["InetRead"], $iIdx) ? $g_StubReturns["InetRead"][$iIdx] : ""
-    Return $vReturn
+	Return __DefineStub("InetRead", __CallArgs("sURL = " & $sURL), "")
 EndFunc
 
 Func _Stub_InetClose($hDownload)
-    __StubInitType("InetClose")
-    Local $iIdx = $g_StubCalls["InetClose"].count + 1
-    Local $oCall[]
-    $g_StubCalls["InetClose"][$iIdx] = $oCall
-    $g_StubCalls["InetClose"].count  = $iIdx
+	Return __DefineStub("InetClose", __CallArgs(), True)
 EndFunc
 
 Func _Stub_InetGetSize($sURL, $iOptions = 0)
-    __StubInitType("InetGetSize")
-    Local $iIdx = $g_StubCalls["InetGetSize"].count + 1
-    Local $oCall[]
-    $oCall["sURL"] = $sURL
-    $g_StubCalls["InetGetSize"][$iIdx] = $oCall
-    $g_StubCalls["InetGetSize"].count  = $iIdx
-    Local $iReturn = MapExists($g_StubReturns["InetGetSize"], $iIdx) ? $g_StubReturns["InetGetSize"][$iIdx] : 0
-    Return $iReturn
+	Return __DefineStub("InetGetSize", __CallArgs("sURL = " & $sURL), 1)
 EndFunc
 
 Func _Stub_Ping($sHost, $iTimeout = 4000)
-    __StubInitType("Ping")
-    Local $iIdx = $g_StubCalls["Ping"].count + 1
-    Local $oCall[]
-    $oCall["sHost"] = $sHost
-    $g_StubCalls["Ping"][$iIdx] = $oCall
-    $g_StubCalls["Ping"].count  = $iIdx
-    Local $iReturn = MapExists($g_StubReturns["Ping"], $iIdx) ? $g_StubReturns["Ping"][$iIdx] : 0
-    Return $iReturn
+	Return __DefineStub("Ping", __CallArgs("sHost = " & $sHost), 1)
 EndFunc
 
 $g_hFn_InetGet     = _Stub_InetGet

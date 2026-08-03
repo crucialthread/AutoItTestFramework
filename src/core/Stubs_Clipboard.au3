@@ -11,22 +11,11 @@
 #include "Stubs_Core.au3"
 
 Func _Stub_ClipGet()
-    __StubInitType("ClipGet")
-    Local $iIdx = $g_StubCalls["ClipGet"].count + 1
-    Local $oCall[]
-    $g_StubCalls["ClipGet"][$iIdx] = $oCall
-    $g_StubCalls["ClipGet"].count  = $iIdx
-    Local $sReturn = MapExists($g_StubReturns["ClipGet"], $iIdx) ? $g_StubReturns["ClipGet"][$iIdx] : ""
-    Return $sReturn
+	Return __DefineStub("ClipGet", __CallArgs(), "")
 EndFunc
 
 Func _Stub_ClipPut($sClip)
-    __StubInitType("ClipPut")
-    Local $iIdx = $g_StubCalls["ClipPut"].count + 1
-    Local $oCall[]
-    $oCall["sClip"] = $sClip
-    $g_StubCalls["ClipPut"][$iIdx] = $oCall
-    $g_StubCalls["ClipPut"].count  = $iIdx
+	Return __DefineStub("ClipPut", __CallArgs("sClip = " & $sClip), 1)
 EndFunc
 
 $g_hFn_ClipGet = _Stub_ClipGet

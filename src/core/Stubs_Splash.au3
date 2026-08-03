@@ -11,59 +11,27 @@
 #include "Stubs_Core.au3"
 
 Func _Stub_SplashTextOn($sTitle, $sText, $iWidth = 500, $iHeight = 400, $iXPos = -1, $iYPos = -1, $iOpt = 1, $sFont = "", $iFontSize = 15, $iFontStyle = 0)
-    __StubInitType("SplashTextOn")
-    Local $iIdx = $g_StubCalls["SplashTextOn"].count + 1
-    Local $oCall[]
-    $oCall["sTitle"] = $sTitle
-    $oCall["sText"]  = $sText
-    $g_StubCalls["SplashTextOn"][$iIdx] = $oCall
-    $g_StubCalls["SplashTextOn"].count  = $iIdx
+	Return __DefineStub("SplashTextOn", __CallArgs("sTitle = " & $sTitle, "sText = " & $sText), 1)
 EndFunc
 
 Func _Stub_SplashImageOn($sTitle, $sFile, $iWidth = -1, $iHeight = -1, $iXPos = -1, $iYPos = -1, $iOpt = 1)
-    __StubInitType("SplashImageOn")
-    Local $iIdx = $g_StubCalls["SplashImageOn"].count + 1
-    Local $oCall[]
-    $oCall["sTitle"] = $sTitle
-    $oCall["sFile"]  = $sFile
-    $g_StubCalls["SplashImageOn"][$iIdx] = $oCall
-    $g_StubCalls["SplashImageOn"].count  = $iIdx
+	Return __DefineStub("SplashImageOn", __CallArgs("sTitle = " & $sTitle, "sFile = " & $sFile))
 EndFunc
 
 Func _Stub_SplashOff()
-    __StubInitType("SplashOff")
-    Local $iIdx = $g_StubCalls["SplashOff"].count + 1
-    Local $oCall[]
-    $g_StubCalls["SplashOff"][$iIdx] = $oCall
-    $g_StubCalls["SplashOff"].count  = $iIdx
+	Return __DefineStub("SplashOff", __CallArgs())
 EndFunc
 
 Func _Stub_ProgressOn($sTitle, $sText, $sSubText = "", $iXPos = -1, $iYPos = -1, $iOpt = 1)
-    __StubInitType("ProgressOn")
-    Local $iIdx = $g_StubCalls["ProgressOn"].count + 1
-    Local $oCall[]
-    $oCall["sTitle"] = $sTitle
-    $oCall["sText"]  = $sText
-    $g_StubCalls["ProgressOn"][$iIdx] = $oCall
-    $g_StubCalls["ProgressOn"].count  = $iIdx
+	Return __DefineStub("ProgressOn", __CallArgs("sTitle = " & $sTitle, "sText = " & $sText))
 EndFunc
 
 Func _Stub_ProgressSet($iPercent, $sText = "", $sTitle = "")
-    __StubInitType("ProgressSet")
-    Local $iIdx = $g_StubCalls["ProgressSet"].count + 1
-    Local $oCall[]
-    $oCall["iPercent"] = $iPercent
-    $oCall["sText"]    = $sText
-    $g_StubCalls["ProgressSet"][$iIdx] = $oCall
-    $g_StubCalls["ProgressSet"].count  = $iIdx
+	Return __DefineStub("ProgressSet", __CallArgs("iPercent = " & $iPercent, "sText = " & $sText))
 EndFunc
 
 Func _Stub_ProgressOff()
-    __StubInitType("ProgressOff")
-    Local $iIdx = $g_StubCalls["ProgressOff"].count + 1
-    Local $oCall[]
-    $g_StubCalls["ProgressOff"][$iIdx] = $oCall
-    $g_StubCalls["ProgressOff"].count  = $iIdx
+	Return __DefineStub("ProgressOff", __CallArgs())
 EndFunc
 
 $g_hFn_SplashTextOn  = _Stub_SplashTextOn
