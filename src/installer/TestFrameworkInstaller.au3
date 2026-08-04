@@ -44,6 +44,7 @@
 #include <ProgressConstants.au3>
 #include <FileConstants.au3>
 #include <MsgBoxConstants.au3>
+#include "..\..\lib\TryCatch\TryCatch.au3"
 #include "..\core\Testable.au3"
 
 ; ===============================================================================================================================
@@ -195,6 +196,34 @@ Func __UpdateReadyPage($idLabel)
 EndFunc
 
 ; ===============================================================================================================================
+; Registry writers
+; ===============================================================================================================================
+
+Func __WriteIncludeRegistry()
+    Local $sExisting = _Tstbl_RegRead($REG_AUTOIT_INCLUDE, "Include")
+    If @error Then $sExisting = ""
+    If Not StringInStr($sExisting, $g_sIncludePath) Then
+        Local $sNew = ($sExisting = "") ? $g_sIncludePath : $sExisting & ";" & $g_sIncludePath
+        _Tstbl_RegWrite($REG_AUTOIT_INCLUDE, "Include", "REG_SZ", $sNew)
+    EndIf
+EndFunc
+
+Func __WriteInstallRegistry()
+    _Tstbl_RegWrite($REG_INSTALL_KEY, "Version",     "REG_SZ", $INSTALLER_VERSION)
+    _Tstbl_RegWrite($REG_INSTALL_KEY, "IncludePath", "REG_SZ", $g_sIncludePath)
+    _Tstbl_RegWrite($REG_INSTALL_KEY, "ChmPath",     "REG_SZ", $g_sChmPath)
+EndFunc
+
+Func __WriteUninstallRegistry()
+    Local $sUninstallerPath = $g_sChmPath & "\TestFrameworkUninstaller.exe"
+    _Tstbl_RegWrite($REG_UNINSTALL_KEY, "DisplayName",     "REG_SZ",    "AutoIt Test Framework")
+    _Tstbl_RegWrite($REG_UNINSTALL_KEY, "DisplayVersion",  "REG_SZ",    $INSTALLER_VERSION)
+    _Tstbl_RegWrite($REG_UNINSTALL_KEY, "Publisher",       "REG_SZ",    "crucialthread")
+    _Tstbl_RegWrite($REG_UNINSTALL_KEY, "UninstallString", "REG_SZ",    '"' & $sUninstallerPath & '"')
+    _Tstbl_RegWrite($REG_UNINSTALL_KEY, "NoModify",        "REG_DWORD", 1)
+EndFunc
+
+; ===============================================================================================================================
 ; FileInstall Implementation (required by testable)
 ; ===============================================================================================================================
 ; __FileInstall wraps FileInstall with literal string paths as required by Testable_FileInstall.au3 so Aut2Exe can find
@@ -276,36 +305,6 @@ Func __FileInstall($sSource, $sDest, $iFlag)
     EndSelect
 EndFunc
 
-_Tstbl_Implement_FileInstall(__FileInstall)
-
-; ===============================================================================================================================
-; Registry writers
-; ===============================================================================================================================
-
-Func __WriteIncludeRegistry()
-    Local $sExisting = _Tstbl_RegRead($REG_AUTOIT_INCLUDE, "Include")
-    If @error Then $sExisting = ""
-    If Not StringInStr($sExisting, $g_sIncludePath) Then
-        Local $sNew = ($sExisting = "") ? $g_sIncludePath : $sExisting & ";" & $g_sIncludePath
-        _Tstbl_RegWrite($REG_AUTOIT_INCLUDE, "Include", "REG_SZ", $sNew)
-    EndIf
-EndFunc
-
-Func __WriteInstallRegistry()
-    _Tstbl_RegWrite($REG_INSTALL_KEY, "Version",     "REG_SZ", $INSTALLER_VERSION)
-    _Tstbl_RegWrite($REG_INSTALL_KEY, "IncludePath", "REG_SZ", $g_sIncludePath)
-    _Tstbl_RegWrite($REG_INSTALL_KEY, "ChmPath",     "REG_SZ", $g_sChmPath)
-EndFunc
-
-Func __WriteUninstallRegistry()
-    Local $sUninstallerPath = $g_sChmPath & "\TestFrameworkUninstaller.exe"
-    _Tstbl_RegWrite($REG_UNINSTALL_KEY, "DisplayName",     "REG_SZ",    "AutoIt Test Framework")
-    _Tstbl_RegWrite($REG_UNINSTALL_KEY, "DisplayVersion",  "REG_SZ",    $INSTALLER_VERSION)
-    _Tstbl_RegWrite($REG_UNINSTALL_KEY, "Publisher",       "REG_SZ",    "crucialthread")
-    _Tstbl_RegWrite($REG_UNINSTALL_KEY, "UninstallString", "REG_SZ",    '"' & $sUninstallerPath & '"')
-    _Tstbl_RegWrite($REG_UNINSTALL_KEY, "NoModify",        "REG_DWORD", 1)
-EndFunc
-
 ; ===============================================================================================================================
 ; Installation logic
 ; ===============================================================================================================================
@@ -314,6 +313,7 @@ Func __ProgressStep($idLabel, $idProgress, $iStep, $iSteps, $sStatus)
     _Tstbl_GUICtrlSetData($idProgress, Int(($iStep / $iSteps) * 100))
 EndFunc
 
+#cs
 Func __RunInstall($idStatusLabel, $idProgress)
     Local $iStep  = 0
     Local $iSteps = 9
@@ -384,6 +384,91 @@ Func __RunInstall($idStatusLabel, $idProgress)
     $iStep += 1
 
     _Tstbl_GUICtrlSetData($idProgress, 100)
+EndFunc
+#ce
+
+Func __RunInstall($idStatusLabel, $idProgress)
+
+	_Tstbl_Implement_FileInstall(__FileInstall)
+
+    _Try()
+        Local $iStep  = 0
+        Local $iSteps = 9
+
+        __ProgressStep($idStatusLabel, $idProgress, $iStep, $iSteps, "Creating install folders...")
+        _TryWith(_NoErr() ? _Tstbl_DirCreate($g_sIncludePath) : Null)
+        _TryWith(_NoErr() ? _Tstbl_DirCreate($g_sChmPath) : Null)
+        $iStep += 1
+
+        __ProgressStep($idStatusLabel, $idProgress, $iStep, $iSteps, "Copying TestFramework.au3...")
+        _TryWith(_NoErr() ? _Tstbl_FileInstall("..\core\TestFramework.au3", $g_sIncludePath & "\TestFramework.au3", $FC_OVERWRITE) : Null)
+        $iStep += 1
+
+        __ProgressStep($idStatusLabel, $idProgress, $iStep, $iSteps, "Copying Testable library...")
+        _TryWith(_NoErr() ? _Tstbl_FileInstall("..\core\Testable.au3",             $g_sIncludePath & "\Testable.au3",             $FC_OVERWRITE) : Null)
+        _TryWith(_NoErr() ? _Tstbl_FileInstall("..\core\Testable_Clipboard.au3",   $g_sIncludePath & "\Testable_Clipboard.au3",   $FC_OVERWRITE) : Null)
+        _TryWith(_NoErr() ? _Tstbl_FileInstall("..\core\Testable_Dialogs.au3",     $g_sIncludePath & "\Testable_Dialogs.au3",     $FC_OVERWRITE) : Null)
+        _TryWith(_NoErr() ? _Tstbl_FileInstall("..\core\Testable_FileInstall.au3", $g_sIncludePath & "\Testable_FileInstall.au3", $FC_OVERWRITE) : Null)
+        _TryWith(_NoErr() ? _Tstbl_FileInstall("..\core\Testable_FileSystem.au3",  $g_sIncludePath & "\Testable_FileSystem.au3",  $FC_OVERWRITE) : Null)
+        _TryWith(_NoErr() ? _Tstbl_FileInstall("..\core\Testable_GUI.au3",         $g_sIncludePath & "\Testable_GUI.au3",         $FC_OVERWRITE) : Null)
+        _TryWith(_NoErr() ? _Tstbl_FileInstall("..\core\Testable_Ini.au3",         $g_sIncludePath & "\Testable_Ini.au3",         $FC_OVERWRITE) : Null)
+        _TryWith(_NoErr() ? _Tstbl_FileInstall("..\core\Testable_Input.au3",       $g_sIncludePath & "\Testable_Input.au3",       $FC_OVERWRITE) : Null)
+        _TryWith(_NoErr() ? _Tstbl_FileInstall("..\core\Testable_Network.au3",     $g_sIncludePath & "\Testable_Network.au3",     $FC_OVERWRITE) : Null)
+        _TryWith(_NoErr() ? _Tstbl_FileInstall("..\core\Testable_Process.au3",     $g_sIncludePath & "\Testable_Process.au3",     $FC_OVERWRITE) : Null)
+        _TryWith(_NoErr() ? _Tstbl_FileInstall("..\core\Testable_Registry.au3",    $g_sIncludePath & "\Testable_Registry.au3",    $FC_OVERWRITE) : Null)
+        _TryWith(_NoErr() ? _Tstbl_FileInstall("..\core\Testable_Sound.au3",       $g_sIncludePath & "\Testable_Sound.au3",       $FC_OVERWRITE) : Null)
+        _TryWith(_NoErr() ? _Tstbl_FileInstall("..\core\Testable_Splash.au3",      $g_sIncludePath & "\Testable_Splash.au3",      $FC_OVERWRITE) : Null)
+        _TryWith(_NoErr() ? _Tstbl_FileInstall("..\core\Testable_System.au3",      $g_sIncludePath & "\Testable_System.au3",      $FC_OVERWRITE) : Null)
+        _TryWith(_NoErr() ? _Tstbl_FileInstall("..\core\Testable_Tray.au3",        $g_sIncludePath & "\Testable_Tray.au3",        $FC_OVERWRITE) : Null)
+        _TryWith(_NoErr() ? _Tstbl_FileInstall("..\core\Testable_Window.au3",      $g_sIncludePath & "\Testable_Window.au3",      $FC_OVERWRITE) : Null)
+        $iStep += 1
+
+        __ProgressStep($idStatusLabel, $idProgress, $iStep, $iSteps, "Copying Stubs library...")
+        _TryWith(_NoErr() ? _Tstbl_FileInstall("..\core\Stubs.au3",             $g_sIncludePath & "\Stubs.au3",             $FC_OVERWRITE) : Null)
+        _TryWith(_NoErr() ? _Tstbl_FileInstall("..\core\Stubs_Core.au3",        $g_sIncludePath & "\Stubs_Core.au3",        $FC_OVERWRITE) : Null)
+        _TryWith(_NoErr() ? _Tstbl_FileInstall("..\core\Stubs_Clipboard.au3",   $g_sIncludePath & "\Stubs_Clipboard.au3",   $FC_OVERWRITE) : Null)
+        _TryWith(_NoErr() ? _Tstbl_FileInstall("..\core\Stubs_Dialogs.au3",     $g_sIncludePath & "\Stubs_Dialogs.au3",     $FC_OVERWRITE) : Null)
+        _TryWith(_NoErr() ? _Tstbl_FileInstall("..\core\Stubs_FileInstall.au3", $g_sIncludePath & "\Stubs_FileInstall.au3", $FC_OVERWRITE) : Null)
+        _TryWith(_NoErr() ? _Tstbl_FileInstall("..\core\Stubs_FileSystem.au3",  $g_sIncludePath & "\Stubs_FileSystem.au3",  $FC_OVERWRITE) : Null)
+        _TryWith(_NoErr() ? _Tstbl_FileInstall("..\core\Stubs_GUI.au3",         $g_sIncludePath & "\Stubs_GUI.au3",         $FC_OVERWRITE) : Null)
+        _TryWith(_NoErr() ? _Tstbl_FileInstall("..\core\Stubs_Ini.au3",         $g_sIncludePath & "\Stubs_Ini.au3",         $FC_OVERWRITE) : Null)
+        _TryWith(_NoErr() ? _Tstbl_FileInstall("..\core\Stubs_Input.au3",       $g_sIncludePath & "\Stubs_Input.au3",       $FC_OVERWRITE) : Null)
+        _TryWith(_NoErr() ? _Tstbl_FileInstall("..\core\Stubs_Network.au3",     $g_sIncludePath & "\Stubs_Network.au3",     $FC_OVERWRITE) : Null)
+        _TryWith(_NoErr() ? _Tstbl_FileInstall("..\core\Stubs_Process.au3",     $g_sIncludePath & "\Stubs_Process.au3",     $FC_OVERWRITE) : Null)
+        _TryWith(_NoErr() ? _Tstbl_FileInstall("..\core\Stubs_Registry.au3",    $g_sIncludePath & "\Stubs_Registry.au3",    $FC_OVERWRITE) : Null)
+        _TryWith(_NoErr() ? _Tstbl_FileInstall("..\core\Stubs_Sound.au3",       $g_sIncludePath & "\Stubs_Sound.au3",       $FC_OVERWRITE) : Null)
+        _TryWith(_NoErr() ? _Tstbl_FileInstall("..\core\Stubs_Splash.au3",      $g_sIncludePath & "\Stubs_Splash.au3",      $FC_OVERWRITE) : Null)
+        _TryWith(_NoErr() ? _Tstbl_FileInstall("..\core\Stubs_System.au3",      $g_sIncludePath & "\Stubs_System.au3",      $FC_OVERWRITE) : Null)
+        _TryWith(_NoErr() ? _Tstbl_FileInstall("..\core\Stubs_Tray.au3",        $g_sIncludePath & "\Stubs_Tray.au3",        $FC_OVERWRITE) : Null)
+        _TryWith(_NoErr() ? _Tstbl_FileInstall("..\core\Stubs_Window.au3",      $g_sIncludePath & "\Stubs_Window.au3",      $FC_OVERWRITE) : Null)
+        $iStep += 1
+
+        __ProgressStep($idStatusLabel, $idProgress, $iStep, $iSteps, "Copying TestFramework.chm...")
+        _TryWith(_NoErr() ? _Tstbl_FileInstall("..\..\chm\TestFramework.chm", $g_sChmPath & "\TestFramework.chm", $FC_OVERWRITE) : Null)
+        $iStep += 1
+
+        __ProgressStep($idStatusLabel, $idProgress, $iStep, $iSteps, "Copying TestFrameworkUninstaller.exe...")
+        _TryWith(_NoErr() ? _Tstbl_FileInstall("..\..\.out\TestFrameworkUninstaller.exe", $g_sChmPath & "\TestFrameworkUninstaller.exe", $FC_OVERWRITE) : Null)
+        $iStep += 1
+
+        __ProgressStep($idStatusLabel, $idProgress, $iStep, $iSteps, "Writing AutoIt include registry entry...")
+        _TryWith(_NoErr() ? __WriteIncludeRegistry() : Null)
+        $iStep += 1
+
+        __ProgressStep($idStatusLabel, $idProgress, $iStep, $iSteps, "Finalizing installation...")
+        _TryWith(_NoErr() ? __WriteInstallRegistry() : Null)
+        _TryWith(_NoErr() ? __WriteUninstallRegistry() : Null)
+        $iStep += 1
+
+        _Tstbl_GUICtrlSetData($idProgress, 100)
+
+		Local $e
+		If _Catch($e) Then
+			_EndTry()
+			Return False
+		EndIf
+    _EndTry()
+    Return True
 EndFunc
 
 ; ===============================================================================================================================
@@ -527,7 +612,11 @@ Func __RunWizard()
                     Case 3
                         $iPage = 4
                         __ShowPage($iPage, $aPage1, $aPage2, $aPage3, $aPage4, $idHeaderSub, $idBtnNext, $idBtnBack, $idBtnCancel)
-                        __RunInstall($aPage4[0], $aPage4[1])
+                        If Not __RunInstall($aPage4[0], $aPage4[1]) Then
+                            _Tstbl_MsgBox($MB_OK + $MB_ICONERROR, $INSTALLER_TITLE, "Installation failed. Please try again.")
+                            _Tstbl_GUIDelete($hWin)
+                            ExitLoop
+                        EndIf
                         _Tstbl_GUICtrlSetData($aPage4[0], "")
                         _Tstbl_GUICtrlSetData($aPage4[2], _
                             "AutoIt Test Framework has been successfully installed." & @CRLF & @CRLF & _

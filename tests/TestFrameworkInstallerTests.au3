@@ -271,6 +271,16 @@ Func _TestRunInstall_InstallsAllFiles()
     _TestFmkAssert($g_StubCalls["FileInstall"][36].sDest = "C:\AutoIt3\TestFramework\TestFrameworkUninstaller.exe", "Installs TestFrameworkUninstaller.exe dest", $g_StubCalls["FileInstall"][36].sDest, "C:\AutoIt3\TestFramework\TestFrameworkUninstaller.exe")
 EndFunc
 
+Func _TestRunInstall_ReturnsFalseOnError()
+    _TestFmkHeader("Test: __RunInstall() - returns False when an operation fails")
+    _ResetStubs()
+    $g_sIncludePath = "C:\AutoIt3\Include\Vendor"
+    $g_sChmPath     = "C:\AutoIt3\TestFramework"
+    _SetStubReturn("DirCreate", 1, $STUB_ERROR)
+    Local $bResult = __RunInstall(1, 2)
+    _TestFmkAssert($bResult = False, "Returns False on install error", $bResult, False)
+EndFunc
+
 Func _TestRunInstall_WritesAllRegistryEntries()
     _TestFmkHeader("Test: __RunInstall() - writes all registry entries")
     _ResetStubs()
@@ -463,6 +473,22 @@ Func _TestWizard_CancelOnPage4DoesNothing()
     _TestFmkAssert(Not MapExists($g_StubCalls, "MsgBox"), "No MsgBox shown on page 4/5 cancel", MapExists($g_StubCalls, "MsgBox"), False)
 EndFunc
 
+Func _TestWizard_InstallFailureShowsErrorMessage()
+    _TestFmkHeader("Test: __RunWizard() - shows error message when install fails")
+    _ResetStubs()
+    $g_bIsUpgrade = False
+    __SetupWizardControlIDs()
+	_SetStubReturn("MsgBox", 1, $IDOK)
+    _SetStubReturn("GUICtrlRead", 1, "C:\AutoIt3\Include\Vendor")
+    _SetStubReturn("DirCreate",   1, $STUB_ERROR)
+    _SetStubReturn("GUIGetMsg",   1, $ID_BTN_NEXT)  ; page 1 -> 2
+    _SetStubReturn("GUIGetMsg",   2, $ID_BTN_NEXT)  ; page 2 -> 3
+    _SetStubReturn("GUIGetMsg",   3, $ID_BTN_NEXT)  ; page 3 -> install (fails)
+    __RunWizard()
+    _TestFmkAssert($g_StubCalls["MsgBox"].count = 1, "Error MsgBox shown", $g_StubCalls["MsgBox"].count, 1)
+    _TestFmkAssert($g_StubCalls["GUIDelete"].count = 1, "GUIDelete called after failure", $g_StubCalls["GUIDelete"].count, 1)
+EndFunc
+
 ; ===============================================================================================================================
 ; Run all tests
 ; ===============================================================================================================================
@@ -484,6 +510,7 @@ Func _RunAllTests()
     $bAllPassed = _TestFmkRun(_TestWriteUninstallRegistry_WritesAllKeys,           $bAllPassed)
     $bAllPassed = _TestFmkRun(_TestRunInstall_CreatesFolders,                      $bAllPassed)
     $bAllPassed = _TestFmkRun(_TestRunInstall_InstallsAllFiles,                    $bAllPassed)
+	$bAllPassed = _TestFmkRun(_TestRunInstall_ReturnsFalseOnError,                 $bAllPassed)
     $bAllPassed = _TestFmkRun(_TestRunInstall_WritesAllRegistryEntries,            $bAllPassed)
     $bAllPassed = _TestFmkRun(_TestWizard_NextFromPage1GoesToPage2,               $bAllPassed)
     $bAllPassed = _TestFmkRun(_TestWizard_NextFromPage2GoesToPage3,               $bAllPassed)
@@ -494,6 +521,7 @@ Func _RunAllTests()
     $bAllPassed = _TestFmkRun(_TestWizard_CancelConfirmed_ClosesWizard,           $bAllPassed)
     $bAllPassed = _TestFmkRun(_TestWizard_CancelDeclined_KeepsWizardOpen,         $bAllPassed)
     $bAllPassed = _TestFmkRun(_TestWizard_CancelOnPage4DoesNothing,               $bAllPassed)
+	$bAllPassed = _TestFmkRun(_TestWizard_InstallFailureShowsErrorMessage,        $bAllPassed)
     _TestFmkSummary()
     Return $bAllPassed
 EndFunc
