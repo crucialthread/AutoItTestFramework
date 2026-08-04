@@ -11,95 +11,118 @@
 #include "Stubs_Core.au3"
 
 Func _Stub_FileExists($sPath)
-	Return __DefineStub("FileExists", __CallArgs("sPath = " & $sPath), 1)
+    Local $vReturn = __DefineStub("FileExists", __CallArgs("sPath = " & $sPath), 1)
+    Return SetError(@error, 0, $vReturn)
 EndFunc
 
 Func _Stub_FileDelete($sPath)
-	Return __DefineStub("FileDelete", __CallArgs("sPath = " & $sPath), 1)
+	Local $vReturn = __DefineStub("FileDelete", __CallArgs("sPath = " & $sPath), 1)
+	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 Func _Stub_FileCopy($sSource, $sDest, $iFlag = 0)
-	Return __DefineStub("FileCopy", __CallArgs("sSource = " & $sSource, "sDest = " & $sDest), 1)
+	Local $vReturn = __DefineStub("FileCopy", __CallArgs("sSource = " & $sSource, "sDest = " & $sDest), 1)
+	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 Func _Stub_FileMove($sSource, $sDest, $iFlag = 0)
-	Return __DefineStub("FileMove", __CallArgs("sSource = " & $sSource, "sDest = " & $sDest), 1)
+	Local $vReturn = __DefineStub("FileMove", __CallArgs("sSource = " & $sSource, "sDest = " & $sDest), 1)
+	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 Func _Stub_FileGetAttrib($sPath)
-	Return __DefineStub("FileGetAttrib", __CallArgs("sPath = " & $sPath), "")
+	Local $vReturn = __DefineStub("FileGetAttrib", __CallArgs("sPath = " & $sPath), "")
+	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 Func _Stub_FileGetSize($sPath)
-	Return __DefineStub("FileGetSize", __CallArgs("sPath = " & $sPath), 0)
+	Local $vReturn = __DefineStub("FileGetSize", __CallArgs("sPath = " & $sPath), 0)
+	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 Func _Stub_FileGetTime($sPath, $iType = 0, $iFormat = 0)
-	Return __DefineStub("FileGetTime", __CallArgs("sPath = " & $sPath, "iType = " & $iType, "iFormat = " & $iFormat), "")
+	Local $vReturn = __DefineStub("FileGetTime", __CallArgs("sPath = " & $sPath, "iType = " & $iType, "iFormat = " & $iFormat), "")
+	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 Func _Stub_FileGetVersion($sPath, $sVersion = "FileVersion")
-	Return __DefineStub("FileGetVersion", __CallArgs("sPath = " & $sPath), "")
+	Local $vReturn = __DefineStub("FileGetVersion", __CallArgs("sPath = " & $sPath), "")
+	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 Func _Stub_FileRead($hFile, $iCount = -1)
-	Return __DefineStub("FileRead", __CallArgs("hFile = " & $hFile), "")
+	Local $vReturn = __DefineStub("FileRead", __CallArgs("hFile = " & $hFile), "")
+	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 Func _Stub_FileWrite($hFile, $sText)
-	Return __DefineStub("FileWrite", __CallArgs("hFile = " & $hFile, "sText = " & $sText), 1)
+	Local $vReturn = __DefineStub("FileWrite", __CallArgs("hFile = " & $hFile, "sText = " & $sText), 1)
+	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 Func _Stub_FileOpen($sFilename, $iMode = 0)
-	Return __DefineStub("FileOpen", __CallArgs("sFilename = " & $sFilename, "iMode = " & $iMode), 1)
+	Local $vReturn = __DefineStub("FileOpen", __CallArgs("sFilename = " & $sFilename, "iMode = " & $iMode), 1)
+	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 Func _Stub_FileClose($hFile)
-	Return __DefineStub("FileClose", __CallArgs("hFile = " & $hFile), 1)
+	Local $vReturn = __DefineStub("FileClose", __CallArgs("hFile = " & $hFile), 1)
+	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 Func _Stub_FileReadLine($hFile, $iLine = -1)
-	Return __DefineStub("FileReadLine", __CallArgs("hFile = " & $hFile), "")
+	Local $vReturn = __DefineStub("FileReadLine", __CallArgs("hFile = " & $hFile), "")
+	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 Func _Stub_FileWriteLine($hFile, $sLine)
-	Return __DefineStub("FileWriteLine", __CallArgs("hFile = " & $hFile, "sLine = " & $sLine), 1)
+	Local $vReturn = __DefineStub("FileWriteLine", __CallArgs("hFile = " & $hFile, "sLine = " & $sLine), 1)
+	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 Func _Stub_FileReadToArray($sFilePath, ByRef $aArray, $iFlags = 0)
-	Return __DefineStub("FileReadToArray", __CallArgs("sFilePath = " & $sFilePath), "")
+	Local $vReturn = __DefineStub("FileReadToArray", __CallArgs("sFilePath = " & $sFilePath), "")
+	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 Func _Stub_FileCreateShortcut($sFile, $sLnk, $sWorkDir = "", $sArgs = "", $sDesc = "", $sHotkey = "", $iIconIndex = 0, $iState = @SW_SHOWNORMAL)
-	Return __DefineStub("FileCreateShortcut", __CallArgs("sFile = " & $sFile, "sLnk = " & $sLnk), 1)
+	Local $vReturn = __DefineStub("FileCreateShortcut", __CallArgs("sFile = " & $sFile, "sLnk = " & $sLnk), 1)
+	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 Func _Stub_FileSetAttrib($sPath, $sAttrib, $iRecurse = 0)
-	Return __DefineStub("FileSetAttrib", __CallArgs("sPath = " & $sPath, "sAttrib = " & $sAttrib), 1)
+	Local $vReturn = __DefineStub("FileSetAttrib", __CallArgs("sPath = " & $sPath, "sAttrib = " & $sAttrib), 1)
+	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 Func _Stub_FileSetTime($sPath, $sTime = "", $iType = -1, $iRecurse = 0)
-	Return __DefineStub("FileSetTime", __CallArgs("sPath = " & $sPath, "sTime = " & $sTime), 1)
+	Local $vReturn = __DefineStub("FileSetTime", __CallArgs("sPath = " & $sPath, "sTime = " & $sTime), 1)
+	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 Func _Stub_DirCreate($sPath)
-	Return __DefineStub("DirCreate", __CallArgs("sPath = " & $sPath), 1)
+    Local $vReturn = __DefineStub("DirCreate", __CallArgs("sPath = " & $sPath), 1)
+    Return SetError(@error, 0, $vReturn)
 EndFunc
 
 Func _Stub_DirRemove($sPath, $iRecurse = 0)
-	Return __DefineStub("DirRemove", __CallArgs("sPath = " & $sPath), 1)
+	Local $vReturn = __DefineStub("DirRemove", __CallArgs("sPath = " & $sPath), 1)
+	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 Func _Stub_DirCopy($sSource, $sDest, $iFlag = 0)
-	Return __DefineStub("DirCopy", __CallArgs("sSource = " & $sSource, "sDest = " & $sDest), 1)
+	Local $vReturn = __DefineStub("DirCopy", __CallArgs("sSource = " & $sSource, "sDest = " & $sDest), 1)
+	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 Func _Stub_DirMove($sSource, $sDest, $iFlag = 0)
-	Return __DefineStub("DirMove", __CallArgs("sSource = " & $sSource, "sDest = " & $sDest), 1)
+	Local $vReturn = __DefineStub("DirMove", __CallArgs("sSource = " & $sSource, "sDest = " & $sDest), 1)
+	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 Func _Stub_DirGetSize($sPath, $iFlag = 0)
-	Return __DefineStub("DirGetSize", __CallArgs("sPath = " & $sPath), 0)
+	Local $vReturn = __DefineStub("DirGetSize", __CallArgs("sPath = " & $sPath), 0)
+	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 $g_hFn_FileExists        = _Stub_FileExists

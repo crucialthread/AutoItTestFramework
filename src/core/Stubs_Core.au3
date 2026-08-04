@@ -15,6 +15,8 @@
 ; Global stub stores
 ; ===============================================================================================================================
 
+Global Const $STUB_ERROR = "__ERROR__"
+
 Global $g_StubCalls[]    ; $g_StubCalls["TypeName"][index]["property"]
 Global $g_StubReturns[]  ; $g_StubReturns["TypeName"][index] = return value
 
@@ -102,7 +104,9 @@ EndFunc
 ; Define stub - records a call to the given built-in and returns the configured return value.
 ;               Initializes the type store, appends the recorded parameters at the next
 ;               1-based index, and returns the value set via _SetStubReturn() for this call
-;               index, or $vDefaultReturn if none was configured
+;               index, or $vDefaultReturn if none was configured.
+;               If the configured return value is $STUB_ERROR, sets @error = 1 and returns
+;               an empty string, simulating a failed built-in call.
 ; ===============================================================================================================================
 Func __DefineStub($sBuiltInFunc, $aArgs, $vDefaultReturn = Null)
 	__StubInitType($sBuiltInFunc)
@@ -110,6 +114,7 @@ Func __DefineStub($sBuiltInFunc, $aArgs, $vDefaultReturn = Null)
 	$g_StubCalls[$sBuiltInFunc][$iIdx] = __StubObject($aArgs)
 	$g_StubCalls[$sBuiltInFunc].count  = $iIdx
 	Local $vReturn = MapExists($g_StubReturns[$sBuiltInFunc], $iIdx) ? $g_StubReturns[$sBuiltInFunc][$iIdx] : $vDefaultReturn
+	If $vReturn == $STUB_ERROR Then Return SetError(1, 0, "")
 	Return $vReturn
 EndFunc
 

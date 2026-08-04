@@ -11,23 +11,28 @@
 #include "Stubs_Core.au3"
 
 Func _Stub_InetGet($sURL, $sFilename, $iOptions = 0, $hDownloadCallback = 0)
-	Return __DefineStub("InetGet", __CallArgs("sURL = " & $sURL, "sFilename = " & $sFilename), 1)
+	Local $vReturn = __DefineStub("InetGet", __CallArgs("sURL = " & $sURL, "sFilename = " & $sFilename), 1)
+	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 Func _Stub_InetRead($sURL, $iOptions = 0)
-	Return __DefineStub("InetRead", __CallArgs("sURL = " & $sURL), "")
+	Local $vReturn = __DefineStub("InetRead", __CallArgs("sURL = " & $sURL), "")
+	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 Func _Stub_InetClose($hDownload)
-	Return __DefineStub("InetClose", __CallArgs(), True)
+	Local $vReturn = __DefineStub("InetClose", __CallArgs(), True)
+	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 Func _Stub_InetGetSize($sURL, $iOptions = 0)
-	Return __DefineStub("InetGetSize", __CallArgs("sURL = " & $sURL), 1)
+	Local $vReturn = __DefineStub("InetGetSize", __CallArgs("sURL = " & $sURL), 1)
+	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 Func _Stub_Ping($sHost, $iTimeout = 4000)
-	Return __DefineStub("Ping", __CallArgs("sHost = " & $sHost), 1)
+	Local $vReturn = __DefineStub("Ping", __CallArgs("sHost = " & $sHost), 1)
+	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 $g_hFn_InetGet     = _Stub_InetGet

@@ -11,35 +11,43 @@
 #include "Stubs_Core.au3"
 
 Func _Stub_TrayTip($sTitle, $sText, $iTimeout, $iOption = 0)
-	Return __DefineStub("TrayTip", __CallArgs("sTitle = " & $sTitle, "sText = " & $sText))
+	Local $vReturn = __DefineStub("TrayTip", __CallArgs("sTitle = " & $sTitle, "sText = " & $sText))
+	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 Func _Stub_TrayGetMsg()
-	Return __DefineStub("TrayGetMsg", __CallArgs(), 0)
+	Local $vReturn = __DefineStub("TrayGetMsg", __CallArgs(), 0)
+	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 Func _Stub_TrayCreateItem($sText, $hMenu = -1, $iMenuItemID = -1, $iStyle = -1)
-	Return __DefineStub("TrayCreateItem", __CallArgs("sText = " & $sText), 1)
+	Local $vReturn = __DefineStub("TrayCreateItem", __CallArgs("sText = " & $sText), 1)
+	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 Func _Stub_TrayCreateMenu($sText, $hMenu = -1, $iMenuItemID = -1)
-	Return __DefineStub("TrayCreateMenu", __CallArgs("sText = " & $sText), 1)
+	Local $vReturn = __DefineStub("TrayCreateMenu", __CallArgs("sText = " & $sText), 1)
+	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 Func _Stub_TrayItemSetState($hItem, $iState)
-	Return __DefineStub("TrayItemSetState", __CallArgs("hItem = " & $hItem, "iState = " & $iState), 1)
+	Local $vReturn = __DefineStub("TrayItemSetState", __CallArgs("hItem = " & $hItem, "iState = " & $iState), 1)
+	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 Func _Stub_TrayItemSetText($hItem, $sText)
-	Return __DefineStub("TrayItemSetText", __CallArgs("hItem = " & $hItem, "sText = " & $sText), 1)
+	Local $vReturn = __DefineStub("TrayItemSetText", __CallArgs("hItem = " & $hItem, "sText = " & $sText), 1)
+	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 Func _Stub_TrayItemGetState($hItem)
-	Return __DefineStub("TrayItemGetState", __CallArgs("hItem = " & $hItem), 0)
+	Local $vReturn = __DefineStub("TrayItemGetState", __CallArgs("hItem = " & $hItem), 0)
+	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 Func _Stub_TrayItemGetText($hItem)
-	Return __DefineStub("TrayItemGetText", __CallArgs("hItem = " & $hItem), "")
+	Local $vReturn = __DefineStub("TrayItemGetText", __CallArgs("hItem = " & $hItem), "")
+	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 $g_hFn_TrayTip          = _Stub_TrayTip

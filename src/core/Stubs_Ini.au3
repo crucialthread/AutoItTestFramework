@@ -11,31 +11,38 @@
 #include "Stubs_Core.au3"
 
 Func _Stub_IniRead($sFilename, $sSection, $sKey, $sDefault)
-	Return __DefineStub("IniRead", __CallArgs("sFilename = " & $sFilename, "sSection = " & $sSection, "sKey = " & $sKey), $sDefault)
+	Local $vReturn = __DefineStub("IniRead", __CallArgs("sFilename = " & $sFilename, "sSection = " & $sSection, "sKey = " & $sKey), $sDefault)
+	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 Func _Stub_IniWrite($sFilename, $sSection, $sKey, $sValue)
-	Return __DefineStub("IniWrite", __CallArgs("sFilename = " & $sFilename, "sSection = " & $sSection, "sKey = " & $sKey, "sValue = " & $sValue), 1)
+	Local $vReturn = __DefineStub("IniWrite", __CallArgs("sFilename = " & $sFilename, "sSection = " & $sSection, "sKey = " & $sKey, "sValue = " & $sValue), 1)
+	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 Func _Stub_IniDelete($sFilename, $sSection, $sKey = "")
-	Return __DefineStub("IniDelete", __CallArgs("sFilename = " & $sFilename, "sSection = " & $sSection, "sKey = " & $sKey), 1)
+	Local $vReturn = __DefineStub("IniDelete", __CallArgs("sFilename = " & $sFilename, "sSection = " & $sSection, "sKey = " & $sKey), 1)
+	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 Func _Stub_IniReadSection($sFilename, $sSection)
-	Return __DefineStub("IniReadSection", __CallArgs("sFilename = " & $sFilename, "sSection = " & $sSection), "")
+	Local $vReturn = __DefineStub("IniReadSection", __CallArgs("sFilename = " & $sFilename, "sSection = " & $sSection), "")
+	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 Func _Stub_IniReadSectionNames($sFilename)
-	Return __DefineStub("IniReadSectionNames", __CallArgs("sFilename = " & $sFilename), "")
+	Local $vReturn = __DefineStub("IniReadSectionNames", __CallArgs("sFilename = " & $sFilename), "")
+	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 Func _Stub_IniWriteSection($sFilename, $sSection, $vData, $iIndex = 0)
-	Return __DefineStub("IniWriteSection", __CallArgs("sFilename = " & $sFilename, "sSection = " & $sSection), 1)
+	Local $vReturn = __DefineStub("IniWriteSection", __CallArgs("sFilename = " & $sFilename, "sSection = " & $sSection), 1)
+	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 Func _Stub_IniRenameSection($sFilename, $sSection, $sNewSection, $bOverwrite = False)
-	Return __DefineStub("IniRenameSection", __CallArgs("sFilename = " & $sFilename, "sSection = " & $sSection, "sNewSection = " & $sNewSection), 1)
+	Local $vReturn = __DefineStub("IniRenameSection", __CallArgs("sFilename = " & $sFilename, "sSection = " & $sSection, "sNewSection = " & $sNewSection), 1)
+	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 $g_hFn_IniRead             = _Stub_IniRead

@@ -11,7 +11,8 @@
 #include "Stubs_Core.au3"
 
 Func _Stub_SoundPlay($sFilename, $bWait = False)
-	Return __DefineStub("SoundPlay", __CallArgs("sFilename = " & $sFilename, "bWait = " & $bWait), 1)
+	Local $vReturn = __DefineStub("SoundPlay", __CallArgs("sFilename = " & $sFilename, "bWait = " & $bWait), 1)
+	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 $g_hFn_SoundPlay = _Stub_SoundPlay

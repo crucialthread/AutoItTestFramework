@@ -12,23 +12,28 @@
 #include <MsgBoxConstants.au3>
 
 Func _Stub_MsgBox($iFlag, $sTitle, $sText, $iTimeout = 0, $hWnd = 0)
-	Return __DefineStub("MsgBox", __CallArgs("iFlag = " & $iFlag, "sTitle = " & $sTitle, "sText = " & $sText), $IDOK)
+	Local $vReturn = __DefineStub("MsgBox", __CallArgs("iFlag = " & $iFlag, "sTitle = " & $sTitle, "sText = " & $sText), $IDOK)
+	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 Func _Stub_InputBox($sTitle, $sPrompt, $sDefault = "", $sPassword = "", $iWidth = 0, $iHeight = 0, $iLeft = -1, $iTop = -1, $iTimeout = 0, $hWnd = 0)
-	Return __DefineStub("InputBox", __CallArgs("sTitle = " & $sTitle, "sPrompt = " & $sPrompt), "")
+	Local $vReturn = __DefineStub("InputBox", __CallArgs("sTitle = " & $sTitle, "sPrompt = " & $sPrompt), "")
+	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 Func _Stub_FileOpenDialog($sTitle, $sInitDir, $sFilter, $iOptions = 0, $sDefaultName = "", $hWnd = 0)
-	Return __DefineStub("FileOpenDialog", __CallArgs("sTitle = " & $sTitle), "")
+	Local $vReturn = __DefineStub("FileOpenDialog", __CallArgs("sTitle = " & $sTitle), "")
+	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 Func _Stub_FileSaveDialog($sTitle, $sInitDir, $sFilter, $iOptions = 0, $sDefaultName = "", $hWnd = 0)
-	Return __DefineStub("FileSaveDialog", __CallArgs("sTitle = " & $sTitle), "")
+	Local $vReturn = __DefineStub("FileSaveDialog", __CallArgs("sTitle = " & $sTitle), "")
+	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 Func _Stub_FileSelectFolder($sMsg, $sRootDir = "", $iFlag = 0, $sInitDir = "")
-	Return __DefineStub("FileSelectFolder", __CallArgs("sMsg = " & $sMsg), "")
+	Local $vReturn = __DefineStub("FileSelectFolder", __CallArgs("sMsg = " & $sMsg), "")
+	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 $g_hFn_MsgBox           = _Stub_MsgBox

@@ -12,27 +12,27 @@
 
 Func _Stub_RegRead($sKeyname, $sValuename)
 	Local $vReturn = __DefineStub("RegRead", __CallArgs("sKeyname = " & $sKeyname, "sValuename = " & $sValuename), "")
-	If $vReturn = "__ERROR__" Then
-		SetError(1)
-		Return ""
-	EndIf
-	Return $vReturn
+	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 Func _Stub_RegWrite($sKeyname, $sValuename = "", $sType = "REG_SZ", $vValue = "")
-	Return __DefineStub("RegWrite", __CallArgs("sKeyname = " & $sKeyname, "sValuename = " & $sValuename, "sType = " & $sType, "vValue = " & $vValue), 1)
+	Local $vReturn = __DefineStub("RegWrite", __CallArgs("sKeyname = " & $sKeyname, "sValuename = " & $sValuename, "sType = " & $sType, "vValue = " & $vValue), 1)
+	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 Func _Stub_RegDelete($sKeyname, $sValuename = "")
-	Return __DefineStub("RegDelete", __CallArgs("sKeyname = " & $sKeyname, "sValuename = " & $sValuename), 1)
+	Local $vReturn = __DefineStub("RegDelete", __CallArgs("sKeyname = " & $sKeyname, "sValuename = " & $sValuename), 1)
+	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 Func _Stub_RegEnumKey($sKeyname, $iInstance)
-	Return __DefineStub("RegEnumKey", __CallArgs("sKeyname = " & $sKeyname, "iInstance = " & $iInstance), "")
+	Local $vReturn = __DefineStub("RegEnumKey", __CallArgs("sKeyname = " & $sKeyname, "iInstance = " & $iInstance), "")
+	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 Func _Stub_RegEnumVal($sKeyname, $iInstance)
-	Return __DefineStub("RegEnumVal", __CallArgs("sKeyname = " & $sKeyname, "iInstance = " & $iInstance), "")
+	Local $vReturn = __DefineStub("RegEnumVal", __CallArgs("sKeyname = " & $sKeyname, "iInstance = " & $iInstance), "")
+	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 $g_hFn_RegRead    = _Stub_RegRead

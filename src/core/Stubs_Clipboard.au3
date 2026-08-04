@@ -11,11 +11,13 @@
 #include "Stubs_Core.au3"
 
 Func _Stub_ClipGet()
-	Return __DefineStub("ClipGet", __CallArgs(), "")
+	Local $vReturn = __DefineStub("ClipGet", __CallArgs(), "")
+	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 Func _Stub_ClipPut($sClip)
-	Return __DefineStub("ClipPut", __CallArgs("sClip = " & $sClip), 1)
+	Local $vReturn = __DefineStub("ClipPut", __CallArgs("sClip = " & $sClip), 1)
+	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 $g_hFn_ClipGet = _Stub_ClipGet
