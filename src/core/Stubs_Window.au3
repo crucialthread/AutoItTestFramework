@@ -76,8 +76,8 @@ Func _Stub_WinSetTitle($sTitle, $sText, $sNewTitle)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func _Stub_WinMove($sTitle, $sText, $iX, $iY, $iWidth = -1, $iHeight = -1)
-	Local $vReturn = __DefineStub("WinMove", __CallArgs("sTitle = " & $sTitle, "sText = " & $sText, "iX = " & $iX, "iY = " & $iY), 1)
+Func _Stub_WinMove($sTitle, $sText, $iX, $iY, $iWidth = -1, $iHeight = -1, $iSpeed = 1)
+	Local $vReturn = __DefineStub("WinMove", __CallArgs("sTitle = " & $sTitle, "sText = " & $sText, "iX = " & $iX, "iY = " & $iY, "iSpeed = " & $iSpeed), 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 

@@ -77,7 +77,7 @@ Func _Stub_DriveGetLabel($sDrive)
 EndFunc
 
 
-Func _Stub_DriveGetType($sDrive)
+Func _Stub_DriveGetType($sDrive, $iOperation = 1)
 	Local $vReturn = __DefineStub("DriveGetType", __CallArgs("sDrive = " & $sDrive), "Fixed")
 	Return SetError(@error, 0, $vReturn)
 EndFunc

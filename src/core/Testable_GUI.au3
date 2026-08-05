@@ -55,28 +55,28 @@ Global $g_hFn_GUICtrlSetPos     = GUICtrlSetPos
 Global $g_hFn_GUICtrlSetTip     = GUICtrlSetTip
 
 ; GUI creation and lifecycle wrappers
-Func _Tstbl_GUICreate($sTitle, $iWidth = -1, $iHeight = -1, $iLeft = -1, $iTop = -1, $iStyle = -1, $iExStyle = -1, $hWndParent = 0)
+Func _Tstbl_GUICreate($sTitle, $iWidth = -1, $iHeight = -1, $iLeft = -1, $iTop = -1, $iStyle = -1, $iExStyle = -1, $hWndParent = Default)
     Local $vResult = $g_hFn_GUICreate($sTitle, $iWidth, $iHeight, $iLeft, $iTop, $iStyle, $iExStyle, $hWndParent)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_GUIDelete($hWnd = 0)
+Func _Tstbl_GUIDelete($hWnd = Default)
     Local $vResult = $g_hFn_GUIDelete($hWnd)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_GUISetState($iState = @SW_SHOW, $hWnd = 0)
+Func _Tstbl_GUISetState($iState = @SW_SHOW, $hWnd = Default)
     Local $vResult = $g_hFn_GUISetState($iState, $hWnd)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_GUISetBkColor($iColor, $hWnd = 0)
+Func _Tstbl_GUISetBkColor($iColor, $hWnd = Default)
     Local $vResult = $g_hFn_GUISetBkColor($iColor, $hWnd)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_GUISetFont($iSize, $iWeight = 400, $iAttrib = 0, $sName = "", $hWnd = 0)
-    Local $vResult = $g_hFn_GUISetFont($iSize, $iWeight, $iAttrib, $sName, $hWnd)
+Func _Tstbl_GUISetFont($iSize, $iWeight = 400, $iAttrib = 0, $sName = "", $hWnd = Default, $iQuality = 0)
+    Local $vResult = $g_hFn_GUISetFont($iSize, $iWeight, $iAttrib, $sName, $hWnd, $iQuality)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
@@ -85,7 +85,7 @@ Func _Tstbl_GUIGetMsg($iAdvanced = 0)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_GUISwitch($hWnd, $hWndTopMost = 0)
+Func _Tstbl_GUISwitch($hWnd, $hWndTopMost = Default)
     Local $vResult = $g_hFn_GUISwitch($hWnd, $hWndTopMost)
     Return SetError(@error, @extended, $vResult)
 EndFunc
@@ -141,8 +141,8 @@ Func _Tstbl_GUICtrlCreateListViewItem($sText, $hWnd)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_GUICtrlCreateTreeView($sText, $iLeft, $iTop, $iWidth = -1, $iHeight = -1, $iStyle = -1, $iExStyle = -1)
-    Local $vResult = $g_hFn_GUICtrlCreateTreeView($sText, $iLeft, $iTop, $iWidth, $iHeight, $iStyle, $iExStyle)
+Func _Tstbl_GUICtrlCreateTreeView($iLeft, $iTop, $iWidth = -1, $iHeight = -1, $iStyle = -1, $iExStyle = -1)
+    Local $vResult = $g_hFn_GUICtrlCreateTreeView($iLeft, $iTop, $iWidth, $iHeight, $iStyle, $iExStyle)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
@@ -166,13 +166,13 @@ Func _Tstbl_GUICtrlCreateTabItem($sText)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_GUICtrlCreateDate($sText, $iLeft, $iTop, $iWidth = -1, $iHeight = -1, $iStyle = -1)
-    Local $vResult = $g_hFn_GUICtrlCreateDate($sText, $iLeft, $iTop, $iWidth, $iHeight, $iStyle)
+Func _Tstbl_GUICtrlCreateDate($sText, $iLeft, $iTop, $iWidth = -1, $iHeight = -1, $iStyle = -1, $iExStyle = -1)
+    Local $vResult = $g_hFn_GUICtrlCreateDate($sText, $iLeft, $iTop, $iWidth, $iHeight, $iStyle, $iExStyle)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_GUICtrlCreateUpdown($iLeft, $iTop, $iWidth = -1, $iHeight = -1, $iStyle = -1, $iExStyle = -1)
-    Local $vResult = $g_hFn_GUICtrlCreateUpdown($iLeft, $iTop, $iWidth, $iHeight, $iStyle, $iExStyle)
+Func _Tstbl_GUICtrlCreateUpdown($iInputcontrolID, $iStyle = -1)
+    Local $vResult = $g_hFn_GUICtrlCreateUpdown($iInputcontrolID, $iStyle)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 

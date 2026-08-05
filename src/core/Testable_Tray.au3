@@ -28,13 +28,13 @@ Func _Tstbl_TrayGetMsg()
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_TrayCreateItem($sText, $hMenu = -1, $iMenuItemID = -1, $iStyle = -1)
-    Local $vResult = $g_hFn_TrayCreateItem($sText, $hMenu, $iMenuItemID, $iStyle)
+Func _Tstbl_TrayCreateItem($sText, $hMenu = -1, $iMenuItemID = -1, $iMenuRadioItem = 0)
+    Local $vResult = $g_hFn_TrayCreateItem($sText, $hMenu, $iMenuItemID, $iMenuRadioItem)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_TrayCreateMenu($sText, $hMenu = -1, $iMenuItemID = -1)
-    Local $vResult = $g_hFn_TrayCreateMenu($sText, $hMenu, $iMenuItemID)
+Func _Tstbl_TrayCreateMenu($sMenuText, $hMenuId = -1, $iMenuEntry = -1)
+    Local $vResult = $g_hFn_TrayCreateMenu($sMenuText, $hMenuId, $iMenuEntry)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 

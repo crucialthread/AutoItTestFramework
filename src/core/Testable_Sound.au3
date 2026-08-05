@@ -11,7 +11,7 @@
 
 Global $g_hFn_SoundPlay = SoundPlay
 
-Func _Tstbl_SoundPlay($sFilename, $bWait = False)
-    Local $vResult = $g_hFn_SoundPlay($sFilename, $bWait)
+Func _Tstbl_SoundPlay($sFilename, $iWait = 0)
+    Local $vResult = $g_hFn_SoundPlay($sFilename, $iWait)
     Return SetError(@error, @extended, $vResult)
 EndFunc

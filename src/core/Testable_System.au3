@@ -79,8 +79,8 @@ Func _Tstbl_DriveGetLabel($sDrive)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_DriveGetType($sDrive)
-    Local $vResult = $g_hFn_DriveGetType($sDrive)
+Func _Tstbl_DriveGetType($sDrive, $iOperation = 1)
+    Local $vResult = $g_hFn_DriveGetType($sDrive, $iOperation)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 

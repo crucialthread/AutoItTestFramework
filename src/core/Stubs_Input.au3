@@ -35,7 +35,7 @@ Func _Stub_ControlClick($sTitle, $sText, $sControl, $sButton = "left", $iNumClic
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func _Stub_ControlSetText($sTitle, $sText, $sControl, $sNewText, $bFlag = True)
+Func _Stub_ControlSetText($sTitle, $sText, $sControl, $sNewText, $iFlag = 0)
 	Local $vReturn = __DefineStub("ControlSetText", __CallArgs("sTitle = " & $sTitle, "sControl = " & $sControl, "sNewText = " & $sNewText), 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc

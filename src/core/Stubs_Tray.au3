@@ -20,13 +20,13 @@ Func _Stub_TrayGetMsg()
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func _Stub_TrayCreateItem($sText, $hMenu = -1, $iMenuItemID = -1, $iStyle = -1)
+Func _Stub_TrayCreateItem($sText, $hMenu = -1, $iMenuItemID = -1, $iMenuRadioItem = 0)
 	Local $vReturn = __DefineStub("TrayCreateItem", __CallArgs("sText = " & $sText), 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func _Stub_TrayCreateMenu($sText, $hMenu = -1, $iMenuItemID = -1)
-	Local $vReturn = __DefineStub("TrayCreateMenu", __CallArgs("sText = " & $sText), 1)
+Func _Stub_TrayCreateMenu($sMenuText, $hMenuId = -1, $iMenuEntry = -1)
+	Local $vReturn = __DefineStub("TrayCreateMenu", __CallArgs("sMenuText = " & $sMenuText), 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 

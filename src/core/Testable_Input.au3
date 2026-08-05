@@ -24,12 +24,12 @@ Func _Tstbl_Send($sKeys, $iFlag = 0)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_MouseClick($sButton = "left", $iX = -2147483647, $iY = -2147483647, $iClicks = 1, $iSpeed = -1)
+Func _Tstbl_MouseClick($sButton = "left", $iX = Default, $iY = Default, $iClicks = 1, $iSpeed = 10)
     Local $vResult = $g_hFn_MouseClick($sButton, $iX, $iY, $iClicks, $iSpeed)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_MouseMove($iX, $iY, $iSpeed = -1)
+Func _Tstbl_MouseMove($iX, $iY, $iSpeed = 10)
     Local $vResult = $g_hFn_MouseMove($iX, $iY, $iSpeed)
     Return SetError(@error, @extended, $vResult)
 EndFunc
@@ -39,13 +39,13 @@ Func _Tstbl_MouseGetPos($iIndex = 0)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_ControlClick($sTitle, $sText, $sControl, $sButton = "left", $iNumClicks = 1, $iX = -2147483647, $iY = -2147483647)
+Func _Tstbl_ControlClick($sTitle, $sText, $sControl, $sButton = "left", $iNumClicks = 1, $iX = Default, $iY = Default)
     Local $vResult = $g_hFn_ControlClick($sTitle, $sText, $sControl, $sButton, $iNumClicks, $iX, $iY)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_ControlSetText($sTitle, $sText, $sControl, $sNewText, $bFlag = True)
-    Local $vResult = $g_hFn_ControlSetText($sTitle, $sText, $sControl, $sNewText, $bFlag)
+Func _Tstbl_ControlSetText($sTitle, $sText, $sControl, $sNewText, $iFlag = 0)
+    Local $vResult = $g_hFn_ControlSetText($sTitle, $sText, $sControl, $sNewText, $iFlag)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 

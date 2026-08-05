@@ -80,12 +80,12 @@ Func _Stub_FileWriteLine($hFile, $sLine)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func _Stub_FileReadToArray($sFilePath, ByRef $aArray, $iFlags = 0)
-	Local $vReturn = __DefineStub("FileReadToArray", __CallArgs("sFilePath = " & $sFilePath), "")
+Func _Stub_FileReadToArray($hFile)
+	Local $vReturn = __DefineStub("FileReadToArray", __CallArgs("hFile = " & $hFile), "")
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func _Stub_FileCreateShortcut($sFile, $sLnk, $sWorkDir = "", $sArgs = "", $sDesc = "", $sHotkey = "", $iIconIndex = 0, $iState = @SW_SHOWNORMAL)
+Func _Stub_FileCreateShortcut($sFile, $sLnk, $sWorkDir = "", $sArgs = "", $sDesc = "", $sIconFilename = "", $sHotkey = "", $iIconIndex = 0, $iState = @SW_SHOWNORMAL)
 	Local $vReturn = __DefineStub("FileCreateShortcut", __CallArgs("sFile = " & $sFile, "sLnk = " & $sLnk), 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc

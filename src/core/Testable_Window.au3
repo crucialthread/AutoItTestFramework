@@ -90,8 +90,8 @@ Func _Tstbl_WinSetTitle($sTitle, $sText, $sNewTitle)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_WinMove($sTitle, $sText, $iX, $iY, $iWidth = -1, $iHeight = -1)
-    Local $vResult = $g_hFn_WinMove($sTitle, $sText, $iX, $iY, $iWidth, $iHeight)
+Func _Tstbl_WinMove($sTitle, $sText, $iX, $iY, $iWidth = -1, $iHeight = -1, $iSpeed = 1)
+    Local $vResult = $g_hFn_WinMove($sTitle, $sText, $iX, $iY, $iWidth, $iHeight, $iSpeed)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 

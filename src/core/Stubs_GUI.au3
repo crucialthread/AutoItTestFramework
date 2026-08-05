@@ -98,8 +98,8 @@ Func _Stub_GUICtrlCreateListViewItem($sText, $hWnd)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func _Stub_GUICtrlCreateTreeView($sText, $iLeft, $iTop, $iWidth = -1, $iHeight = -1, $iStyle = -1, $iExStyle = -1)
-	Local $vReturn = __DefineStub("GUICtrlCreateTreeView", __CallArgs("sText = " & $sText), 1)
+Func _Stub_GUICtrlCreateTreeView($iLeft, $iTop, $iWidth = -1, $iHeight = -1, $iStyle = -1, $iExStyle = -1)
+	Local $vReturn = __DefineStub("GUICtrlCreateTreeView", __CallArgs(), 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
@@ -123,13 +123,13 @@ Func _Stub_GUICtrlCreateTabItem($sText)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func _Stub_GUICtrlCreateDate($sText, $iLeft, $iTop, $iWidth = -1, $iHeight = -1, $iStyle = -1)
+Func _Stub_GUICtrlCreateDate($sText, $iLeft, $iTop, $iWidth = -1, $iHeight = -1, $iStyle = -1, $iExStyle = -1)
 	Local $vReturn = __DefineStub("GUICtrlCreateDate", __CallArgs("sText = " & $sText), 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func _Stub_GUICtrlCreateUpdown($iLeft, $iTop, $iWidth = -1, $iHeight = -1, $iStyle = -1, $iExStyle = -1)
-	Local $vReturn = __DefineStub("GUICtrlCreateUpdown", __CallArgs(), 1)
+Func _Stub_GUICtrlCreateUpdown($iInputcontrolID, $iStyle = -1)
+	Local $vReturn = __DefineStub("GUICtrlCreateUpdown", __CallArgs("iInputcontrolID = " & $iInputcontrolID), 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 

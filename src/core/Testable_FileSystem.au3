@@ -103,12 +103,12 @@ Func _Tstbl_FileWriteLine($hFile, $sLine)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_FileReadToArray($sFilePath, ByRef $aArray, $iFlags = 0)
-    Local $vResult = $g_hFn_FileReadToArray($sFilePath, $aArray, $iFlags)
+Func _Tstbl_FileReadToArray($hFile)
+    Local $vResult = $g_hFn_FileReadToArray($hFile)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_FileCreateShortcut($sFile, $sLnk, $sWorkDir = "", $sArgs = "", $sDesc = "", $sHotkey = "", $iIconIndex = 0, $iState = @SW_SHOWNORMAL)
+Func _Tstbl_FileCreateShortcut($sFile, $sLnk, $sWorkDir = Default, $sArgs = Default, $sDesc = Default, $sIconFilename = Default, $sHotkey = Default, $iIconIndex = 0, $iState = @SW_SHOWNORMAL)
     Local $vResult = $g_hFn_FileCreateShortcut($sFile, $sLnk, $sWorkDir, $sArgs, $sDesc, $sHotkey, $iIconIndex, $iState)
     Return SetError(@error, @extended, $vResult)
 EndFunc

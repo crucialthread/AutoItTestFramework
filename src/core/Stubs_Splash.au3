@@ -10,13 +10,13 @@
 #include-once
 #include "Stubs_Core.au3"
 
-Func _Stub_SplashTextOn($sTitle, $sText, $iWidth = 500, $iHeight = 400, $iXPos = -1, $iYPos = -1, $iOpt = 1, $sFont = "", $iFontSize = 15, $iFontStyle = 0)
+Func _Stub_SplashTextOn($sTitle, $sText, $iWidth = 500, $iHeight = 400, $iXPos = -1, $iYPos = -1, $iOpt = 0, $sFont = "", $iFontSize = 12, $iFontStyle = 0)
 	Local $vReturn = __DefineStub("SplashTextOn", __CallArgs("sTitle = " & $sTitle, "sText = " & $sText), 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 
-Func _Stub_SplashImageOn($sTitle, $sFile, $iWidth = -1, $iHeight = -1, $iXPos = -1, $iYPos = -1, $iOpt = 1)
+Func _Stub_SplashImageOn($sTitle, $sFile, $iWidth = 500, $iHeight = 400, $iXPos = -1, $iYPos = -1, $iOpt = 1)
 	Local $vReturn = __DefineStub("SplashImageOn", __CallArgs("sTitle = " & $sTitle, "sFile = " & $sFile))
 	Return SetError(@error, 0, $vReturn)
 EndFunc
