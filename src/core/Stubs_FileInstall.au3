@@ -16,10 +16,10 @@
 
 #include "Stubs_Core.au3"
 
-Func _Stub_FileInstall($sSource, $sDest, $iFlag = 0)
+Func __Stub_FileInstall($sSource, $sDest, $iFlag = 0)
     If Not __Tstbl_IsFileInstallImplemented() Then Return SetError(1, 0, Null)
-    Local $vReturn = __DefineStub("FileInstall", __CallArgs("sSource = " & $sSource, "sDest = " & $sDest), 1)
+    Local $vReturn = __DefineStub("FileInstall", __CallArgs("sSource = " & $sSource, "sDest = " & $sDest, "iFlag = " & $iFlag), 1)
     Return SetError(@error, 0, $vReturn)
 EndFunc
 
-$g_hFn_FileInstall = _Stub_FileInstall
+$g_hFn_FileInstall = __Stub_FileInstall

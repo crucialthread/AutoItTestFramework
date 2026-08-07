@@ -44,11 +44,12 @@ Func __SanitizeStubParam($sParam)
 EndFunc
 
 ; #INTERNAL_USE_ONLY# ===========================================================================================================
-; Coerce value - coerces a recorded string value back to its proper type. "True"/"False"
-;                become booleans, numeric strings become numbers, everything else stays a
-;                string. Used for non-string parameters (keys not prefixed with "s")
+; Coerce value - coerces a recorded string value back to its proper type. String "Default"
+;                becomes Default type, "True"/"False" become booleans, numeric strings become numbers,
+;                everything else stays a string. Used for non-string parameters (keys not prefixed with "s")
 ; ===============================================================================================================================
 Func __CoerceStubValue($sVal)
+	If $sVal = "Default" Then Return Default
 	If $sVal = "True" Then Return True
 	If $sVal = "False" Then Return False
 	If StringIsInt($sVal) Or StringIsFloat($sVal) Then Return Number($sVal)

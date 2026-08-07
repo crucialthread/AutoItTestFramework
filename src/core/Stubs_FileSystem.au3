@@ -10,141 +10,141 @@
 #include-once
 #include "Stubs_Core.au3"
 
-Func _Stub_FileExists($sPath)
+Func __Stub_FileExists($sPath)
     Local $vReturn = __DefineStub("FileExists", __CallArgs("sPath = " & $sPath), 1)
     Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func _Stub_FileDelete($sPath)
-	Local $vReturn = __DefineStub("FileDelete", __CallArgs("sPath = " & $sPath), 1)
+Func __Stub_FileDelete($sFileName)
+	Local $vReturn = __DefineStub("FileDelete", __CallArgs("sFileName = " & $sFileName), 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func _Stub_FileCopy($sSource, $sDest, $iFlag = 0)
-	Local $vReturn = __DefineStub("FileCopy", __CallArgs("sSource = " & $sSource, "sDest = " & $sDest), 1)
+Func __Stub_FileCopy($sSource, $sDest, $iFlag = 0)
+	Local $vReturn = __DefineStub("FileCopy", __CallArgs("sSource = " & $sSource, "sDest = " & $sDest, "iFlag = " & $iFlag), 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func _Stub_FileMove($sSource, $sDest, $iFlag = 0)
-	Local $vReturn = __DefineStub("FileMove", __CallArgs("sSource = " & $sSource, "sDest = " & $sDest), 1)
+Func __Stub_FileMove($sSource, $sDest, $iFlag = 0)
+	Local $vReturn = __DefineStub("FileMove", __CallArgs("sSource = " & $sSource, "sDest = " & $sDest, "iFlag = " & $iFlag), 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func _Stub_FileGetAttrib($sPath)
-	Local $vReturn = __DefineStub("FileGetAttrib", __CallArgs("sPath = " & $sPath), "")
+Func __Stub_FileGetAttrib($sFileName)
+	Local $vReturn = __DefineStub("FileGetAttrib", __CallArgs("sFileName = " & $sFileName), "")
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func _Stub_FileGetSize($sPath)
-	Local $vReturn = __DefineStub("FileGetSize", __CallArgs("sPath = " & $sPath), 0)
+Func __Stub_FileGetSize($sFileName)
+	Local $vReturn = __DefineStub("FileGetSize", __CallArgs("sFileName = " & $sFileName), 0)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func _Stub_FileGetTime($sPath, $iType = 0, $iFormat = 0)
-	Local $vReturn = __DefineStub("FileGetTime", __CallArgs("sPath = " & $sPath, "iType = " & $iType, "iFormat = " & $iFormat), "")
+Func __Stub_FileGetTime($sFileName, $iOption = 0, $iFormat = 0)
+	Local $vReturn = __DefineStub("FileGetTime", __CallArgs("sFileName = " & $sFileName, "iOption = " & $iOption, "iFormat = " & $iFormat), "")
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func _Stub_FileGetVersion($sPath, $sVersion = "FileVersion")
-	Local $vReturn = __DefineStub("FileGetVersion", __CallArgs("sPath = " & $sPath), "")
+Func __Stub_FileGetVersion($sFileName, $sStringName = "FileVersion")
+	Local $vReturn = __DefineStub("FileGetVersion", __CallArgs("sFileName = " & $sFileName, "sStringName = " & $sStringName), "")
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func _Stub_FileRead($hFile, $iCount = -1)
-	Local $vReturn = __DefineStub("FileRead", __CallArgs("hFile = " & $hFile), "")
+Func __Stub_FileRead($hFile, $iCount = -1)
+	Local $vReturn = __DefineStub("FileRead", __CallArgs("hFile = " & $hFile, "iCount = " & $iCount), "")
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func _Stub_FileWrite($hFile, $sText)
+Func __Stub_FileWrite($hFile, $sText)
 	Local $vReturn = __DefineStub("FileWrite", __CallArgs("hFile = " & $hFile, "sText = " & $sText), 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func _Stub_FileOpen($sFilename, $iMode = 0)
+Func __Stub_FileOpen($sFilename, $iMode = 0)
 	Local $vReturn = __DefineStub("FileOpen", __CallArgs("sFilename = " & $sFilename, "iMode = " & $iMode), 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func _Stub_FileClose($hFile)
+Func __Stub_FileClose($hFile)
 	Local $vReturn = __DefineStub("FileClose", __CallArgs("hFile = " & $hFile), 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func _Stub_FileReadLine($hFile, $iLine = -1)
-	Local $vReturn = __DefineStub("FileReadLine", __CallArgs("hFile = " & $hFile), "")
+Func __Stub_FileReadLine($hFile, $iLine = 1)
+	Local $vReturn = __DefineStub("FileReadLine", __CallArgs("hFile = " & $hFile,"iLine = " & $iLine), "")
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func _Stub_FileWriteLine($hFile, $sLine)
+Func __Stub_FileWriteLine($hFile, $sLine)
 	Local $vReturn = __DefineStub("FileWriteLine", __CallArgs("hFile = " & $hFile, "sLine = " & $sLine), 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func _Stub_FileReadToArray($hFile)
+Func __Stub_FileReadToArray($hFile)
 	Local $vReturn = __DefineStub("FileReadToArray", __CallArgs("hFile = " & $hFile), "")
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func _Stub_FileCreateShortcut($sFile, $sLnk, $sWorkDir = "", $sArgs = "", $sDesc = "", $sIconFilename = "", $sHotkey = "", $iIconIndex = 0, $iState = @SW_SHOWNORMAL)
+Func __Stub_FileCreateShortcut($sFile, $sLnk, $sWorkDir = "", $sArgs = "", $sDesc = "", $sIconFilename = "", $sHotkey = "", $iIconIndex = 0, $iState = @SW_SHOWNORMAL)
 	Local $vReturn = __DefineStub("FileCreateShortcut", __CallArgs("sFile = " & $sFile, "sLnk = " & $sLnk), 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func _Stub_FileSetAttrib($sPath, $sAttrib, $iRecurse = 0)
-	Local $vReturn = __DefineStub("FileSetAttrib", __CallArgs("sPath = " & $sPath, "sAttrib = " & $sAttrib), 1)
+Func __Stub_FileSetAttrib($sFilePattern, $sAttrib, $iRecurse = 0)
+	Local $vReturn = __DefineStub("FileSetAttrib", __CallArgs("sFilePattern = " & $sFilePattern, "sAttrib = " & $sAttrib), 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func _Stub_FileSetTime($sPath, $sTime = "", $iType = -1, $iRecurse = 0)
-	Local $vReturn = __DefineStub("FileSetTime", __CallArgs("sPath = " & $sPath, "sTime = " & $sTime), 1)
+Func __Stub_FileSetTime($sFilePattern, $sTime = "", $iType = 0, $iRecurse = 0)
+	Local $vReturn = __DefineStub("FileSetTime", __CallArgs("sFilePattern = " & $sFilePattern, "sTime = " & $sTime), 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func _Stub_DirCreate($sPath)
+Func __Stub_DirCreate($sPath)
     Local $vReturn = __DefineStub("DirCreate", __CallArgs("sPath = " & $sPath), 1)
     Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func _Stub_DirRemove($sPath, $iRecurse = 0)
+Func __Stub_DirRemove($sPath, $iRecurse = 0)
 	Local $vReturn = __DefineStub("DirRemove", __CallArgs("sPath = " & $sPath), 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func _Stub_DirCopy($sSource, $sDest, $iFlag = 0)
+Func __Stub_DirCopy($sSource, $sDest, $iFlag = 0)
 	Local $vReturn = __DefineStub("DirCopy", __CallArgs("sSource = " & $sSource, "sDest = " & $sDest), 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func _Stub_DirMove($sSource, $sDest, $iFlag = 0)
+Func __Stub_DirMove($sSource, $sDest, $iFlag = 0)
 	Local $vReturn = __DefineStub("DirMove", __CallArgs("sSource = " & $sSource, "sDest = " & $sDest), 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func _Stub_DirGetSize($sPath, $iFlag = 0)
+Func __Stub_DirGetSize($sPath, $iFlag = 0)
 	Local $vReturn = __DefineStub("DirGetSize", __CallArgs("sPath = " & $sPath), 0)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-$g_hFn_FileExists        = _Stub_FileExists
-$g_hFn_FileDelete        = _Stub_FileDelete
-$g_hFn_FileCopy          = _Stub_FileCopy
-$g_hFn_FileMove          = _Stub_FileMove
-$g_hFn_FileGetAttrib     = _Stub_FileGetAttrib
-$g_hFn_FileGetSize       = _Stub_FileGetSize
-$g_hFn_FileGetTime       = _Stub_FileGetTime
-$g_hFn_FileGetVersion    = _Stub_FileGetVersion
-$g_hFn_FileRead          = _Stub_FileRead
-$g_hFn_FileWrite         = _Stub_FileWrite
-$g_hFn_FileOpen          = _Stub_FileOpen
-$g_hFn_FileClose         = _Stub_FileClose
-$g_hFn_FileReadLine      = _Stub_FileReadLine
-$g_hFn_FileWriteLine     = _Stub_FileWriteLine
-$g_hFn_FileReadToArray   = _Stub_FileReadToArray
-$g_hFn_FileCreateShortcut = _Stub_FileCreateShortcut
-$g_hFn_FileSetAttrib     = _Stub_FileSetAttrib
-$g_hFn_FileSetTime       = _Stub_FileSetTime
-$g_hFn_DirCreate         = _Stub_DirCreate
-$g_hFn_DirRemove         = _Stub_DirRemove
-$g_hFn_DirCopy           = _Stub_DirCopy
-$g_hFn_DirMove           = _Stub_DirMove
-$g_hFn_DirGetSize        = _Stub_DirGetSize
+$g_hFn_FileExists         = __Stub_FileExists
+$g_hFn_FileDelete         = __Stub_FileDelete
+$g_hFn_FileCopy           = __Stub_FileCopy
+$g_hFn_FileMove           = __Stub_FileMove
+$g_hFn_FileGetAttrib      = __Stub_FileGetAttrib
+$g_hFn_FileGetSize        = __Stub_FileGetSize
+$g_hFn_FileGetTime        = __Stub_FileGetTime
+$g_hFn_FileGetVersion     = __Stub_FileGetVersion
+$g_hFn_FileRead           = __Stub_FileRead
+$g_hFn_FileWrite          = __Stub_FileWrite
+$g_hFn_FileOpen           = __Stub_FileOpen
+$g_hFn_FileClose          = __Stub_FileClose
+$g_hFn_FileReadLine       = __Stub_FileReadLine
+$g_hFn_FileWriteLine      = __Stub_FileWriteLine
+$g_hFn_FileReadToArray    = __Stub_FileReadToArray
+$g_hFn_FileCreateShortcut = __Stub_FileCreateShortcut
+$g_hFn_FileSetAttrib      = __Stub_FileSetAttrib
+$g_hFn_FileSetTime        = __Stub_FileSetTime
+$g_hFn_DirCreate          = __Stub_DirCreate
+$g_hFn_DirRemove          = __Stub_DirRemove
+$g_hFn_DirCopy            = __Stub_DirCopy
+$g_hFn_DirMove            = __Stub_DirMove
+$g_hFn_DirGetSize         = __Stub_DirGetSize

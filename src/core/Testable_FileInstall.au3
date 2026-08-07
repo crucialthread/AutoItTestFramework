@@ -44,7 +44,7 @@
 ; ===============================================================================================================================
 #include-once
 
-Global Const $STUB_FILEINSTALL_FUNCNAME = "_Stub_FileInstall"
+Global Const $STUB_FILEINSTALL_FUNCNAME = "__Stub_FileInstall"
 Global $g_bFileInstallImplemented       = False
 Global $g_hFn_FileInstall               = __Tstbl_Dummy_FileInstall
 

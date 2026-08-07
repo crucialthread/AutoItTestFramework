@@ -42,12 +42,12 @@ Func _Tstbl_IniReadSectionNames($sFilename)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_IniWriteSection($sFilename, $sSection, $vData, $iIndex = 0)
+Func _Tstbl_IniWriteSection($sFilename, $sSection, $vData, $iIndex = 1)
     Local $vResult = $g_hFn_IniWriteSection($sFilename, $sSection, $vData, $iIndex)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_IniRenameSection($sFilename, $sSection, $sNewSection, $bOverwrite = False)
-    Local $vResult = $g_hFn_IniRenameSection($sFilename, $sSection, $sNewSection, $bOverwrite)
+Func _Tstbl_IniRenameSection($sFilename, $sSection, $sNewSection, $iFlag = 0)
+    Local $vResult = $g_hFn_IniRenameSection($sFilename, $sSection, $sNewSection, $iFlag)
     Return SetError(@error, @extended, $vResult)
 EndFunc

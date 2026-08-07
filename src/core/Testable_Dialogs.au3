@@ -8,7 +8,6 @@
 ; ===============================================================================================================================
 
 #include-once
-#include <MsgBoxConstants.au3>
 
 Global $g_hFn_MsgBox           = MsgBox
 Global $g_hFn_InputBox         = InputBox
@@ -21,8 +20,8 @@ Func _Tstbl_MsgBox($iFlag, $sTitle, $sText, $iTimeout = 0, $hWnd = 0)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_InputBox($sTitle, $sPrompt, $sDefault = "", $sPassword = "", $iWidth = -1, $iHeight = -1, $iLeft = Default, $iTop = Default, $iTimeout = 0, $hWnd = 0)
-    Local $vResult = $g_hFn_InputBox($sTitle, $sPrompt, $sDefault, $sPassword, $iWidth, $iHeight, $iLeft, $iTop, $iTimeout, $hWnd)
+Func _Tstbl_InputBox($sTitle, $sPrompt, $sDefault = "", $sPasswordChar = "", $iWidth = 250, $iHeight = 190, $iLeft = Default, $iTop = Default, $iTimeout = 0, $hWnd = 0)
+    Local $vResult = $g_hFn_InputBox($sTitle, $sPrompt, $sDefault, $sPasswordChar, $iWidth, $iHeight, $iLeft, $iTop, $iTimeout, $hWnd)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 

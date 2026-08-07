@@ -9,37 +9,37 @@
 
 #include-once
 
-Global $g_hFn_FileExists        = FileExists
-Global $g_hFn_FileDelete        = FileDelete
-Global $g_hFn_FileCopy          = FileCopy
-Global $g_hFn_FileMove          = FileMove
-Global $g_hFn_FileGetAttrib     = FileGetAttrib
-Global $g_hFn_FileGetSize       = FileGetSize
-Global $g_hFn_FileGetTime       = FileGetTime
-Global $g_hFn_FileGetVersion    = FileGetVersion
-Global $g_hFn_FileRead          = FileRead
-Global $g_hFn_FileWrite         = FileWrite
-Global $g_hFn_FileOpen          = FileOpen
-Global $g_hFn_FileClose         = FileClose
-Global $g_hFn_FileReadLine      = FileReadLine
-Global $g_hFn_FileWriteLine     = FileWriteLine
-Global $g_hFn_FileReadToArray   = FileReadToArray
+Global $g_hFn_FileExists         = FileExists
+Global $g_hFn_FileDelete         = FileDelete
+Global $g_hFn_FileCopy           = FileCopy
+Global $g_hFn_FileMove           = FileMove
+Global $g_hFn_FileGetAttrib      = FileGetAttrib
+Global $g_hFn_FileGetSize        = FileGetSize
+Global $g_hFn_FileGetTime        = FileGetTime
+Global $g_hFn_FileGetVersion     = FileGetVersion
+Global $g_hFn_FileRead           = FileRead
+Global $g_hFn_FileWrite          = FileWrite
+Global $g_hFn_FileOpen           = FileOpen
+Global $g_hFn_FileClose          = FileClose
+Global $g_hFn_FileReadLine       = FileReadLine
+Global $g_hFn_FileWriteLine      = FileWriteLine
+Global $g_hFn_FileReadToArray    = FileReadToArray
 Global $g_hFn_FileCreateShortcut = FileCreateShortcut
-Global $g_hFn_FileSetAttrib     = FileSetAttrib
-Global $g_hFn_FileSetTime       = FileSetTime
-Global $g_hFn_DirCreate         = DirCreate
-Global $g_hFn_DirRemove         = DirRemove
-Global $g_hFn_DirCopy           = DirCopy
-Global $g_hFn_DirMove           = DirMove
-Global $g_hFn_DirGetSize        = DirGetSize
+Global $g_hFn_FileSetAttrib      = FileSetAttrib
+Global $g_hFn_FileSetTime        = FileSetTime
+Global $g_hFn_DirCreate          = DirCreate
+Global $g_hFn_DirRemove          = DirRemove
+Global $g_hFn_DirCopy            = DirCopy
+Global $g_hFn_DirMove            = DirMove
+Global $g_hFn_DirGetSize         = DirGetSize
 
 Func _Tstbl_FileExists($sPath)
     Local $vResult = $g_hFn_FileExists($sPath)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_FileDelete($sPath)
-    Local $vResult = $g_hFn_FileDelete($sPath)
+Func _Tstbl_FileDelete($sFileName)
+    Local $vResult = $g_hFn_FileDelete($sFileName)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
@@ -53,23 +53,23 @@ Func _Tstbl_FileMove($sSource, $sDest, $iFlag = 0)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_FileGetAttrib($sPath)
-    Local $vResult = $g_hFn_FileGetAttrib($sPath)
+Func _Tstbl_FileGetAttrib($sFileName)
+    Local $vResult = $g_hFn_FileGetAttrib($sFileName)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_FileGetSize($sPath)
-    Local $vResult = $g_hFn_FileGetSize($sPath)
+Func _Tstbl_FileGetSize($sFileName)
+    Local $vResult = $g_hFn_FileGetSize($sFileName)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_FileGetTime($sPath, $iType = 0, $iFormat = 0)
-    Local $vResult = $g_hFn_FileGetTime($sPath, $iType, $iFormat)
+Func _Tstbl_FileGetTime($sFileName, $iOption = 0, $iFormat = 0)
+    Local $vResult = $g_hFn_FileGetTime($sFileName, $iOption, $iFormat)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_FileGetVersion($sPath, $sVersion = "FileVersion")
-    Local $vResult = $g_hFn_FileGetVersion($sPath, $sVersion)
+Func _Tstbl_FileGetVersion($sFileName, $sStringName = "FileVersion")
+    Local $vResult = $g_hFn_FileGetVersion($sFileName, $sStringName)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
@@ -93,7 +93,7 @@ Func _Tstbl_FileClose($hFile)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_FileReadLine($hFile, $iLine = -1)
+Func _Tstbl_FileReadLine($hFile, $iLine = 1)
     Local $vResult = $g_hFn_FileReadLine($hFile, $iLine)
     Return SetError(@error, @extended, $vResult)
 EndFunc
@@ -108,18 +108,18 @@ Func _Tstbl_FileReadToArray($hFile)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_FileCreateShortcut($sFile, $sLnk, $sWorkDir = Default, $sArgs = Default, $sDesc = Default, $sIconFilename = Default, $sHotkey = Default, $iIconIndex = 0, $iState = @SW_SHOWNORMAL)
+Func _Tstbl_FileCreateShortcut($sFile, $sLnk, $sWorkDir = "", $sArgs = "", $sDesc = "", $sIconFilename = "", $sHotkey = "", $iIconIndex = 0, $iState = @SW_SHOWNORMAL)
     Local $vResult = $g_hFn_FileCreateShortcut($sFile, $sLnk, $sWorkDir, $sArgs, $sDesc, $sHotkey, $iIconIndex, $iState)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_FileSetAttrib($sPath, $sAttrib, $iRecurse = 0)
-    Local $vResult = $g_hFn_FileSetAttrib($sPath, $sAttrib, $iRecurse)
+Func _Tstbl_FileSetAttrib($sFilePattern, $sAttrib, $iRecurse = 0)
+    Local $vResult = $g_hFn_FileSetAttrib($sFilePattern, $sAttrib, $iRecurse)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_FileSetTime($sPath, $sTime = "", $iType = -1, $iRecurse = 0)
-    Local $vResult = $g_hFn_FileSetTime($sPath, $sTime, $iType, $iRecurse)
+Func _Tstbl_FileSetTime($sFilePattern, $sTime = "", $iType = 0, $iRecurse = 0)
+    Local $vResult = $g_hFn_FileSetTime($sFilePattern, $sTime, $iType, $iRecurse)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 

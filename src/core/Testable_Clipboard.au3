@@ -17,7 +17,7 @@ Func _Tstbl_ClipGet()
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_ClipPut($sClip)
-    Local $vResult = $g_hFn_ClipPut($sClip)
+Func _Tstbl_ClipPut($sClipValue)
+    Local $vResult = $g_hFn_ClipPut($sClipValue)
     Return SetError(@error, @extended, $vResult)
 EndFunc

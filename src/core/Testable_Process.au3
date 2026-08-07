@@ -22,12 +22,12 @@ Global $g_hFn_StdoutRead       = StdoutRead
 Global $g_hFn_StderrRead       = StderrRead
 Global $g_hFn_StdinWrite       = StdinWrite
 
-Func _Tstbl_ShellExecute($sFilename, $sParams = "", $sWorkDir = "", $sVerb = "", $iShowFlag = 1)
+Func _Tstbl_ShellExecute($sFilename, $sParams = "", $sWorkDir = "", $sVerb = "open", $iShowFlag = 1)
     Local $vResult = $g_hFn_ShellExecute($sFilename, $sParams, $sWorkDir, $sVerb, $iShowFlag)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_ShellExecuteWait($sFilename, $sParams = "", $sWorkDir = "", $sVerb = "", $iShowFlag = 1)
+Func _Tstbl_ShellExecuteWait($sFilename, $sParams = "", $sWorkDir = "", $sVerb = "open", $iShowFlag = 1)
     Local $vResult = $g_hFn_ShellExecuteWait($sFilename, $sParams, $sWorkDir, $sVerb, $iShowFlag)
     Return SetError(@error, @extended, $vResult)
 EndFunc
@@ -77,7 +77,7 @@ Func _Tstbl_StderrRead($hProcess, $bPeek = False, $bBinary = False)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_StdinWrite($hProcess, $sData = "")
-    Local $vResult = $g_hFn_StdinWrite($hProcess, $sData)
+Func _Tstbl_StdinWrite($hProcess, $vData = "")
+    Local $vResult = $g_hFn_StdinWrite($hProcess, $vData)
     Return SetError(@error, @extended, $vResult)
 EndFunc

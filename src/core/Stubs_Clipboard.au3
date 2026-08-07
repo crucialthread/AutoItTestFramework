@@ -10,15 +10,15 @@
 #include-once
 #include "Stubs_Core.au3"
 
-Func _Stub_ClipGet()
+Func __Stub_ClipGet()
 	Local $vReturn = __DefineStub("ClipGet", __CallArgs(), "")
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func _Stub_ClipPut($sClip)
-	Local $vReturn = __DefineStub("ClipPut", __CallArgs("sClip = " & $sClip), 1)
+Func __Stub_ClipPut($sClipValue)
+	Local $vReturn = __DefineStub("ClipPut", __CallArgs("sClipValue = " & $sClipValue), 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-$g_hFn_ClipGet = _Stub_ClipGet
-$g_hFn_ClipPut = _Stub_ClipPut
+$g_hFn_ClipGet = __Stub_ClipGet
+$g_hFn_ClipPut = __Stub_ClipPut
