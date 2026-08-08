@@ -9,7 +9,7 @@
 
 #include-once
 #include <AutoItConstants.au3>
-#include "Stubs_Core.au3"
+#include "StubsCore.au3"
 
 Func __Stub_WinExists($sTitle, $sText = "")
 	Local $vReturn = __DefineStub("WinExists", __CallArgs("sTitle = " & $sTitle, "sText = " & $sText), 1)

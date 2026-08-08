@@ -9,7 +9,7 @@
 
 #include-once
 #include <AutoItConstants.au3>
-#include "Stubs_Core.au3"
+#include "StubsCore.au3"
 
 Func __Stub_Sleep($iDelay)
 	Local $vReturn = __DefineStub("Sleep", __CallArgs("iDelay = " & $iDelay))

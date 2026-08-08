@@ -9,7 +9,7 @@
 
 #include-once
 #include <Array.au3>
-#include "Stubs_Core.au3"
+#include "StubsCore.au3"
 
 Func __Stub_IniRead($sFilename, $sSection, $sKey, $sDefault)
 	Local $vReturn = __DefineStub("IniRead", __CallArgs("sFilename = " & $sFilename, "sSection = " & $sSection, "sKey = " & $sKey, "sDefault = " & $sDefault), $sDefault)

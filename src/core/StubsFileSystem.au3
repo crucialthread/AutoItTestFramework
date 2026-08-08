@@ -8,7 +8,7 @@
 ; ===============================================================================================================================
 
 #include-once
-#include "Stubs_Core.au3"
+#include "StubsCore.au3"
 
 Func __Stub_FileExists($sPath)
     Local $vReturn = __DefineStub("FileExists", __CallArgs("sPath = " & $sPath), 1)

@@ -8,7 +8,7 @@
 ; ===============================================================================================================================
 
 #include-once
-#include "Stubs_Core.au3"
+#include "StubsCore.au3"
 
 Func __Stub_SoundPlay($sFilename, $iWait = 0)
 	Local $vReturn = __DefineStub("SoundPlay", __CallArgs("sFilename = " & $sFilename, "iWait = " & $iWait), 1)

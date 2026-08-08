@@ -8,8 +8,8 @@
 ; ===============================================================================================================================
 
 #include-once
-#include "Stubs_Core.au3"
 #include <GUIConstantsEx.au3>
+#include "StubsCore.au3"
 
 Func __Stub_GUICreate($sTitle, $iWidth = -1, $iHeight = -1, $iLeft = -1, $iTop = -1, $iStyle = -1, $iExStyle = -1, $hWndParent = 0)
 	Local $aArgs = __CallArgs("sTitle = " & $sTitle, "iWidth = " & $iWidth, "iHeight = " & $iHeight, "iLeft = " & $iLeft, _

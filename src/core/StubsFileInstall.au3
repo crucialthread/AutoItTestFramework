@@ -14,7 +14,7 @@
 ; ===============================================================================================================================
 #include-once
 
-#include "Stubs_Core.au3"
+#include "StubsCore.au3"
 
 Func __Stub_FileInstall($sSource, $sDest, $iFlag = 0)
     If Not __Tstbl_IsFileInstallImplemented() Then Return SetError(1, 0, Null)

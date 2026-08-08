@@ -8,7 +8,7 @@
 ; ===============================================================================================================================
 
 #include-once
-#include "Stubs_Core.au3"
+#include "StubsCore.au3"
 
 Func __Stub_ShellExecute($sFilename, $sParams = "", $sWorkDir = "", $sVerb = "open", $iShowFlag = 1)
 	Local $aArgs = __CallArgs("sFilename = " & $sFilename, "sParams = " & $sParams, "sWorkDir = " & $sWorkDir, _

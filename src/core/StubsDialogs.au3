@@ -8,7 +8,7 @@
 ; ===============================================================================================================================
 
 #include-once
-#include "Stubs_Core.au3"
+#include "StubsCore.au3"
 
 Func __Stub_MsgBox($iFlag, $sTitle, $sText, $iTimeout = 0, $hWnd = 0)
 	Local $aArgs = __CallArgs("iFlag = " & $iFlag, "sTitle = " & $sTitle, "sText = " & $sText, "hWnd = " & $hWnd)

@@ -8,7 +8,7 @@
 ; ===============================================================================================================================
 
 #include-once
-#include "Stubs_Core.au3"
+#include "StubsCore.au3"
 
 Func __Stub_Send($sKeys, $iFlag = 0)
 	Local $vReturn = __DefineStub("Send", __CallArgs("sKeys = " & $sKeys, "iFlag = " & $iFlag))

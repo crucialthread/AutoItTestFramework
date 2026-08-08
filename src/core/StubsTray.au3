@@ -8,7 +8,7 @@
 ; ===============================================================================================================================
 
 #include-once
-#include "Stubs_Core.au3"
+#include "StubsCore.au3"
 
 Func __Stub_TrayTip($sTitle, $sText, $iTimeout, $iOption = 0)
 	Local $vReturn = __DefineStub("TrayTip", __CallArgs("sTitle = " & $sTitle, "sText = " & $sText, "iTimeout = " & $iTimeout, "iOption = " & $iOption))

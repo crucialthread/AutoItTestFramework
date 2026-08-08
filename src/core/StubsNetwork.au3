@@ -8,7 +8,7 @@
 ; ===============================================================================================================================
 
 #include-once
-#include "Stubs_Core.au3"
+#include "StubsCore.au3"
 
 Func __Stub_InetGet($sURL, $sFilename, $iOptions = 0, $hDownloadCallback = 0)
 	Local $aArgs = __CallArgs("sURL = " & $sURL, "sFilename = " & $sFilename, "iOptions = " & $iOptions, "hDownloadCallback = " & $hDownloadCallback)

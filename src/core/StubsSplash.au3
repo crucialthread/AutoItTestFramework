@@ -8,7 +8,7 @@
 ; ===============================================================================================================================
 
 #include-once
-#include "Stubs_Core.au3"
+#include "StubsCore.au3"
 
 Func __Stub_SplashTextOn($sTitle, $sText, $iWidth = 500, $iHeight = 400, $iXPos = Default, $iYPos = Default, $iOpt = 0, $sFont = "", $iFontSize = 12, $iFontStyle = 0)
 	Local $aArgs = __CallArgs("sTitle = " & $sTitle, "sText = " & $sText, "iWidth = " & $iWidth, "iHeight = " & $iHeight, _
