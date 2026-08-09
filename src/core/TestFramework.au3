@@ -29,8 +29,8 @@ Global $__TestFmkPassed = 0
 Global $__TestFmkFailed = 0
 
 ; Print a test section header
-; $sTitle  - title of the test section
-; $sColor  - color constant: $TFW_COLOR_ORANGE (default), $TFW_COLOR_YELLOW, $TFW_COLOR_BLUE, $TFW_COLOR_RED
+; $sTitle  	   - title of the test section
+; $bResetStubs - Automatically run _ResetStubs() (see StubsCore.au3 for more details)
 Func _TestFmkHeader($sTitle, $bResetStubs = True)
     ConsoleWrite(@CRLF & $TFW_COLOR_ORANGE & " --- " & $sTitle & " ---" & @CRLF)
 	If $bResetStubs Then _ResetStubs()
@@ -41,7 +41,8 @@ EndFunc
 ; $sDescription - description of the test
 ; $vActual      - optional actual value to display on failure
 ; $vExpected    - optional expected value to display on failure
-Func _TestFmkAssert($bCondition, $sDescription, $vActual = "", $vExpected = "")
+; $LineNumber   - line in the test related to the failure
+Func _TestFmkAssert($bCondition, $sDescription, $vActual = "", $vExpected = "", $LineNumber = @ScriptLineNumber)
     $__TestFmkCount += 1
     If $bCondition Then
         $__TestFmkPassed += 1
@@ -52,6 +53,7 @@ Func _TestFmkAssert($bCondition, $sDescription, $vActual = "", $vExpected = "")
         If $vActual <> "" Or $vExpected <> "" Then
             $sDetail = " (expected: " & $vExpected & ", actual: " & $vActual & ")"
         EndIf
+		$sDetail = $sDetail & " [Line: " & $LineNumber & "]"
         ConsoleWrite($TFW_COLOR_RED & " [FAIL] " & $sDescription & $sDetail & @CRLF)
     EndIf
 EndFunc
