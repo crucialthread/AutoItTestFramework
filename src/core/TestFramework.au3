@@ -15,6 +15,7 @@
 ; ===============================================================================================================================
 
 #include-once
+#include "Stubs.au3"
 
 ; Console output color constants — prefix characters for SciTE console coloring
 Global Const $TFW_COLOR_WHITE  = ":"  ; white (no color)
@@ -30,8 +31,9 @@ Global $__TestFmkFailed = 0
 ; Print a test section header
 ; $sTitle  - title of the test section
 ; $sColor  - color constant: $TFW_COLOR_ORANGE (default), $TFW_COLOR_YELLOW, $TFW_COLOR_BLUE, $TFW_COLOR_RED
-Func _TestFmkHeader($sTitle, $sColor = $TFW_COLOR_ORANGE)
-    ConsoleWrite(@CRLF & $sColor & " --- " & $sTitle & " ---" & @CRLF)
+Func _TestFmkHeader($sTitle, $bResetStubs = True)
+    ConsoleWrite(@CRLF & $TFW_COLOR_ORANGE & " --- " & $sTitle & " ---" & @CRLF)
+	If $bResetStubs Then _ResetStubs()
 EndFunc
 
 ; Assert a condition and record pass/fail
