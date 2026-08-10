@@ -51,7 +51,7 @@ Func _TestFmkAssert($bCondition, $sDescription, $vActual = "", $vExpected = "", 
         $__TestFmkFailed += 1
         Local $sDetail = ""
         If $vActual <> "" Or $vExpected <> "" Then
-            $sDetail = " (expected: " & $vExpected & ", actual: " & $vActual & ")"
+			$sDetail = " (actual: " & $vActual & ", expected: " & $vExpected & ")"
         EndIf
 		$sDetail = $sDetail & " [Line: " & $LineNumber & "]"
         ConsoleWrite($TFW_COLOR_RED & " [FAIL] " & $sDescription & $sDetail & @CRLF)
