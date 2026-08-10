@@ -10,56 +10,56 @@
 #include-once
 #include "StubsCore.au3"
 
-Func __Stub_ShellExecute($sFilename, $sParams = "", $sWorkDir = "", $sVerb = "open", $iShowFlag = 1)
-	Local $aArgs = __CallArgs("sFilename = " & $sFilename, "sParams = " & $sParams, "sWorkDir = " & $sWorkDir, _
-							  "sVerb = " & $sVerb, "iShowFlag = " & $iShowFlag)
+Func __Stub_ShellExecute($sFilename, $sParameters = "", $sWorkingDir = "", $sShellVerb = Default, $iShowFlag = 1)
+	Local $aArgs = __CallArgs("sFilename = " & $sFilename, "sParameters = " & $sParameters, "sWorkingDir = " & $sWorkingDir, _
+							  "sShellVerb = " & $sShellVerb, "iShowFlag = " & $iShowFlag)
 	Local $vReturn = __DefineStub("ShellExecute", $aArgs, 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func __Stub_ShellExecuteWait($sFilename, $sParams = "", $sWorkDir = "", $sVerb = "open", $iShowFlag = 1)
-	Local $aArgs = __CallArgs("sFilename = " & $sFilename, "sParams = " & $sParams, "sWorkDir = " & $sWorkDir, _
-							  "sVerb = " & $sVerb, "iShowFlag = " & $iShowFlag)
+Func __Stub_ShellExecuteWait($sFilename, $sParameters = "", $sWorkingDir = "", $sShellVerb = Default, $iShowFlag = 1)
+	Local $aArgs = __CallArgs("sFilename = " & $sFilename, "sParameters = " & $sParameters, "sWorkingDir = " & $sWorkingDir, _
+							  "sShellVerb = " & $sShellVerb, "iShowFlag = " & $iShowFlag)
 	Local $vReturn = __DefineStub("ShellExecuteWait", $aArgs, 0)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func __Stub_Run($sProgram, $sWorkingDir = "", $iShowFlag = @SW_SHOWNORMAL, $nOptionalStreamHandle = 0)
+Func __Stub_Run($sProgram, $sWorkingDir = "", $iShowFlag = @SW_SHOWNORMAL, $nOptFlag = 0)
 	Local $aArgs = __CallArgs("sProgram = " & $sProgram, "sWorkingDir = " & $sWorkingDir, "iShowFlag = " & $iShowFlag, _
-							  "nOptionalStreamHandle = " & $nOptionalStreamHandle)
+							  "nOptFlag = " & $nOptFlag)
 	Local $vReturn = __DefineStub("Run", $aArgs, 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func __Stub_RunWait($sProgram, $sWorkingDir = "", $iShowFlag = @SW_SHOWNORMAL, $nOptionalStreamHandle = 0)
+Func __Stub_RunWait($sProgram, $sWorkingDir = "", $iShowFlag = @SW_SHOWNORMAL, $nOptFlag = 0)
 	Local $aArgs = __CallArgs("sProgram = " & $sProgram, "sWorkingDir = " & $sWorkingDir, "iShowFlag = " & $iShowFlag, _
-							  "nOptionalStreamHandle = " & $nOptionalStreamHandle)
+							  "nOptFlag = " & $nOptFlag)
 	Local $vReturn = __DefineStub("RunWait", $aArgs, 0)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func __Stub_ProcessExists($sProcess)
-	Local $vReturn = __DefineStub("ProcessExists", __CallArgs("sProcess = " & $sProcess), 1)
+Func __Stub_ProcessExists($idProcess)
+	Local $vReturn = __DefineStub("ProcessExists", __CallArgs("idProcess = " & $idProcess), 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func __Stub_ProcessClose($sProcess)
-	Local $vReturn = __DefineStub("ProcessClose", __CallArgs("sProcess = " & $sProcess), 1)
+Func __Stub_ProcessClose($idProcess)
+	Local $vReturn = __DefineStub("ProcessClose", __CallArgs("idProcess = " & $idProcess), 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func __Stub_ProcessWait($sProcess, $iTimeout = 0)
-	Local $vReturn = __DefineStub("ProcessWait", __CallArgs("sProcess = " & $sProcess, "iTimeout = " & $iTimeout), 1)
+Func __Stub_ProcessWait($sProcessName, $iTimeout = 0)
+	Local $vReturn = __DefineStub("ProcessWait", __CallArgs("sProcessName = " & $sProcessName, "iTimeout = " & $iTimeout), 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func __Stub_ProcessWaitClose($sProcess, $iTimeout = 0)
-	Local $vReturn = __DefineStub("ProcessWaitClose", __CallArgs("sProcess = " & $sProcess, "iTimeout = " & $iTimeout), 1)
+Func __Stub_ProcessWaitClose($idProcess, $iTimeout = 0)
+	Local $vReturn = __DefineStub("ProcessWaitClose", __CallArgs("idProcess = " & $idProcess, "iTimeout = " & $iTimeout), 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func __Stub_ProcessList($sProcess = "")
-	Local $vReturn = __DefineStub("ProcessList", __CallArgs("sProcess = " & $sProcess), "")
+Func __Stub_ProcessList($sProcessName = "")
+	Local $vReturn = __DefineStub("ProcessList", __CallArgs("sProcessName = " & $sProcessName), "")
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 

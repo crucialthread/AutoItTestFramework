@@ -10,28 +10,28 @@
 #include-once
 #include "StubsCore.au3"
 
-Func __Stub_RegRead($sKeyname, $sValuename)
-	Local $vReturn = __DefineStub("RegRead", __CallArgs("sKeyname = " & $sKeyname, "sValuename = " & $sValuename), "")
+Func __Stub_RegRead($sKeyName, $sValueName)
+	Local $vReturn = __DefineStub("RegRead", __CallArgs("sKeyName = " & $sKeyName, "sValueName = " & $sValueName), "")
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func __Stub_RegWrite($sKeyname, $sValuename = "", $sType = "REG_SZ", $vValue = "")
-	Local $vReturn = __DefineStub("RegWrite", __CallArgs("sKeyname = " & $sKeyname, "sValuename = " & $sValuename, "sType = " & $sType, "vValue = " & $vValue), 1)
+Func __Stub_RegWrite($sKeyName, $sValueName = "", $sKeyType = "REG_SZ", $sValue = "")
+	Local $vReturn = __DefineStub("RegWrite", __CallArgs("sKeyName = " & $sKeyName, "sValueName = " & $sValueName, "sKeyType = " & $sKeyType, "sValue = " & $sValue), 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func __Stub_RegDelete($sKeyname, $sValuename = "")
-	Local $vReturn = __DefineStub("RegDelete", __CallArgs("sKeyname = " & $sKeyname, "sValuename = " & $sValuename), 1)
+Func __Stub_RegDelete($sKeyName, $sValueName = "")
+	Local $vReturn = __DefineStub("RegDelete", __CallArgs("sKeyName = " & $sKeyName, "sValueName = " & $sValueName), 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func __Stub_RegEnumKey($sKeyname, $iInstance)
-	Local $vReturn = __DefineStub("RegEnumKey", __CallArgs("sKeyname = " & $sKeyname, "iInstance = " & $iInstance), "")
+Func __Stub_RegEnumKey($sKeyName, $iKeyInstance)
+	Local $vReturn = __DefineStub("RegEnumKey", __CallArgs("sKeyName = " & $sKeyName, "iKeyInstance = " & $iKeyInstance), "")
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func __Stub_RegEnumVal($sKeyname, $iInstance)
-	Local $vReturn = __DefineStub("RegEnumVal", __CallArgs("sKeyname = " & $sKeyname, "iInstance = " & $iInstance), "")
+Func __Stub_RegEnumVal($sKeyName, $iKeyInstance)
+	Local $vReturn = __DefineStub("RegEnumVal", __CallArgs("sKeyName = " & $sKeyName, "iKeyInstance = " & $iKeyInstance), "")
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 

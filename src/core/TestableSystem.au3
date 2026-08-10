@@ -54,8 +54,8 @@ Func _Tstbl_DriveGetDrive($sType = "ALL")
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_DriveGetFileSystem($sDrive)
-    Local $vResult = $g_hFn_DriveGetFileSystem($sDrive)
+Func _Tstbl_DriveGetFileSystem($sPath)
+    Local $vResult = $g_hFn_DriveGetFileSystem($sPath)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
@@ -69,18 +69,18 @@ Func _Tstbl_DriveSpaceTotal($sPath)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_DriveStatus($sDrive)
-    Local $vResult = $g_hFn_DriveStatus($sDrive)
+Func _Tstbl_DriveStatus($sPath)
+    Local $vResult = $g_hFn_DriveStatus($sPath)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_DriveGetLabel($sDrive)
-    Local $vResult = $g_hFn_DriveGetLabel($sDrive)
+Func _Tstbl_DriveGetLabel($sPath)
+    Local $vResult = $g_hFn_DriveGetLabel($sPath)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_DriveGetType($sDrive, $iOperation = 1)
-    Local $vResult = $g_hFn_DriveGetType($sDrive, $iOperation)
+Func _Tstbl_DriveGetType($sPath, $iOperation = 1)
+    Local $vResult = $g_hFn_DriveGetType($sPath, $iOperation)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 

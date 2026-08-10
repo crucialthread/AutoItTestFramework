@@ -10,18 +10,18 @@
 #include-once
 #include "StubsCore.au3"
 
-Func __Stub_SplashTextOn($sTitle, $sText, $iWidth = 500, $iHeight = 400, $iXPos = Default, $iYPos = Default, $iOpt = 0, $sFont = "", $iFontSize = 12, $iFontStyle = 0)
+Func __Stub_SplashTextOn($sTitle, $sText, $iWidth = 500, $iHeight = 400, $iXPos = Default, $iYPos = Default, $iOption = 0, $sFontName = "", $iFontSize = 12, $iFontWeight = 0)
 	Local $aArgs = __CallArgs("sTitle = " & $sTitle, "sText = " & $sText, "iWidth = " & $iWidth, "iHeight = " & $iHeight, _
-							  "iXPos = " & $iXPos, "iYPos = " & $iYPos, "iOpt = " & $iOpt, _
-							  "sFont = " & $sFont, "iFontSize = " & $iFontSize, "iFontStyle = " & $iFontStyle)
+							  "iXPos = " & $iXPos, "iYPos = " & $iYPos, "iOption = " & $iOption, _
+							  "sFontName = " & $sFontName, "iFontSize = " & $iFontSize, "iFontWeight = " & $iFontWeight)
 	Local $vReturn = __DefineStub("SplashTextOn", $aArgs, 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 
-Func __Stub_SplashImageOn($sTitle, $sFile, $iWidth = 500, $iHeight = 400, $iXPos = Default, $iYPos = Default, $iOpt = 1)
-	Local $aArgs = __CallArgs("sTitle = " & $sTitle, "sFile = " & $sFile, "iWidth = " & $iWidth, "iHeight = " & $iHeight, _
-							  "iXPos = " & $iXPos, "iYPos = " & $iYPos, "iOpt = " & $iOpt)
+Func __Stub_SplashImageOn($sTitle, $sFileName, $iWidth = 500, $iHeight = 400, $iXPos = Default, $iYPos = Default, $iOption = 1)
+	Local $aArgs = __CallArgs("sTitle = " & $sTitle, "sFileName = " & $sFileName, "iWidth = " & $iWidth, "iHeight = " & $iHeight, _
+							  "iXPos = " & $iXPos, "iYPos = " & $iYPos, "iOption = " & $iOption)
 	Local $vReturn = __DefineStub("SplashImageOn", $aArgs)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
@@ -33,15 +33,15 @@ Func __Stub_SplashOff()
 EndFunc
 
 
-Func __Stub_ProgressOn($sTitle, $sText, $sSubText = "", $iXPos = Default, $iYPos = Default, $iOpt = 1)
-	Local $aArgs = __CallArgs("sTitle = " & $sTitle, "sText = " & $sText, "sSubText = " & $sSubText, "iXPos = " & $iXPos, "iYPos = " & $iYPos, "iOpt = " & $iOpt)
+Func __Stub_ProgressOn($sTitle, $sText, $sSubText = "", $iXPos = Default, $iYPos = Default, $iOption = 1)
+	Local $aArgs = __CallArgs("sTitle = " & $sTitle, "sText = " & $sText, "sSubText = " & $sSubText, "iXPos = " & $iXPos, "iYPos = " & $iYPos, "iOption = " & $iOption)
 	Local $vReturn = __DefineStub("ProgressOn", $aArgs)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 
 Func __Stub_ProgressSet($iPercent, $sText = "", $sTitle = "")
-	Local $vReturn = __DefineStub("ProgressSet", __CallArgs("iPercent = " & $iPercent, "sText = " & $sText))
+	Local $vReturn = __DefineStub("ProgressSet", __CallArgs("iPercent = " & $iPercent, "sText = " & $sText, "sTitle = " & $sTitle))
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 

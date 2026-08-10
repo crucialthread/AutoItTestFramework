@@ -80,8 +80,8 @@ Func _Tstbl_WinGetState($sTitle, $sText = "")
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_WinSetState($sTitle, $sText, $iFlags)
-    Local $vResult = $g_hFn_WinSetState($sTitle, $sText, $iFlags)
+Func _Tstbl_WinSetState($sTitle, $sText, $iFlag)
+    Local $vResult = $g_hFn_WinSetState($sTitle, $sText, $iFlag)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
@@ -90,8 +90,8 @@ Func _Tstbl_WinSetTitle($sTitle, $sText, $sNewTitle)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_WinMove($sTitle, $sText, $iX, $iY, $iWidth = -1, $iHeight = -1, $iSpeed = 1)
-    Local $vResult = $g_hFn_WinMove($sTitle, $sText, $iX, $iY, $iWidth, $iHeight, $iSpeed)
+Func _Tstbl_WinMove($sTitle, $sText, $iXPos, $iYPos, $iWidth = -1, $iHeight = -1, $iSpeed = 1)
+    Local $vResult = $g_hFn_WinMove($sTitle, $sText, $iXPos, $iYPos, $iWidth, $iHeight, $iSpeed)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 

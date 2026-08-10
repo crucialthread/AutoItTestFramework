@@ -19,18 +19,18 @@ Global $g_hFn_ControlGetText = ControlGetText
 Global $g_hFn_ControlSend    = ControlSend
 Global $g_hFn_ControlFocus   = ControlFocus
 
-Func _Tstbl_Send($sKeys, $iFlag = 0)
-    Local $vResult = $g_hFn_Send($sKeys, $iFlag)
+Func _Tstbl_Send($sKeyStrokes, $iFlag = 0)
+    Local $vResult = $g_hFn_Send($sKeyStrokes, $iFlag)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_MouseClick($sButton = "left", $iX = Default, $iY = Default, $iClicks = 1, $iSpeed = 10)
-    Local $vResult = $g_hFn_MouseClick($sButton, $iX, $iY, $iClicks, $iSpeed)
+Func _Tstbl_MouseClick($sButton = "left", $iXPos = Default, $iYPos = Default, $iClicks = 1, $iSpeed = 10)
+    Local $vResult = $g_hFn_MouseClick($sButton, $iXPos, $iYPos, $iClicks, $iSpeed)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_MouseMove($iX, $iY, $iSpeed = 10)
-    Local $vResult = $g_hFn_MouseMove($iX, $iY, $iSpeed)
+Func _Tstbl_MouseMove($iXPos, $iYPos, $iSpeed = 10)
+    Local $vResult = $g_hFn_MouseMove($iXPos, $iYPos, $iSpeed)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
@@ -39,27 +39,27 @@ Func _Tstbl_MouseGetPos($iIndex = 0)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_ControlClick($sTitle, $sText, $sControl, $sButton = "left", $iNumClicks = 1, $iX = Default, $iY = Default)
-    Local $vResult = $g_hFn_ControlClick($sTitle, $sText, $sControl, $sButton, $iNumClicks, $iX, $iY)
+Func _Tstbl_ControlClick($sTitle, $sText, $hControlId, $sButton = "left", $iNumClicks = 1, $iXPos = Default, $iYPos = Default)
+    Local $vResult = $g_hFn_ControlClick($sTitle, $sText, $hControlId, $sButton, $iNumClicks, $iXPos, $iYPos)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_ControlSetText($sTitle, $sText, $sControl, $sNewText, $iFlag = 0)
-    Local $vResult = $g_hFn_ControlSetText($sTitle, $sText, $sControl, $sNewText, $iFlag)
+Func _Tstbl_ControlSetText($sTitle, $sText, $hControlId, $sNewText, $iFlag = 0)
+    Local $vResult = $g_hFn_ControlSetText($sTitle, $sText, $hControlId, $sNewText, $iFlag)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_ControlGetText($sTitle, $sText, $sControl)
-    Local $vResult = $g_hFn_ControlGetText($sTitle, $sText, $sControl)
+Func _Tstbl_ControlGetText($sTitle, $sText, $hControlId)
+    Local $vResult = $g_hFn_ControlGetText($sTitle, $sText, $hControlId)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_ControlSend($sTitle, $sText, $sControl, $sKeys, $iFlag = 0)
-    Local $vResult = $g_hFn_ControlSend($sTitle, $sText, $sControl, $sKeys, $iFlag)
+Func _Tstbl_ControlSend($sTitle, $sText, $hControlId, $sString, $iFlag = 0)
+    Local $vResult = $g_hFn_ControlSend($sTitle, $sText, $hControlId, $sString, $iFlag)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_ControlFocus($sTitle, $sText, $sControl)
-    Local $vResult = $g_hFn_ControlFocus($sTitle, $sText, $sControl)
+Func _Tstbl_ControlFocus($sTitle, $sText, $hControlId)
+    Local $vResult = $g_hFn_ControlFocus($sTitle, $sText, $hControlId)
     Return SetError(@error, @extended, $vResult)
 EndFunc

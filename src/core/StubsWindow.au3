@@ -66,8 +66,8 @@ Func __Stub_WinGetState($sTitle, $sText = "")
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func __Stub_WinSetState($sTitle, $sText, $iFlags)
-	Local $vReturn = __DefineStub("WinSetState", __CallArgs("sTitle = " & $sTitle, "sText = " & $sText, "iFlags = " & $iFlags), 1)
+Func __Stub_WinSetState($sTitle, $sText, $iFlag)
+	Local $vReturn = __DefineStub("WinSetState", __CallArgs("sTitle = " & $sTitle, "sText = " & $sText, "iFlag = " & $iFlag), 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
@@ -76,8 +76,8 @@ Func __Stub_WinSetTitle($sTitle, $sText, $sNewTitle)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func __Stub_WinMove($sTitle, $sText, $iX, $iY, $iWidth = -1, $iHeight = -1, $iSpeed = 1)
-	Local $aArgs = __CallArgs("sTitle = " & $sTitle, "sText = " & $sText, "iX = " & $iX, "iY = " & $iY, _
+Func __Stub_WinMove($sTitle, $sText, $iXPos, $iYPos, $iWidth = -1, $iHeight = -1, $iSpeed = 1)
+	Local $aArgs = __CallArgs("sTitle = " & $sTitle, "sText = " & $sText, "iXPos = " & $iXPos, "iYPos = " & $iYPos, _
 							  "iWidth = " & $iWidth, "iHeight = " & $iHeight, "iSpeed = " & $iSpeed)
 	Local $vReturn = __DefineStub("WinMove", $aArgs, 1)
 	Return SetError(@error, 0, $vReturn)

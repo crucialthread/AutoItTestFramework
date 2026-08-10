@@ -40,13 +40,13 @@ Func __Stub_FileGetSize($sFileName)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func __Stub_FileGetTime($sFileName, $iOption = 0, $iFormat = 0)
-	Local $vReturn = __DefineStub("FileGetTime", __CallArgs("sFileName = " & $sFileName, "iOption = " & $iOption, "iFormat = " & $iFormat), "")
+Func __Stub_FileGetTime($sFileName, $iOption = 0, $iFileTimeFormat = 0)
+	Local $vReturn = __DefineStub("FileGetTime", __CallArgs("sFileName = " & $sFileName, "iOption = " & $iOption, "iFileTimeFormat = " & $iFileTimeFormat), "")
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func __Stub_FileGetVersion($sFileName, $sStringName = "FileVersion")
-	Local $vReturn = __DefineStub("FileGetVersion", __CallArgs("sFileName = " & $sFileName, "sStringName = " & $sStringName), "")
+Func __Stub_FileGetVersion($sFileName, $sFileInfo = "FileVersion")
+	Local $vReturn = __DefineStub("FileGetVersion", __CallArgs("sFileName = " & $sFileName, "sFileInfo = " & $sFileInfo), "")
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
@@ -75,8 +75,8 @@ Func __Stub_FileReadLine($hFile, $iLine = 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func __Stub_FileWriteLine($hFile, $sLine)
-	Local $vReturn = __DefineStub("FileWriteLine", __CallArgs("hFile = " & $hFile, "sLine = " & $sLine), 1)
+Func __Stub_FileWriteLine($hFile, $sTextLine)
+	Local $vReturn = __DefineStub("FileWriteLine", __CallArgs("hFile = " & $hFile, "sTextLine = " & $sTextLine), 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
@@ -90,8 +90,8 @@ Func __Stub_FileCreateShortcut($sFile, $sLnk, $sWorkDir = "", $sArgs = "", $sDes
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func __Stub_FileSetAttrib($sFilePattern, $sAttrib, $iRecurse = 0)
-	Local $vReturn = __DefineStub("FileSetAttrib", __CallArgs("sFilePattern = " & $sFilePattern, "sAttrib = " & $sAttrib), 1)
+Func __Stub_FileSetAttrib($sFilePattern, $sFileAttrib, $iRecurse = 0)
+	Local $vReturn = __DefineStub("FileSetAttrib", __CallArgs("sFilePattern = " & $sFilePattern, "sFileAttrib = " & $sFileAttrib), 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 

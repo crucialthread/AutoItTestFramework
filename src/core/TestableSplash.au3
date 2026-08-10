@@ -17,13 +17,13 @@ Global $g_hFn_ProgressOn    = ProgressOn
 Global $g_hFn_ProgressSet   = ProgressSet
 Global $g_hFn_ProgressOff   = ProgressOff
 
-Func _Tstbl_SplashTextOn($sTitle, $sText, $iWidth = 500, $iHeight = 400, $iXPos = Default, $iYPos = Default, $iOpt = 0, $sFont = "", $iFontSize = 12, $iFontStyle = 0)
-    Local $vResult = $g_hFn_SplashTextOn($sTitle, $sText, $iWidth, $iHeight, $iXPos, $iYPos, $iOpt, $sFont, $iFontSize, $iFontStyle)
+Func _Tstbl_SplashTextOn($sTitle, $sText, $iWidth = 500, $iHeight = 400, $iXPos = Default, $iYPos = Default, $iOption = 0, $sFontName = "", $iFontSize = 12, $iFontWeight = 0)
+    Local $vResult = $g_hFn_SplashTextOn($sTitle, $sText, $iWidth, $iHeight, $iXPos, $iYPos, $iOption, $sFontName, $iFontSize, $iFontWeight)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_SplashImageOn($sTitle, $sFile, $iWidth = 500, $iHeight = 400, $iXPos = Default, $iYPos = Default, $iOpt = 1)
-    Local $vResult = $g_hFn_SplashImageOn($sTitle, $sFile, $iWidth, $iHeight, $iXPos, $iYPos, $iOpt)
+Func _Tstbl_SplashImageOn($sTitle, $sFileName, $iWidth = 500, $iHeight = 400, $iXPos = Default, $iYPos = Default, $iOption = 1)
+    Local $vResult = $g_hFn_SplashImageOn($sTitle, $sFileName, $iWidth, $iHeight, $iXPos, $iYPos, $iOption)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
@@ -32,8 +32,8 @@ Func _Tstbl_SplashOff()
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_ProgressOn($sTitle, $sText, $sSubText = "", $iXPos = Default, $iYPos = Default, $iOpt = 1)
-    Local $vResult = $g_hFn_ProgressOn($sTitle, $sText, $sSubText, $iXPos, $iYPos, $iOpt)
+Func _Tstbl_ProgressOn($sTitle, $sText, $sSubText = "", $iXPos = Default, $iYPos = Default, $iOption = 1)
+    Local $vResult = $g_hFn_ProgressOn($sTitle, $sText, $sSubText, $iXPos, $iYPos, $iOption)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 

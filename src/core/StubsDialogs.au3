@@ -11,7 +11,7 @@
 #include "StubsCore.au3"
 
 Func __Stub_MsgBox($iFlag, $sTitle, $sText, $iTimeout = 0, $hWnd = 0)
-	Local $aArgs = __CallArgs("iFlag = " & $iFlag, "sTitle = " & $sTitle, "sText = " & $sText, "hWnd = " & $hWnd)
+	Local $aArgs = __CallArgs("iFlag = " & $iFlag, "sTitle = " & $sTitle, "sText = " & $sText, "iTimeout = " & $iTimeout, "hWnd = " & $hWnd)
 	Local $vReturn = __DefineStub("MsgBox", $aArgs, 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
@@ -26,7 +26,7 @@ EndFunc
 Func __Stub_FileOpenDialog($sTitle, $sInitDir, $sFilter, $iOptions = 0, $sDefaultName = "", $hWnd = 0)
 	Local $aArgs = __CallArgs("sTitle = " & $sTitle, "sInitDir = " & $sInitDir, "sFilter = " & $sFilter, _
 							  "iOptions = " & $iOptions, "sDefaultName = " & $sDefaultName, "hWnd = " & $hWnd)
-	Local $vReturn = __DefineStub("FileOpenDialog", __CallArgs("sTitle = " & $sTitle), "")
+	Local $vReturn = __DefineStub("FileOpenDialog", $aArgs, "")
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 

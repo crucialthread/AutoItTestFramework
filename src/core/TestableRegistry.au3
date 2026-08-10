@@ -15,27 +15,27 @@ Global $g_hFn_RegDelete  = RegDelete
 Global $g_hFn_RegEnumKey = RegEnumKey
 Global $g_hFn_RegEnumVal = RegEnumVal
 
-Func _Tstbl_RegRead($sKeyname, $sValuename)
-    Local $vResult = $g_hFn_RegRead($sKeyname, $sValuename)
+Func _Tstbl_RegRead($sKeyName, $sValueName)
+    Local $vResult = $g_hFn_RegRead($sKeyName, $sValueName)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_RegWrite($sKeyname, $sValuename = "", $sType = "REG_SZ", $vValue = "")
-    Local $vResult = $g_hFn_RegWrite($sKeyname, $sValuename, $sType, $vValue)
+Func _Tstbl_RegWrite($sKeyName, $sValueName = "", $sKeyType = "REG_SZ", $sValue = "")
+    Local $vResult = $g_hFn_RegWrite($sKeyName, $sValueName, $sKeyType, $sValue)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_RegDelete($sKeyname, $sValuename = "")
-    Local $vResult = $g_hFn_RegDelete($sKeyname, $sValuename)
+Func _Tstbl_RegDelete($sKeyName, $sValueName = "")
+    Local $vResult = $g_hFn_RegDelete($sKeyName, $sValueName)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_RegEnumKey($sKeyname, $iInstance)
-    Local $vResult = $g_hFn_RegEnumKey($sKeyname, $iInstance)
+Func _Tstbl_RegEnumKey($sKeyName, $iKeyInstance)
+    Local $vResult = $g_hFn_RegEnumKey($sKeyName, $iKeyInstance)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_RegEnumVal($sKeyname, $iInstance)
-    Local $vResult = $g_hFn_RegEnumVal($sKeyname, $iInstance)
+Func _Tstbl_RegEnumVal($sKeyName, $iKeyInstance)
+    Local $vResult = $g_hFn_RegEnumVal($sKeyName, $iKeyInstance)
     Return SetError(@error, @extended, $vResult)
 EndFunc

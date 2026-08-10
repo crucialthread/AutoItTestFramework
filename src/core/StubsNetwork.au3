@@ -10,8 +10,8 @@
 #include-once
 #include "StubsCore.au3"
 
-Func __Stub_InetGet($sURL, $sFilename, $iOptions = 0, $hDownloadCallback = 0)
-	Local $aArgs = __CallArgs("sURL = " & $sURL, "sFilename = " & $sFilename, "iOptions = " & $iOptions, "hDownloadCallback = " & $hDownloadCallback)
+Func __Stub_InetGet($sURL, $sFilename, $iOptions = 0, $iBackground  = 0)
+	Local $aArgs = __CallArgs("sURL = " & $sURL, "sFilename = " & $sFilename, "iOptions = " & $iOptions, "iBackground = " & $iBackground)
 	Local $vReturn = __DefineStub("InetGet", $aArgs, 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
@@ -21,8 +21,8 @@ Func __Stub_InetRead($sURL, $iOptions = 0)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func __Stub_InetClose($hDownload)
-	Local $vReturn = __DefineStub("InetClose", __CallArgs("hDownload = " & $hDownload), True)
+Func __Stub_InetClose($hHandle)
+	Local $vReturn = __DefineStub("InetClose", __CallArgs("hHandle = " & $hHandle), True)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 

@@ -4,7 +4,7 @@
 ; AutoIt Version : 3.3.18.0
 ; Author ........: Crucial Thread
 ; Description ...: Core stub infrastructure shared by all Stubs_*.au3 category files.
-;                  Provides $g_StubCalls, $g_StubReturns, __StubInitType and _ResetStubs.
+;                  Provides stub stores, helper functions, accessor functions, and reset/return utilities.
 ; ===============================================================================================================================
 
 #include-once
@@ -119,6 +119,33 @@ Func __DefineStub($sBuiltInFunc, $aArgs, $vDefaultReturn = Null)
 	Return $vReturn
 EndFunc
 
+; #INTERNAL_USE_ONLY# ===========================================================================================================
+; Param offset - returns the number of characters to skip for the Hungarian prefix of a parameter key.
+;                Skips 2 for "id" prefix, 1 for any other single lowercase letter prefix, 0 otherwise.
+; ===============================================================================================================================
+Func __ParamOffset($sParam)
+	Local $iOffset = 0
+	If StringIsLower(StringLeft($sParam, 1)) Then
+		$iOffset = StringLeft($sParam, 2) == "id" ? 2 : 1
+	EndIf
+	Return $iOffset
+EndFunc
+
+; #INTERNAL_USE_ONLY# ===========================================================================================================
+; Fallback param - finds a matching key in a map by comparing base names after stripping Hungarian prefixes.
+;                  Used when an exact key match fails, making _StubCall resilient to prefix variations.
+;                  Returns Null if no match is found.
+; ===============================================================================================================================
+Func __FallBackParam($sParam, $aMapKeys)
+	$sParam = __SanitizeStubParam($sParam)
+	Local $ParamSearch = StringMid($sParam, __ParamOffset($sParam) + 1)
+
+	For $vKey In $aMapKeys
+		If StringRight($vKey, StringLen($vKey) - __ParamOffset($vKey)) = $ParamSearch Then Return $vKey
+	Next
+	Return Null
+EndFunc
+
 ; ===============================================================================================================================
 ; Reset - call between tests to clear all recorded calls and returns
 ; ===============================================================================================================================
@@ -139,3 +166,32 @@ Func _SetStubReturn($sType, $iIdx, $vValue)
     $g_StubReturns[$sType][$iIdx] = $vValue
 EndFunc
 
+; ===============================================================================================================================
+; Accessor functions
+; ===============================================================================================================================
+
+; ===============================================================================================================================
+; Stub call count - returns the number of times a stub type was called, or 0 if it was never called.
+;                   Safe alternative to $g_StubCalls["TypeName"].count which crashes if the type does not exist.
+; ===============================================================================================================================
+Func _StubCallCount($sType)
+    If Not MapExists($g_StubCalls, $sType) Then Return 0
+    Return $g_StubCalls[$sType].count
+EndFunc
+
+; ===============================================================================================================================
+; Stub call accessor - returns the recorded argument value for a given stub type, call index, and parameter name.
+;                      Falls back to a prefix-agnostic match if the exact parameter name is not found.
+;                      Returns Null if the type, index, or parameter does not exist.
+; ===============================================================================================================================
+Func _StubCall($sType, $idStub, $sParam)
+	If Not IsMap($g_StubCalls[$sType]) Then Return Null
+	If Not IsMap($g_StubCalls[$sType][$idStub]) Then Return Null
+
+	If MapExists($g_StubCalls[$sType][$idStub], $sParam) Then
+		Return $g_StubCalls[$sType][$idStub][$sParam]
+	Else
+		Local $vKey = __FallBackParam($sParam, MapKeys($g_StubCalls[$sType][$idStub]))
+		Return $vKey = Null ? Null : $g_StubCalls[$sType][$idStub][$vKey]
+	EndIf
+EndFunc

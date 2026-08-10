@@ -33,9 +33,9 @@ Func __Stub_GUISetBkColor($iColor, $hWnd = Default)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func __Stub_GUISetFont($iSize, $iWeight = 0, $iAttrib = 0, $sFontName = "", $hWnd = Default, $iQuality = 0)
-	Local $aArgs = __CallArgs("iSize = " & $iSize, "iWeight = " & $iWeight, "iAttrib = " & $iAttrib, _
-							  "sFontName = " & $sFontName, "hWnd = " & $hWnd, "iQuality = " & $iQuality)
+Func __Stub_GUISetFont($iFontSize, $iFontWeight = 0, $iFontAttribute = 0, $sFontName = "", $hWnd = Default, $iFontQuality = 0)
+	Local $aArgs = __CallArgs("iFontSize = " & $iFontSize, "iFontWeight = " & $iFontWeight, "iFontAttribute = " & $iFontAttribute, _
+							  "sFontName = " & $sFontName, "hWnd = " & $hWnd, "iFontQuality = " & $iFontQuality)
 	Local $vReturn = __DefineStub("GUISetFont", $aArgs, 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
@@ -115,8 +115,8 @@ Func __Stub_GUICtrlCreateListView($sText, $iLeft, $iTop, $iWidth = Default, $iHe
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func __Stub_GUICtrlCreateListViewItem($sText, $idListView)
-	Local $vReturn = __DefineStub("GUICtrlCreateListViewItem", __CallArgs("sText = " & $sText, "idListView = " & $idListView), 1)
+Func __Stub_GUICtrlCreateListViewItem($sText, $hListViewId)
+	Local $vReturn = __DefineStub("GUICtrlCreateListViewItem", __CallArgs("sText = " & $sText, "hListViewId = " & $hListViewId), 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
@@ -127,8 +127,8 @@ Func __Stub_GUICtrlCreateTreeView($iLeft, $iTop, $iWidth = Default, $iHeight = D
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func __Stub_GUICtrlCreateTreeViewItem($sText, $idTreeview)
-	Local $vReturn = __DefineStub("GUICtrlCreateTreeViewItem", __CallArgs("sText = " & $sText, "idTreeview = " & $idTreeview), 1)
+Func __Stub_GUICtrlCreateTreeViewItem($sText, $hTreeViewId)
+	Local $vReturn = __DefineStub("GUICtrlCreateTreeViewItem", __CallArgs("sText = " & $sText, "hTreeViewId = " & $hTreeViewId), 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
@@ -158,8 +158,8 @@ Func __Stub_GUICtrlCreateDate($sText, $iLeft, $iTop, $iWidth = Default, $iHeight
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func __Stub_GUICtrlCreateUpdown($idInputControl, $iStyle = -1)
-	Local $vReturn = __DefineStub("GUICtrlCreateUpdown", __CallArgs("idInputControl = " & $idInputControl, "iStyle = " & $iStyle), 1)
+Func __Stub_GUICtrlCreateUpdown($hInputControlId, $iStyle = -1)
+	Local $vReturn = __DefineStub("GUICtrlCreateUpdown", __CallArgs("hInputControlId = " & $hInputControlId, "iStyle = " & $iStyle), 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
@@ -170,14 +170,14 @@ Func __Stub_GUICtrlCreateGroup($sText, $iLeft, $iTop, $iWidth = Default, $iHeigh
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func __Stub_GUICtrlCreateMenu($sText, $idParentMenu = -1, $iMenuEntry = -1)
-	Local $aArgs = __CallArgs("sText = " & $sText, "idParentMenu = " & $idParentMenu, "iMenuEntry = " & $iMenuEntry)
+Func __Stub_GUICtrlCreateMenu($sText, $hParentMenuId = -1, $iMenuEntry = -1)
+	Local $aArgs = __CallArgs("sText = " & $sText, "hParentMenuId = " & $hParentMenuId, "iMenuEntry = " & $iMenuEntry)
 	Local $vReturn = __DefineStub("GUICtrlCreateMenu", $aArgs, 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func __Stub_GUICtrlCreateMenuItem($sText, $IdMenu, $iMenuEntry = -1, $iMenuRadioItem  = 0)
-	Local $aArgs = __CallArgs("sText = " & $sText, "$IdMenu = " & $IdMenu, "$iMenuEntry = " & $iMenuEntry, "$iMenuRadioItem = " & $iMenuRadioItem)
+Func __Stub_GUICtrlCreateMenuItem($sText, $hMenuId, $iMenuEntry = -1, $iMenuRadioItem  = 0)
+	Local $aArgs = __CallArgs("sText = " & $sText, "hMenuId = " & $hMenuId, "iMenuEntry = " & $iMenuEntry, "iMenuRadioItem = " & $iMenuRadioItem)
 	Local $vReturn = __DefineStub("GUICtrlCreateMenuItem", $aArgs, 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
@@ -198,56 +198,56 @@ EndFunc
 
 ; --- Control interaction ---
 
-Func __Stub_GUICtrlSetState($idCtrl, $iState)
-	Local $vReturn = __DefineStub("GUICtrlSetState", __CallArgs("idCtrl = " & $idCtrl, "iState = " & $iState), 1)
+Func __Stub_GUICtrlSetState($hControlId, $iState)
+	Local $vReturn = __DefineStub("GUICtrlSetState", __CallArgs("hControlId = " & $hControlId, "iState = " & $iState), 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func __Stub_GUICtrlGetState($idCtrl)
-	Local $vReturn = __DefineStub("GUICtrlGetState", __CallArgs("idCtrl = " & $idCtrl), 1)
+Func __Stub_GUICtrlGetState($hControlId)
+	Local $vReturn = __DefineStub("GUICtrlGetState", __CallArgs("hControlId = " & $hControlId), 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func __Stub_GUICtrlSetData($idCtrl, $vData, $vDefault = "")
-	Local $vReturn = __DefineStub("GUICtrlSetData", __CallArgs("idCtrl = " & $idCtrl, "vData = " & $vData, "vDefault = " & $vDefault), 1)
+Func __Stub_GUICtrlSetData($hControlId, $vData, $vDefault = "")
+	Local $vReturn = __DefineStub("GUICtrlSetData", __CallArgs("hControlId = " & $hControlId, "vData = " & $vData, "vDefault = " & $vDefault), 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func __Stub_GUICtrlRead($idCtrl, $iAdvanced = 0)
-	Local $vReturn = __DefineStub("GUICtrlRead", __CallArgs("idCtrl = " & $idCtrl, "iAdvanced = " & $iAdvanced), "")
+Func __Stub_GUICtrlRead($hControlId, $iAdvanced = 0)
+	Local $vReturn = __DefineStub("GUICtrlRead", __CallArgs("hControlId = " & $hControlId, "iAdvanced = " & $iAdvanced), "")
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func __Stub_GUICtrlDelete($idCtrl)
-	Local $vReturn = __DefineStub("GUICtrlDelete", __CallArgs("idCtrl = " & $idCtrl), 1)
+Func __Stub_GUICtrlDelete($hControlId)
+	Local $vReturn = __DefineStub("GUICtrlDelete", __CallArgs("hControlId = " & $hControlId), 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func __Stub_GUICtrlSetFont($idCtrl, $iSize, $iWeight = 0, $iAttrib = 0, $sName = "", $iQuality = 0)
-	Local $aArgs = __CallArgs("idCtrl = " & $idCtrl, "iSize = " & $iSize, "iWeight = " & $iWeight, _
-							  "iAttrib = " & $iAttrib, "sName = " & $sName, "iQuality = " & $iQuality)
+Func __Stub_GUICtrlSetFont($hControlId, $iFontSize, $iFontWeight = 0, $iFontAttribute = 0, $sName = "", $iFontQuality = 0)
+	Local $aArgs = __CallArgs("hControlId = " & $hControlId, "iFontSize = " & $iFontSize, "iFontWeight = " & $iFontWeight, _
+							  "iFontAttribute = " & $iFontAttribute, "sName = " & $sName, "iFontQuality = " & $iFontQuality)
 	Local $vReturn = __DefineStub("GUICtrlSetFont", $aArgs, 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func __Stub_GUICtrlSetColor($idCtrl, $iColor)
-	Local $vReturn = __DefineStub("GUICtrlSetColor", __CallArgs("idCtrl = " & $idCtrl, "iColor = " & $iColor), 1)
+Func __Stub_GUICtrlSetColor($hControlId, $iColor)
+	Local $vReturn = __DefineStub("GUICtrlSetColor", __CallArgs("hControlId = " & $hControlId, "iColor = " & $iColor), 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func __Stub_GUICtrlSetBkColor($idCtrl, $iColor)
-	Local $vReturn = __DefineStub("GUICtrlSetBkColor", __CallArgs("idCtrl = " & $idCtrl, "iColor = " & $iColor), 1)
+Func __Stub_GUICtrlSetBkColor($hControlId, $iColor)
+	Local $vReturn = __DefineStub("GUICtrlSetBkColor", __CallArgs("hControlId = " & $hControlId, "iColor = " & $iColor), 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func __Stub_GUICtrlSetPos($idCtrl, $iLeft, $iTop, $iWidth = Default, $iHeight = Default)
-	Local $aArgs =  __CallArgs("idCtrl = " & $idCtrl, "iLeft = " & $iLeft, "iTop = " & $iTop, "iWidth = " & $iWidth, "iHeight = " & $iHeight)
+Func __Stub_GUICtrlSetPos($hControlId, $iLeft, $iTop, $iWidth = Default, $iHeight = Default)
+	Local $aArgs =  __CallArgs("hControlId = " & $hControlId, "iLeft = " & $iLeft, "iTop = " & $iTop, "iWidth = " & $iWidth, "iHeight = " & $iHeight)
 	Local $vReturn = __DefineStub("GUICtrlSetPos", $aArgs, 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func __Stub_GUICtrlSetTip($idCtrl, $sTooltip, $sTitle = "", $iIcon = 0, $iOptions = 0)
-	Local $aArgs = __CallArgs("idCtrl = " & $idCtrl, "sTooltip = " & $sTooltip, "sTitle = " & $sTitle, "iIcon = " & $iIcon, "iOptions = " & $iOptions)
+Func __Stub_GUICtrlSetTip($hControlId, $sTooltip, $sTitle = "", $iIcon = 0, $iOptions = 0)
+	Local $aArgs = __CallArgs("hControlId = " & $hControlId, "sTooltip = " & $sTooltip, "sTitle = " & $sTitle, "iIcon = " & $iIcon, "iOptions = " & $iOptions)
 	Local $vReturn = __DefineStub("GUICtrlSetTip", $aArgs, 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc

@@ -15,8 +15,8 @@ Global $g_hFn_InetClose   = InetClose
 Global $g_hFn_InetGetSize = InetGetSize
 Global $g_hFn_Ping        = Ping
 
-Func _Tstbl_InetGet($sURL, $sFilename, $iOptions = 0, $hDownloadCallback = 0)
-    Local $vResult = $g_hFn_InetGet($sURL, $sFilename, $iOptions, $hDownloadCallback)
+Func _Tstbl_InetGet($sURL, $sFilename, $iOptions = 0, $iBackground = 0)
+    Local $vResult = $g_hFn_InetGet($sURL, $sFilename, $iOptions, $iBackground)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
@@ -25,8 +25,8 @@ Func _Tstbl_InetRead($sURL, $iOptions = 0)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_InetClose($hDownload)
-    Local $vResult = $g_hFn_InetClose($hDownload)
+Func _Tstbl_InetClose($hHandle)
+    Local $vResult = $g_hFn_InetClose($hHandle)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 

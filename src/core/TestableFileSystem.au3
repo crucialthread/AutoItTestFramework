@@ -63,13 +63,13 @@ Func _Tstbl_FileGetSize($sFileName)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_FileGetTime($sFileName, $iOption = 0, $iFormat = 0)
-    Local $vResult = $g_hFn_FileGetTime($sFileName, $iOption, $iFormat)
+Func _Tstbl_FileGetTime($sFileName, $iOption = 0, $iFileTimeFormat = 0)
+    Local $vResult = $g_hFn_FileGetTime($sFileName, $iOption, $iFileTimeFormat)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_FileGetVersion($sFileName, $sStringName = "FileVersion")
-    Local $vResult = $g_hFn_FileGetVersion($sFileName, $sStringName)
+Func _Tstbl_FileGetVersion($sFileName, $sFileInfo = "FileVersion")
+    Local $vResult = $g_hFn_FileGetVersion($sFileName, $sFileInfo)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
@@ -98,8 +98,8 @@ Func _Tstbl_FileReadLine($hFile, $iLine = 1)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_FileWriteLine($hFile, $sLine)
-    Local $vResult = $g_hFn_FileWriteLine($hFile, $sLine)
+Func _Tstbl_FileWriteLine($hFile, $sTextLine)
+    Local $vResult = $g_hFn_FileWriteLine($hFile, $sTextLine)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
@@ -113,8 +113,8 @@ Func _Tstbl_FileCreateShortcut($sFile, $sLnk, $sWorkDir = "", $sArgs = "", $sDes
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_FileSetAttrib($sFilePattern, $sAttrib, $iRecurse = 0)
-    Local $vResult = $g_hFn_FileSetAttrib($sFilePattern, $sAttrib, $iRecurse)
+Func _Tstbl_FileSetAttrib($sFilePattern, $sFileAttrib, $iRecurse = 0)
+    Local $vResult = $g_hFn_FileSetAttrib($sFilePattern, $sFileAttrib, $iRecurse)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 

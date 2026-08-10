@@ -22,38 +22,38 @@ Global $g_hFn_StdoutRead       = StdoutRead
 Global $g_hFn_StderrRead       = StderrRead
 Global $g_hFn_StdinWrite       = StdinWrite
 
-Func _Tstbl_ShellExecute($sFilename, $sParams = "", $sWorkDir = "", $sVerb = "open", $iShowFlag = 1)
-    Local $vResult = $g_hFn_ShellExecute($sFilename, $sParams, $sWorkDir, $sVerb, $iShowFlag)
+Func _Tstbl_ShellExecute($sFilename, $sParameters = "", $sWorkingDir = "", $sShellVerb = Default, $iShowFlag = 1)
+    Local $vResult = $g_hFn_ShellExecute($sFilename, $sParameters, $sWorkingDir, $sShellVerb, $iShowFlag)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_ShellExecuteWait($sFilename, $sParams = "", $sWorkDir = "", $sVerb = "open", $iShowFlag = 1)
-    Local $vResult = $g_hFn_ShellExecuteWait($sFilename, $sParams, $sWorkDir, $sVerb, $iShowFlag)
+Func _Tstbl_ShellExecuteWait($sFilename, $sParameters = "", $sWorkingDir = "", $sShellVerb = Default, $iShowFlag = 1)
+    Local $vResult = $g_hFn_ShellExecuteWait($sFilename, $sParameters, $sWorkingDir, $sShellVerb, $iShowFlag)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_Run($sProgram, $sWorkingDir = "", $iShowFlag = @SW_SHOWNORMAL, $nOptionalStreamHandle = 0)
-    Local $vResult = $g_hFn_Run($sProgram, $sWorkingDir, $iShowFlag, $nOptionalStreamHandle)
+Func _Tstbl_Run($sProgram, $sWorkingDir = "", $iShowFlag = @SW_SHOWNORMAL, $nOptFlag = 0)
+    Local $vResult = $g_hFn_Run($sProgram, $sWorkingDir, $iShowFlag, $nOptFlag)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_RunWait($sProgram, $sWorkingDir = "", $iShowFlag = @SW_SHOWNORMAL, $nOptionalStreamHandle = 0)
-    Local $vResult = $g_hFn_RunWait($sProgram, $sWorkingDir, $iShowFlag, $nOptionalStreamHandle)
+Func _Tstbl_RunWait($sProgram, $sWorkingDir = "", $iShowFlag = @SW_SHOWNORMAL, $nOptFlag = 0)
+    Local $vResult = $g_hFn_RunWait($sProgram, $sWorkingDir, $iShowFlag, $nOptFlag)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_ProcessExists($sProcess)
-    Local $vResult = $g_hFn_ProcessExists($sProcess)
+Func _Tstbl_ProcessExists($idProcess)
+    Local $vResult = $g_hFn_ProcessExists($idProcess)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_ProcessClose($sProcess)
-    Local $vResult = $g_hFn_ProcessClose($sProcess)
+Func _Tstbl_ProcessClose($idProcess)
+    Local $vResult = $g_hFn_ProcessClose($idProcess)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_ProcessWait($sProcess, $iTimeout = 0)
-    Local $vResult = $g_hFn_ProcessWait($sProcess, $iTimeout)
+Func _Tstbl_ProcessWait($sProcessName, $iTimeout = 0)
+    Local $vResult = $g_hFn_ProcessWait($sProcessName, $iTimeout)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
@@ -62,8 +62,8 @@ Func _Tstbl_ProcessWaitClose($sProcess, $iTimeout = 0)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_ProcessList($sProcess = "")
-    Local $vResult = $g_hFn_ProcessList($sProcess)
+Func _Tstbl_ProcessList($sProcessName = "")
+    Local $vResult = $g_hFn_ProcessList($sProcessName)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 

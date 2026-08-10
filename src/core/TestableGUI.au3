@@ -75,8 +75,8 @@ Func _Tstbl_GUISetBkColor($iColor, $hWnd = Default)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_GUISetFont($iSize, $iWeight = 0, $iAttrib = 0, $sFontName = "", $hWnd = Default, $iQuality = 0)
-    Local $vResult = $g_hFn_GUISetFont($iSize, $iWeight, $iAttrib, $sFontName, $hWnd, $iQuality)
+Func _Tstbl_GUISetFont($iFontSize, $iFontWeight = 0, $iFontAttribute = 0, $sFontName = "", $hWnd = Default, $iFontQuality = 0)
+    Local $vResult = $g_hFn_GUISetFont($iFontSize, $iFontWeight, $iFontAttribute, $sFontName, $hWnd, $iFontQuality)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
@@ -136,8 +136,8 @@ Func _Tstbl_GUICtrlCreateListView($sText, $iLeft, $iTop, $iWidth = Default, $iHe
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_GUICtrlCreateListViewItem($sText, $idListView)
-    Local $vResult = $g_hFn_GUICtrlCreateListViewItem($sText, $idListView)
+Func _Tstbl_GUICtrlCreateListViewItem($sText, $hListViewId)
+    Local $vResult = $g_hFn_GUICtrlCreateListViewItem($sText, $hListViewId)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
@@ -146,8 +146,8 @@ Func _Tstbl_GUICtrlCreateTreeView($iLeft, $iTop, $iWidth = Default, $iHeight = D
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_GUICtrlCreateTreeViewItem($sText, $idTreeview)
-    Local $vResult = $g_hFn_GUICtrlCreateTreeViewItem($sText, $idTreeview)
+Func _Tstbl_GUICtrlCreateTreeViewItem($sText, $hTreeViewId)
+    Local $vResult = $g_hFn_GUICtrlCreateTreeViewItem($sText, $hTreeViewId)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
@@ -171,8 +171,8 @@ Func _Tstbl_GUICtrlCreateDate($sText, $iLeft, $iTop, $iWidth = Default, $iHeight
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_GUICtrlCreateUpdown($idInputControl, $iStyle = -1)
-    Local $vResult = $g_hFn_GUICtrlCreateUpdown($idInputControl, $iStyle)
+Func _Tstbl_GUICtrlCreateUpdown($hInputControlId, $iStyle = -1)
+    Local $vResult = $g_hFn_GUICtrlCreateUpdown($hInputControlId, $iStyle)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
@@ -181,13 +181,13 @@ Func _Tstbl_GUICtrlCreateGroup($sText, $iLeft, $iTop, $iWidth = Default, $iHeigh
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_GUICtrlCreateMenu($sText, $idParentMenu = -1, $iMenuEntry = -1)
-    Local $vResult = $g_hFn_GUICtrlCreateMenu($sText, $idParentMenu, $iMenuEntry)
+Func _Tstbl_GUICtrlCreateMenu($sText, $hParentMenuId = -1, $iMenuEntry = -1)
+    Local $vResult = $g_hFn_GUICtrlCreateMenu($sText, $hParentMenuId, $iMenuEntry)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_GUICtrlCreateMenuItem($sText, $IdMenu, $iMenuEntry = -1, $iMenuRadioItem  = 0)
-    Local $vResult = $g_hFn_GUICtrlCreateMenuItem($sText, $IdMenu, $iMenuEntry, $iMenuRadioItem)
+Func _Tstbl_GUICtrlCreateMenuItem($sText, $hMenuId, $iMenuEntry = -1, $iMenuRadioItem  = 0)
+    Local $vResult = $g_hFn_GUICtrlCreateMenuItem($sText, $hMenuId, $iMenuEntry, $iMenuRadioItem)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
@@ -202,52 +202,52 @@ Func _Tstbl_GUICtrlCreatePic($sFilename, $iLeft, $iTop, $iWidth = Default, $iHei
 EndFunc
 
 ; Control interaction wrappers
-Func _Tstbl_GUICtrlSetState($idCtrl, $iState)
-    Local $vResult = $g_hFn_GUICtrlSetState($idCtrl, $iState)
+Func _Tstbl_GUICtrlSetState($hControlId, $iState)
+    Local $vResult = $g_hFn_GUICtrlSetState($hControlId, $iState)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_GUICtrlGetState($idCtrl)
-    Local $vResult = $g_hFn_GUICtrlGetState($idCtrl)
+Func _Tstbl_GUICtrlGetState($hControlId)
+    Local $vResult = $g_hFn_GUICtrlGetState($hControlId)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_GUICtrlSetData($idCtrl, $vData, $vDefault = "")
-    Local $vResult = $g_hFn_GUICtrlSetData($idCtrl, $vData, $vDefault)
+Func _Tstbl_GUICtrlSetData($hControlId, $vData, $vDefault = "")
+    Local $vResult = $g_hFn_GUICtrlSetData($hControlId, $vData, $vDefault)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_GUICtrlRead($idCtrl, $iAdvanced = 0)
-    Local $vResult = $g_hFn_GUICtrlRead($idCtrl, $iAdvanced)
+Func _Tstbl_GUICtrlRead($hControlId, $iAdvanced = 0)
+    Local $vResult = $g_hFn_GUICtrlRead($hControlId, $iAdvanced)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_GUICtrlDelete($idCtrl)
-    Local $vResult = $g_hFn_GUICtrlDelete($idCtrl)
+Func _Tstbl_GUICtrlDelete($hControlId)
+    Local $vResult = $g_hFn_GUICtrlDelete($hControlId)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_GUICtrlSetFont($idCtrl, $iSize, $iWeight = 0, $iAttrib = 0, $sName = "", $iQuality = 0)
-    Local $vResult = $g_hFn_GUICtrlSetFont($idCtrl, $iSize, $iWeight, $iAttrib, $sName, $iQuality)
+Func _Tstbl_GUICtrlSetFont($hControlId, $iFontSize, $iFontWeight = 0, $iFontAttribute = 0, $sName = "", $iFontQuality = 0)
+    Local $vResult = $g_hFn_GUICtrlSetFont($hControlId, $iFontSize, $iFontWeight, $iFontAttribute, $sName, $iFontQuality)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_GUICtrlSetColor($idCtrl, $iColor)
-    Local $vResult = $g_hFn_GUICtrlSetColor($idCtrl, $iColor)
+Func _Tstbl_GUICtrlSetColor($hControlId, $iColor)
+    Local $vResult = $g_hFn_GUICtrlSetColor($hControlId, $iColor)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_GUICtrlSetBkColor($idCtrl, $iColor)
-    Local $vResult = $g_hFn_GUICtrlSetBkColor($idCtrl, $iColor)
+Func _Tstbl_GUICtrlSetBkColor($hControlId, $iColor)
+    Local $vResult = $g_hFn_GUICtrlSetBkColor($hControlId, $iColor)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_GUICtrlSetPos($idCtrl, $iLeft, $iTop, $iWidth = Default, $iHeight = Default)
-    Local $vResult = $g_hFn_GUICtrlSetPos($idCtrl, $iLeft, $iTop, $iWidth, $iHeight)
+Func _Tstbl_GUICtrlSetPos($hControlId, $iLeft, $iTop, $iWidth = Default, $iHeight = Default)
+    Local $vResult = $g_hFn_GUICtrlSetPos($hControlId, $iLeft, $iTop, $iWidth, $iHeight)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_GUICtrlSetTip($idCtrl, $sTooltip, $sTitle = "", $iIcon = 0, $iOptions = 0)
-    Local $vResult = $g_hFn_GUICtrlSetTip($idCtrl, $sTooltip, $sTitle, $iIcon, $iOptions)
+Func _Tstbl_GUICtrlSetTip($hControlId, $sTooltip, $sTitle = "", $iIcon = 0, $iOptions = 0)
+    Local $vResult = $g_hFn_GUICtrlSetTip($hControlId, $sTooltip, $sTitle, $iIcon, $iOptions)
     Return SetError(@error, @extended, $vResult)
 EndFunc

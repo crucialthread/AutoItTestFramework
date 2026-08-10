@@ -28,32 +28,32 @@ Func _Tstbl_TrayGetMsg()
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_TrayCreateItem($sText, $hMenu = -1, $iMenuItemID = -1, $iMenuRadioItem = 0)
-    Local $vResult = $g_hFn_TrayCreateItem($sText, $hMenu, $iMenuItemID, $iMenuRadioItem)
+Func _Tstbl_TrayCreateItem($sText, $hMenuId = -1, $iMenuEntry = -1, $iMenuRadioItem = 0)
+    Local $vResult = $g_hFn_TrayCreateItem($sText, $hMenuId, $iMenuEntry, $iMenuRadioItem)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_TrayCreateMenu($sMenuText, $hMenuId = -1, $iMenuEntry = -1)
-    Local $vResult = $g_hFn_TrayCreateMenu($sMenuText, $hMenuId, $iMenuEntry)
+Func _Tstbl_TrayCreateMenu($sMenuText, $hParentMenuId = -1, $iMenuEntry = -1)
+    Local $vResult = $g_hFn_TrayCreateMenu($sMenuText, $hParentMenuId, $iMenuEntry)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_TrayItemSetState($hItem, $iState)
-    Local $vResult = $g_hFn_TrayItemSetState($hItem, $iState)
+Func _Tstbl_TrayItemSetState($hControlId, $iState)
+    Local $vResult = $g_hFn_TrayItemSetState($hControlId, $iState)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_TrayItemSetText($hItem, $sText)
-    Local $vResult = $g_hFn_TrayItemSetText($hItem, $sText)
+Func _Tstbl_TrayItemSetText($hControlId, $sText)
+    Local $vResult = $g_hFn_TrayItemSetText($hControlId, $sText)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_TrayItemGetState($hItem)
-    Local $vResult = $g_hFn_TrayItemGetState($hItem)
+Func _Tstbl_TrayItemGetState($hControlId)
+    Local $vResult = $g_hFn_TrayItemGetState($hControlId)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_TrayItemGetText($hItem)
-    Local $vResult = $g_hFn_TrayItemGetText($hItem)
+Func _Tstbl_TrayItemGetText($hControlId)
+    Local $vResult = $g_hFn_TrayItemGetText($hControlId)
     Return SetError(@error, @extended, $vResult)
 EndFunc

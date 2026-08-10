@@ -10,19 +10,19 @@
 #include-once
 #include "StubsCore.au3"
 
-Func __Stub_Send($sKeys, $iFlag = 0)
-	Local $vReturn = __DefineStub("Send", __CallArgs("sKeys = " & $sKeys, "iFlag = " & $iFlag))
+Func __Stub_Send($sKeyStrokes, $iFlag = 0)
+	Local $vReturn = __DefineStub("Send", __CallArgs("sKeyStrokes = " & $sKeyStrokes, "iFlag = " & $iFlag))
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func __Stub_MouseClick($sButton = "left", $iX = Default, $iY = Default, $iClicks = 1, $iSpeed = 10)
-	Local $aArgs = __CallArgs("sButton = " & $sButton, "iX = " & $iX, "iY = " & $iY, "iClicks = " & $iClicks, "iSpeed = " & $iSpeed)
+Func __Stub_MouseClick($sButton = "left", $iXPos = Default, $iYPos = Default, $iClicks = 1, $iSpeed = 10)
+	Local $aArgs = __CallArgs("sButton = " & $sButton, "iXPos = " & $iXPos, "iYPos = " & $iYPos, "iClicks = " & $iClicks, "iSpeed = " & $iSpeed)
 	Local $vReturn = __DefineStub("MouseClick", $aArgs, 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func __Stub_MouseMove($iX, $iY, $iSpeed = 10)
-	Local $vReturn = __DefineStub("MouseMove", __CallArgs("iX = " & $iX, "iY = " & $iY, "iSpeed = " & $iSpeed))
+Func __Stub_MouseMove($iXPos, $iYPos, $iSpeed = 10)
+	Local $vReturn = __DefineStub("MouseMove", __CallArgs("iXPos = " & $iXPos, "iYPos = " & $iYPos, "iSpeed = " & $iSpeed))
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
@@ -31,32 +31,32 @@ Func __Stub_MouseGetPos($iIndex = 0)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func __Stub_ControlClick($sTitle, $sText, $sControl, $sButton = "left", $iNumClicks = 1, $iX = Default, $iY = Default)
-	Local $aArgs = __CallArgs("sTitle = " & $sTitle, "sText = " & $sText, "sControl = " & $sControl, _
-							  "sButton = " & $sButton, "iNumClicks = " & $iNumClicks, "iX = " & $iX, "iY = " & $iY)
+Func __Stub_ControlClick($sTitle, $sText, $hControlId, $sButton = "left", $iNumClicks = 1, $iXPos = Default, $iYPos = Default)
+	Local $aArgs = __CallArgs("sTitle = " & $sTitle, "sText = " & $sText, "hControlId = " & $hControlId, _
+							  "sButton = " & $sButton, "iNumClicks = " & $iNumClicks, "iXPos = " & $iXPos, "iYPos = " & $iYPos)
 	Local $vReturn = __DefineStub("ControlClick", $aArgs, 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func __Stub_ControlSetText($sTitle, $sText, $sControl, $sNewText, $iFlag = 0)
-	Local $aArgs =  __CallArgs("sTitle = " & $sTitle, "sText = " & $sText, "sControl = " & $sControl, "sNewText = " & $sNewText, "iFlag = " & $iFlag)
+Func __Stub_ControlSetText($sTitle, $sText, $hControlId, $sNewText, $iFlag = 0)
+	Local $aArgs =  __CallArgs("sTitle = " & $sTitle, "sText = " & $sText, "hControlId = " & $hControlId, "sNewText = " & $sNewText, "iFlag = " & $iFlag)
 	Local $vReturn = __DefineStub("ControlSetText", $aArgs, 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func __Stub_ControlGetText($sTitle, $sText, $sControl)
-	Local $vReturn = __DefineStub("ControlGetText", __CallArgs("sTitle = " & $sTitle, "sText = " & $sText, "sControl = " & $sControl), "")
+Func __Stub_ControlGetText($sTitle, $sText, $hControlId)
+	Local $vReturn = __DefineStub("ControlGetText", __CallArgs("sTitle = " & $sTitle, "sText = " & $sText, "hControlId = " & $hControlId), "")
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func __Stub_ControlSend($sTitle, $sText, $sControl, $sKeys, $iFlag = 0)
-	Local $aArgs = __CallArgs("sTitle = " & $sTitle, "sText = " & $sText, "sControl = " & $sControl, "sKeys = " & $sKeys, "iFlag = " & $iFlag)
+Func __Stub_ControlSend($sTitle, $sText, $hControlId, $sString, $iFlag = 0)
+	Local $aArgs = __CallArgs("sTitle = " & $sTitle, "sText = " & $sText, "hControlId = " & $hControlId, "sString = " & $sString, "iFlag = " & $iFlag)
 	Local $vReturn = __DefineStub("ControlSend", $aArgs, 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func __Stub_ControlFocus($sTitle, $sText, $sControl)
-	Local $vReturn = __DefineStub("ControlFocus", __CallArgs("sTitle = " & $sTitle, "sText = " & $sText, "sControl = " & $sControl), 1)
+Func __Stub_ControlFocus($sTitle, $sText, $hControlId)
+	Local $vReturn = __DefineStub("ControlFocus", __CallArgs("sTitle = " & $sTitle, "sText = " & $sText, "hControlId = " & $hControlId), 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 

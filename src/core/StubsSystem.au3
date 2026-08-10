@@ -16,84 +16,70 @@ Func __Stub_Sleep($iDelay)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-
 Func __Stub_Shutdown($iCode)
 	Local $vReturn = __DefineStub("Shutdown", __CallArgs("iCode = " & $iCode), 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
-
 
 Func __Stub_IsAdmin()
 	Local $vReturn = __DefineStub("IsAdmin", __CallArgs(), 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-
 Func __Stub_EnvGet($sEnvVarName)
 	Local $vReturn = __DefineStub("EnvGet", __CallArgs("sEnvVarName = " & $sEnvVarName), $sEnvVarName)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
-
 
 Func __Stub_EnvSet($sEnvVarName, $sValue = "")
 	Local $vReturn = __DefineStub("EnvSet", __CallArgs("sEnvVarName = " & $sEnvVarName, "sValue = " & $sValue), 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-
 Func __Stub_DriveGetDrive($sType = "ALL")
 	Local $vReturn = __DefineStub("DriveGetDrive", __CallArgs("sType = " & $sType), "")
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-
-Func __Stub_DriveGetFileSystem($sDrive)
-	Local $vReturn = __DefineStub("DriveGetFileSystem", __CallArgs("sDrive = " & $sDrive), $DT_NTFS)
+Func __Stub_DriveGetFileSystem($sPath)
+	Local $vReturn = __DefineStub("DriveGetFileSystem", __CallArgs("sPath = " & $sPath), $DT_NTFS)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
-
 
 Func __Stub_DriveSpaceFree($sPath)
-	Local $vReturn = __DefineStub("DriveSpaceFree", __CallArgs("sPath = " & $sPath), 1)
+	Local $vReturn = __DefineStub("DriveSpaceFree", __CallArgs("sPath = " & $sPath), 1.0)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
-
 
 Func __Stub_DriveSpaceTotal($sPath)
 	Local $vReturn = __DefineStub("DriveSpaceTotal", __CallArgs("sPath = " & $sPath), 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-
-Func __Stub_DriveStatus($sDrive)
-	Local $vReturn = __DefineStub("DriveStatus", __CallArgs("sDrive = " & $sDrive), $DS_READY)
+Func __Stub_DriveStatus($sPath)
+	Local $vReturn = __DefineStub("DriveStatus", __CallArgs("sPath = " & $sPath), $DS_READY)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-
-Func __Stub_DriveGetLabel($sDrive)
-	Local $vReturn = __DefineStub("DriveGetLabel", __CallArgs("sDrive = " & $sDrive), "")
+Func __Stub_DriveGetLabel($sPath)
+	Local $vReturn = __DefineStub("DriveGetLabel", __CallArgs("sPath = " & $sPath), "")
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-
-Func __Stub_DriveGetType($sDrive, $iOperation = 1)
-	Local $vReturn = __DefineStub("DriveGetType", __CallArgs("sDrive = " & $sDrive, "iOperation = " & $iOperation), "Fixed")
+Func __Stub_DriveGetType($sPath, $iOperation = 1)
+	Local $vReturn = __DefineStub("DriveGetType", __CallArgs("sPath = " & $sPath, "iOperation = " & $iOperation), "Fixed")
 	Return SetError(@error, 0, $vReturn)
 EndFunc
-
 
 Func __Stub_ConsoleWrite($sText)
 	Local $vReturn = __DefineStub("ConsoleWrite", __CallArgs("sText = " & $sText), 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-
 Func __Stub_ConsoleWriteError($sText)
 	Local $vReturn = __DefineStub("ConsoleWriteError", __CallArgs("sText = " & $sText), 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
-
 
 $g_hFn_Sleep              = __Stub_Sleep
 $g_hFn_Shutdown           = __Stub_Shutdown
