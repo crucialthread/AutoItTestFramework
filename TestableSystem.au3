@@ -1,13 +1,14 @@
+#include-once
+
 ; #INDEX# =======================================================================================================================
 ; Title .........: AutoIt Test Framework - TestableSystem.au3
-; Version .......: 0.0.1
+; Version .......: 1.0.0
 ; AutoIt Version : 3.3.18.0
+; Language ......: English
 ; Author ........: Crucial Thread
 ; Description ...: Testable wrappers for AutoIt system functions.
 ;                  Can be included directly or via Testable.au3
 ; ===============================================================================================================================
-
-#include-once
 
 Global $g_hFn_Sleep              = Sleep
 Global $g_hFn_Shutdown           = Shutdown

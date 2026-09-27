@@ -1,14 +1,16 @@
+#include-once
+
+#include "StubsCore.au3"
+
 ; #INDEX# =======================================================================================================================
-; Title .........: AutoIt Test Framework - Stubs_Process.au3 library
-; Version .......: 0.0.1
+; Title .........: AutoIt Test Framework - StubsProcess.au3 library
+; Version .......: 1.0.0
 ; AutoIt Version : 3.3.18.0
+; Language ......: English
 ; Author ........: Crucial Thread
 ; Description ...: Stub implementations for AutoIt process and shell functions.
 ;                  Can be included directly or via Stubs.au3.
 ; ===============================================================================================================================
-
-#include-once
-#include "StubsCore.au3"
 
 Func __Stub_ShellExecute($sFilename, $sParameters = "", $sWorkingDir = "", $sShellVerb = Default, $iShowFlag = 1)
 	Local $aArgs = __CallArgs("sFilename = " & $sFilename, "sParameters = " & $sParameters, "sWorkingDir = " & $sWorkingDir, _

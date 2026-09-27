@@ -1,15 +1,17 @@
+#include-once
+
+#include <AutoItConstants.au3>
+#include "StubsCore.au3"
+
 ; #INDEX# =======================================================================================================================
-; Title .........: AutoIt Test Framework - Stubs_System.au3
-; Version .......: 0.0.1
+; Title .........: AutoIt Test Framework - StubsSystem.au3
+; Version .......: 1.0.0
 ; AutoIt Version : 3.3.18.0
+; Language ......: English
 ; Author ........: Crucial Thread
 ; Description ...: Stub implementations for AutoIt system functions.
 ;                  Can be included directly or via Stubs.au3
 ; ===============================================================================================================================
-
-#include-once
-#include <AutoItConstants.au3>
-#include "StubsCore.au3"
 
 Func __Stub_Sleep($iDelay)
 	Local $vReturn = __DefineStub("Sleep", __CallArgs("iDelay = " & $iDelay))

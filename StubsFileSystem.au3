@@ -1,14 +1,16 @@
+#include-once
+
+#include "StubsCore.au3"
+
 ; #INDEX# =======================================================================================================================
-; Title .........: AutoIt Test Framework - Stubs_FileSystem.au3 library
-; Version .......: 0.0.1
+; Title .........: AutoIt Test Framework - StubsFileSystem.au3 library
+; Version .......: 1.0.0
 ; AutoIt Version : 3.3.18.0
+; Language ......: English
 ; Author ........: Crucial Thread
 ; Description ...: Stub implementations for AutoIt file system functions.
 ;                  Can be included directly or via Stubs.au3.
 ; ===============================================================================================================================
-
-#include-once
-#include "StubsCore.au3"
 
 Func __Stub_FileExists($sPath)
     Local $vReturn = __DefineStub("FileExists", __CallArgs("sPath = " & $sPath), 1)
@@ -71,7 +73,7 @@ Func __Stub_FileClose($hFile)
 EndFunc
 
 Func __Stub_FileReadLine($hFile, $iLine = 1)
-	Local $vReturn = __DefineStub("FileReadLine", __CallArgs("hFile = " & $hFile,"iLine = " & $iLine), "")
+	Local $vReturn = __DefineStub("FileReadLine", __CallArgs("hFile = " & $hFile, "iLine = " & $iLine), "")
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
@@ -86,17 +88,19 @@ Func __Stub_FileReadToArray($hFile)
 EndFunc
 
 Func __Stub_FileCreateShortcut($sFile, $sLnk, $sWorkDir = "", $sArgs = "", $sDesc = "", $sIconFilename = "", $sHotkey = "", $iIconIndex = 0, $iState = @SW_SHOWNORMAL)
-	Local $vReturn = __DefineStub("FileCreateShortcut", __CallArgs("sFile = " & $sFile, "sLnk = " & $sLnk), 1)
+	Local $aArgs = __CallArgs("sFile = " & $sFile, "sLnk = " & $sLnk, "sWorkDir = " & $sWorkDir, "sArgs = " & $sArgs, "sDesc = " & $sDesc, _
+							  "sIconFilename = " & $sIconFilename, "sHotkey = " & $sHotkey, "iIconIndex = " & $iIconIndex, "iState = " & $iState)
+	Local $vReturn = __DefineStub("FileCreateShortcut", $aArgs, 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 Func __Stub_FileSetAttrib($sFilePattern, $sFileAttrib, $iRecurse = 0)
-	Local $vReturn = __DefineStub("FileSetAttrib", __CallArgs("sFilePattern = " & $sFilePattern, "sFileAttrib = " & $sFileAttrib), 1)
+	Local $vReturn = __DefineStub("FileSetAttrib", __CallArgs("sFilePattern = " & $sFilePattern, "sFileAttrib = " & $sFileAttrib, "iRecurse = " & $iRecurse), 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 Func __Stub_FileSetTime($sFilePattern, $sTime = "", $iType = 0, $iRecurse = 0)
-	Local $vReturn = __DefineStub("FileSetTime", __CallArgs("sFilePattern = " & $sFilePattern, "sTime = " & $sTime), 1)
+	Local $vReturn = __DefineStub("FileSetTime", __CallArgs("sFilePattern = " & $sFilePattern, "sTime = " & $sTime, "iRecurse = " & $iRecurse), 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
@@ -106,22 +110,22 @@ Func __Stub_DirCreate($sPath)
 EndFunc
 
 Func __Stub_DirRemove($sPath, $iRecurse = 0)
-	Local $vReturn = __DefineStub("DirRemove", __CallArgs("sPath = " & $sPath), 1)
+	Local $vReturn = __DefineStub("DirRemove", __CallArgs("sPath = " & $sPath, "iRecurse = " & $iRecurse), 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 Func __Stub_DirCopy($sSource, $sDest, $iFlag = 0)
-	Local $vReturn = __DefineStub("DirCopy", __CallArgs("sSource = " & $sSource, "sDest = " & $sDest), 1)
+	Local $vReturn = __DefineStub("DirCopy", __CallArgs("sSource = " & $sSource, "sDest = " & $sDest, "iFlag = " & $iFlag), 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 Func __Stub_DirMove($sSource, $sDest, $iFlag = 0)
-	Local $vReturn = __DefineStub("DirMove", __CallArgs("sSource = " & $sSource, "sDest = " & $sDest), 1)
+	Local $vReturn = __DefineStub("DirMove", __CallArgs("sSource = " & $sSource, "sDest = " & $sDest, "iFlag = " & $iFlag), 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
 Func __Stub_DirGetSize($sPath, $iFlag = 0)
-	Local $vReturn = __DefineStub("DirGetSize", __CallArgs("sPath = " & $sPath), 0)
+	Local $vReturn = __DefineStub("DirGetSize", __CallArgs("sPath = " & $sPath, "iFlag = " & $iFlag), 0)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 

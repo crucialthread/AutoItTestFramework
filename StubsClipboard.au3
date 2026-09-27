@@ -1,14 +1,15 @@
+#include-once
+
+#include "StubsCore.au3"
+
 ; #INDEX# =======================================================================================================================
-; Title .........: AutoIt Test Framework - Stubs_Clipboard.au3 library
-; Version .......: 0.0.1
+; Title .........: AutoIt Test Framework - StubsClipboard.au3 library
+; Version .......: 1.0.0
 ; AutoIt Version : 3.3.18.0
 ; Author ........: Crucial Thread
 ; Description ...: Stub implementations for AutoIt clipboard functions.
 ;                  Can be included directly or via Stubs.au3.
 ; ===============================================================================================================================
-
-#include-once
-#include "StubsCore.au3"
 
 Func __Stub_ClipGet()
 	Local $vReturn = __DefineStub("ClipGet", __CallArgs(), "")

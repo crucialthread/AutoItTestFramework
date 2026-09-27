@@ -1,14 +1,15 @@
+#include-once
+
 ; #INDEX# =======================================================================================================================
 ; Title .........: AutoIt Test Framework - Testable.au3 library
-; Version .......: 0.0.1
+; Version .......: 1.0.0
 ; AutoIt Version : 3.3.18.0
+; Language ......: English
 ; Author ........: Crucial Thread
 ; Description ...: Testable functions to replace the AutoIt built-ins with the same functionality
 ;                  but enable them to be testable through unit tests.
 ;                  Includes all Testable_*.au3 category files at once.
 ; ===============================================================================================================================
-
-#include-once
 
 #include "TestableDialogs.au3"
 #include "TestableFileSystem.au3"

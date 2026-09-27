@@ -1,13 +1,14 @@
+#include-once
+
 ; #INDEX# =======================================================================================================================
 ; Title .........: AutoIt Test Framework - TestableGUI.au3 library
-; Version .......: 0.0.1
+; Version .......: 1.0.0
 ; AutoIt Version : 3.3.18.0
+; Language ......: English
 ; Author ........: Crucial Thread
 ; Description ...: Testable wrappers for AutoIt GUI functions.
 ;                  Can be included directly or via Testable.au3
 ; ===============================================================================================================================
-
-#include-once
 
 ; GUI creation and lifecycle
 Global $g_hFn_GUICreate     = GUICreate
@@ -235,8 +236,8 @@ Func _Tstbl_GUICtrlDelete($hControlId)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_GUICtrlSetFont($hControlId, $iFontSize, $iFontWeight = 0, $iFontAttribute = 0, $sName = "", $iFontQuality = 0)
-    Local $vResult = $g_hFn_GUICtrlSetFont($hControlId, $iFontSize, $iFontWeight, $iFontAttribute, $sName, $iFontQuality)
+Func _Tstbl_GUICtrlSetFont($hControlId, $iFontSize, $iFontWeight = 0, $iFontAttribute = 0, $sFontName = "", $iFontQuality = 0)
+    Local $vResult = $g_hFn_GUICtrlSetFont($hControlId, $iFontSize, $iFontWeight, $iFontAttribute, $sFontName, $iFontQuality)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 

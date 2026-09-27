@@ -1,7 +1,10 @@
+#include-once
+
 ; #INDEX# =======================================================================================================================
-; Title .........: AutoIt Test Framework - Testable_FileInstall.au3 library
-; Version .......: 0.0.1
+; Title .........: AutoIt Test Framework - TestableFileInstall.au3 library
+; Version .......: 1.0.0
 ; AutoIt Version : 3.3.18.0
+; Language ......: English
 ; Author ........: Crucial Thread
 ; Description ...: Testable wrappers for AutoIt FileInstall function.
 ;                  Can be included directly or via Testable.au3
@@ -42,7 +45,6 @@
 ;
 ;                  Until that is done, _Tstbl_FileInstall() remains linked to a dummy and returns Null with @error = 1.
 ; ===============================================================================================================================
-#include-once
 
 Global Const $STUB_FILEINSTALL_FUNCNAME = "__Stub_FileInstall"
 Global $g_bFileInstallImplemented       = False

@@ -1,13 +1,14 @@
+#include-once
+
 ; #INDEX# =======================================================================================================================
-; Title .........: AutoIt Test Framework - Testable_Input.au3 library
-; Version .......: 0.0.1
+; Title .........: AutoIt Test Framework - TestableInput.au3 library
+; Version .......: 1.0.0
 ; AutoIt Version : 3.3.18.0
+; Language ......: English
 ; Author ........: Crucial Thread
 ; Description ...: Testable wrappers for AutoIt input simulation functions.
 ;                  Can be included directly or via Testable.au3
 ; ===============================================================================================================================
-
-#include-once
 
 Global $g_hFn_Send           = Send
 Global $g_hFn_MouseClick     = MouseClick

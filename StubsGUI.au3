@@ -1,15 +1,17 @@
+#include-once
+
+#include <GUIConstantsEx.au3>
+#include "StubsCore.au3"
+
 ; #INDEX# =======================================================================================================================
 ; Title .........: AutoIt Test Framework - StubsGUI.au3 library
-; Version .......: 0.0.1
+; Version .......: 1.0.0
 ; AutoIt Version : 3.3.18.0
+; Language ......: English
 ; Author ........: Crucial Thread
 ; Description ...: Stub implementations for AutoIt GUI functions.
 ;                  Can be included directly or via Stubs.au3.
 ; ===============================================================================================================================
-
-#include-once
-#include <GUIConstantsEx.au3>
-#include "StubsCore.au3"
 
 Func __Stub_GUICreate($sTitle, $iWidth = -1, $iHeight = -1, $iLeft = -1, $iTop = -1, $iStyle = -1, $iExStyle = -1, $hWndParent = 0)
 	Local $aArgs = __CallArgs("sTitle = " & $sTitle, "iWidth = " & $iWidth, "iHeight = " & $iHeight, "iLeft = " & $iLeft, _
@@ -228,9 +230,9 @@ Func __Stub_GUICtrlDelete($hControlId)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func __Stub_GUICtrlSetFont($hControlId, $iFontSize, $iFontWeight = 0, $iFontAttribute = 0, $sName = "", $iFontQuality = 0)
+Func __Stub_GUICtrlSetFont($hControlId, $iFontSize, $iFontWeight = 0, $iFontAttribute = 0, $sFontName = "", $iFontQuality = 0)
 	Local $aArgs = __CallArgs("hControlId = " & $hControlId, "iFontSize = " & $iFontSize, "iFontWeight = " & $iFontWeight, _
-							  "iFontAttribute = " & $iFontAttribute, "sName = " & $sName, "iFontQuality = " & $iFontQuality)
+							  "iFontAttribute = " & $iFontAttribute, "sFontName = " & $sFontName, "iFontQuality = " & $iFontQuality)
 	Local $vReturn = __DefineStub("GUICtrlSetFont", $aArgs, 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc

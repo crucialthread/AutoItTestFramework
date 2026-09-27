@@ -1,14 +1,16 @@
+#include-once
+
+#include "StubsCore.au3"
+
 ; #INDEX# =======================================================================================================================
-; Title .........: AutoIt Test Framework - Stubs_Dialogs.au3 library
-; Version .......: 0.0.1
+; Title .........: AutoIt Test Framework - StubsDialogs.au3 library
+; Version .......: 1.0.0
 ; AutoIt Version : 3.3.18.0
+; Language ......: English
 ; Author ........: Crucial Thread
 ; Description ...: Stub implementations for AutoIt dialog functions.
 ;                  Can be included directly or via Stubs.au3.
 ; ===============================================================================================================================
-
-#include-once
-#include "StubsCore.au3"
 
 Func __Stub_MsgBox($iFlag, $sTitle, $sText, $iTimeout = 0, $hWnd = 0)
 	Local $aArgs = __CallArgs("iFlag = " & $iFlag, "sTitle = " & $sTitle, "sText = " & $sText, "iTimeout = " & $iTimeout, "hWnd = " & $hWnd)

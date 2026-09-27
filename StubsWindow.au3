@@ -1,15 +1,17 @@
+#include-once
+
+#include <AutoItConstants.au3>
+#include "StubsCore.au3"
+
 ; #INDEX# =======================================================================================================================
 ; Title .........: AutoIt Test Framework - StubsWindow.au3 library
-; Version .......: 0.0.1
+; Version .......: 1.0.0
 ; AutoIt Version : 3.3.18.0
+; Language ......: English
 ; Author ........: Crucial Thread
 ; Description ...: Stub implementations for AutoIt window management functions.
 ;                  Can be included directly or via Stubs.au3.
 ; ===============================================================================================================================
-
-#include-once
-#include <AutoItConstants.au3>
-#include "StubsCore.au3"
 
 Func __Stub_IsHWnd($hWnd)
     Local $vReturn = __DefineStub("IsHWnd", __CallArgs("hWnd = " & $hWnd), False)
