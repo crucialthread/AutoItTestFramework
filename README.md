@@ -1,17 +1,22 @@
 # AutoIt Test Framework
 
-A simple, lightweight unit test framework for AutoIt. Provides colored console output, pass/fail tracking, and cumulative test result accumulation. Includes testable wrappers and stubs for testing scripts that require user interaction or return values that affect program flow (dialogs, file system, registry, GUI, shell, etc.).
+A lightweight unit test framework for AutoIt. Write and run unit tests for any AutoIt script with results printed directly to SciTE's console output pane, or from the command line as part of an automated workflow.
+
+Provides cumulative pass/fail tracking and detailed failure output with actual/expected values, file name, and line number. Includes testable wrappers and stubs for testing code that calls AutoIt built-ins (dialogs, file system, registry, GUI, and more) without those operations executing during tests.
 
 See the full [documentation](https://crucialthread.github.io/AutoItTestFramework/) for more details.
 
 ## Features
 
-- Colored console output in SciTE's output pane for at-a-glance readability
-- Actual vs. expected value display on failure
-- Cumulative pass/fail tracking across multiple test functions
+- Testable wrappers and stubs for testing code that calls AutoIt built-ins (dialogs, file system, registry, GUI) without those operations executing during tests
+- Every test always runs regardless of earlier failures, giving you a complete picture of the suite in one run
+- Detailed failure output showing actual and expected values, file name, and line number
+- Color-coded pass/fail output in SciTE's console pane for at-a-glance readability
 - Final summary block showing total, passed, and failed counts
-- Testable wrappers and stubs - `Testable.au3` and `Stubs.au3` provide a pattern to test scripts that require user interaction or return values that affect program flow, without those operations actually executing during tests
-- Zero dependencies - no additional `#include` required beyond the framework itself
+- Silent mode that suppresses pass results and headers, leaving only failures and the summary
+- Each test file runs independently or as part of a combined script that includes all test files
+- Command line support with exit code reporting for build pipeline integration
+- Zero external dependencies
 
 ## Quick Example
 
@@ -43,7 +48,6 @@ Download the latest installer from the [releases page](https://github.com/crucia
 ```autoit
 #include <TestFramework.au3>
 #include <Testable.au3>
-#include <Stubs.au3>
 ```
 
 The installer also includes the documentation (`TestFramework.chm`) and an uninstaller registered in Add/Remove Programs.
@@ -63,7 +67,6 @@ Download and extract the source code zip from the [releases page](https://github
 ```autoit
 #include "TestFramework.au3"
 #include "Testable.au3"
-#include "Stubs.au3"
 ```
 
 This is the simplest option but means you need a separate copy for each project (or you can keep them in a shared folder from where all your projects reference them).
@@ -84,7 +87,6 @@ git submodule update --init
 ```autoit
 #include "lib/TestFramework/TestFramework.au3"
 #include "lib/TestFramework/Testable.au3"
-#include "lib/TestFramework/Stubs.au3"
 ```
 
 **Cloning a project that already uses the submodule:**
@@ -127,23 +129,46 @@ See the [documentation](https://crucialthread.github.io/AutoItTestFramework/) fo
 |---|---|
 | `_TestFmkHeader($sTitle)` | Prints a labeled section header to identify a group of tests. |
 | `_TestFmkAssert($bCondition, $sDescription, $vActual, $vExpected)` | Evaluates a condition and records pass or fail. |
-| `_TestFmkRun($fTest, $bCumulative)` | Runs a test function and accumulates its result into a cumulative boolean. |
+| `_TestFmkRun($hFuncTest, $bNothingFailed)` | Runs a test function and accumulates its result into a cumulative boolean. |
 | `_TestFmkSummary()` | Prints the final Total/Passed/Failed summary block. |
+| `_TestFmkSeparator($iLength, $sChar)` | Prints a separator line of repeated characters to visually divide output. |
+| `_TestFmk_SetSilentMode($bSilent)` | Enables or disables silent mode, which suppresses pass results and header output. |
+| `_TestFmkRunAllTests($hFuncSuite)` | Runs the test suite function only when the script is executed directly, not when included. |
 
 ### Testable.au3
 
-Include in script code. Provides `_Tstbl_*` wrappers for AutoIt built-ins so calls can be intercepted by stubs in tests. Covers dialogs, file system, INI, registry, shell, process, GUI, network, system, clipboard, input, window management, splash, sound, and tray functions.
+Include in script code. Replace direct AutoIt built-in calls with `_Tstbl_*` wrapper equivalents so tests can intercept them via stubs without those operations actually executing.
+
+**Example:**
+```autoit
+#include <Testable.au3>
+
+Func DeleteFile($sPath)
+    If Not _Tstbl_FileExists($sPath) Then Return False
+    _Tstbl_FileDelete($sPath)
+    Return True
+EndFunc
+```
+
+Covers dialogs, file system, INI, registry, shell, process, GUI, network, system, clipboard, input, window management, splash, sound, and tray functions.
 
 ### Stubs.au3
 
-Include in test files. Automatically rewires all `_Tstbl_*` wrappers to stubs that record calls and return controlled values.
+`Stubs.au3` provides stub implementations for all `_Tstbl_*` wrappers. Each stub serves two purposes:
 
-| Function / Variable | Description |
+- **Call recording** — every call is recorded with its parameters so tests can verify that the correct functions were called with the correct arguments using `_GetStubCall()`, and how many times via `_StubCallCount()`.
+- **Return control** — tests can pre-configure what a stub returns for each call via `_SetStubReturn()`, allowing tests to drive the code under test down specific branches.
+
+| Function | Description |
 |---|---|
 | `_ResetStubs()` | Clears all recorded calls and configured return values. Call between tests. |
 | `_SetStubReturn($sType, $iIdx, $vValue)` | Pre-configures the return value for the Nth call of a stub type. |
-| `$g_StubCalls["TypeName"]` | Map of recorded calls keyed by 1-based index, with a `.count` property. |
-| `$g_StubReturns["TypeName"]` | Map of pre-configured return values keyed by 1-based call index. |
+| `_StubCallCount($sType)` | Returns the number of times a stub type was called. |
+| `_GetStubCall($sType, $iIdx)` | Returns the recorded call map for the Nth call of a stub type. |
+
+### StubConstants.au3
+
+Optional constants for use in test files. Provides named call index constants (`$_1st`, `$_2nd`, `$_3rd`, ...) for use with `_SetStubReturn()`, `_StubCall()`, and `_GetStubCall()`, and named parameter key constants (`$Param_Path`, `$Param_Dest`, `$Param_Title`, ...) for accessing recorded stub call arguments without raw strings or numbers.
 
 ## AI Claude Skills
 
