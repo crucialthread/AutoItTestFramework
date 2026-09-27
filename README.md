@@ -176,11 +176,11 @@ This repository includes two AI Claude skills for AutoIt Test Framework.
 
 ### autoit-testframework
 
-Generates complete, ready-to-run AutoIt unit test files. Works from any input - source files, descriptions, BDD specs, or project folders. Also handles the Testable/Stubs pattern automatically when the script requires user interaction or return values that affect program flow.
+Generates complete, ready-to-run AutoIt unit test files. Works from any input - source files, descriptions, BDD specs, or project folders. Also handles the Testing with Testable Wrappers and Stubs pattern automatically when the script calls AutoIt built-ins with side effects.
 
 ### autoit-testable-converter
 
-Audits, suggests, or converts AutoIt scripts to use `_Tstbl_*` testable wrappers, making them compatible with the Testable/Stubs pattern. Supports interactive mode (audit and suggest) and approved mode for autonomous AI agent workflows.
+Converts existing AutoIt scripts to use `_Tstbl_*` testable wrappers from Testable.au3, making their built-in calls stubbable in AutoIt Test Framework tests. Supports interactive mode (audit before applying), suggest mode (show diff without applying), and approved mode for autonomous workflows.
 
 ### Claude Code - Manual Installation (Recommended)
 
