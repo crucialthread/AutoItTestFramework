@@ -1,160 +1,136 @@
 ---
 name: autoit-testframework
-description: Generates complete, ready-to-run AutoIt unit test files using AutoIt Test Framework (`TestFramework.au3`). Use when the user wants to write, generate, or add tests for any AutoIt script or function, develop using TDD or BDD, or audit an existing project for test coverage. Works from any input - source files, descriptions, BDD specs, or project folders. Also handles scripts that require user interaction or affect program flow (dialogs, file system, registry, GUI, shell) using the Testable/Stubs pattern.
+description: Generates complete, ready-to-run AutoIt unit test files using AutoIt Test Framework. Use for any request to write, generate, or add tests to AutoIt code — from a single function to a whole project. Covers TDD, BDD, regression, and spec-driven workflows. Handles the Testable/Stubs pattern automatically when the script calls AutoIt built-ins.
 ---
 
 # AutoIt Test Framework Skill
 
 Generates complete, ready-to-run AutoIt unit test files using AutoIt Test Framework
 (`TestFramework.au3`), and implements the code under test when needed. Works from any input
-the developer has available, in any combination. Also supports testing scripts that require
-user interaction or return values that affect program flow (dialogs, file system, registry,
-GUI, shell, etc.) through the Testable.au3 and Stubs.au3 libraries.
+the developer has available, in any combination. Also supports testing scripts that call
+AutoIt built-ins with side effects (dialogs, file system, registry, GUI, shell, etc.)
+through Testing with Testable Wrappers and Stubs using `Testable.au3`.
 
-## Path selection - read this first
+## How to approach the task
 
-Scan the source code for calls to built-ins (dialogs, file system, registry, GUI, shell,
-etc.) from the testable list. Then pick the path:
+Follow these steps in order every time:
 
-- **No testable built-ins found** → standard path only (`TestFramework.au3`)
-- **Testable built-ins found** → standard path + Testable/Stubs (`TestFramework.au3` +
-  `Testable.au3` + `Stubs.au3`)
+1. **Read all available input first** — source files, descriptions, specs, project folders.
+   Do not write a single line of test code before this is done.
+2. **Map every code path** — for each function, identify every branch, every `Return`,
+   every `SetError` path, every condition driven by a parameter or stub return value.
+   Each distinct path becomes one or more test assertions.
+3. **Decide which pattern applies** (see Path selection below).
+4. **Write test functions** — one per function under test, or one per scenario when a
+   function has multiple distinct behaviors worth separating. Write all test functions
+   before writing `_RunAllTests`.
+5. **Write `_RunAllTests` last** — wire all test functions in using `_TestFmkRun`, add
+   `_TestFmkSummary()`, and end with `_TestFmkRunAllTests(_RunAllTests)`.
+6. **Add the output file header** comment block at the top of the generated file.
 
-The Testable/Stubs pattern builds on top of the standard path - it does not replace it.
+Never jump to writing tests from a surface-level read. The quality of the output depends
+entirely on how thoroughly step 1 and 2 are done.
 
-## Core principle
+## Path selection
 
-Read whatever is available. Figure out what exists and what needs to be created. Produce the
-most complete, immediately runnable output possible from whatever input is provided. The
-developer should never need to declare which "mode" they are in - the skill adapts to the
-situation automatically.
+When source code is available, scan it for calls to AutoIt built-ins with side effects:
+dialogs (`MsgBox`, `InputBox`), file system (`FileExists`, `FileDelete`, `FileCopy`),
+registry (`RegRead`, `RegWrite`, `RegDelete`), GUI (`GUICreate`, `GUIGetMsg`), shell
+(`ShellExecute`, `Run`), and similar.
 
-## Input - what to look for
+- **No testable built-ins found, or no source available** → Basic Test Structure only
+- **Testable built-ins found** → Basic Test Structure + Testing with Testable Wrappers and Stubs
 
-Before generating anything, survey what is available:
+When no source is available (TDD or description-only), default to the Basic Test Structure
+unless the description explicitly mentions any of the above categories.
 
-- **Chat description** - a human (or AI agent) describing what a function should do
-- **Source files** - existing `.au3` files with functions to test or extend
-- **Project folder** - a whole project to audit and generate test coverage for
-- **BDD/spec files** - Gherkin `.feature` files, design docs, README files, API specs,
-or any document describing expected behavior
-- **Partial code** - stubs, incomplete implementations, or draft functions
-- **Any combination** of the above
+Testing with Testable Wrappers and Stubs builds on top of the Basic Test Structure — it
+does not replace it.
 
-Read all available inputs before deciding what to generate. If a project folder is provided,
-scan all `.au3` files to understand scope before writing a single line of output.
+If source files use raw AutoIt built-ins instead of `_Tstbl_*` wrappers and the
+Testable/Stubs pattern is needed, the conversion is handled by the
+`autoit-testable-converter` skill. Check whether it is available:
 
-When reading source files, check whether the code calls AutoIt built-ins like `MsgBox`,
-`FileExists`, `FileDelete`, `RegRead`, `GUICreate`, `GUIGetMsg`, `ShellExecute`, etc. If it
-does and it already uses `_Tstbl_*` wrappers, use the Testable/Stubs pattern. If it uses raw
-built-ins and the user wants them testable, check whether the `autoit-testable-converter`
-skill is available:
-
-- In Claude Code: check whether `.claude/skills/autoit-testable-converter/SKILL.md` or
-  `~/.claude/skills/autoit-testable-converter/SKILL.md` exists
-- In Chat/Cowork: check whether the `autoit-testable-converter` skill description is present
-  in context, which means the user has it installed
-
-If the converter skill is available, invoke it to audit and optionally convert the script
-before proceeding with test generation. If it is not available:
-
-- **Claude Code:** try fetching the skill directly from
-  `https://raw.githubusercontent.com/crucialthread/AutoItTestFramework/main/.claude/skills/autoit-testable-converter/SKILL.md`
-  and apply it inline if the fetch succeeds. If the fetch fails, advise the user that the
-  `autoit-testable-converter` skill is available at that URL and can be installed locally,
-  then ask whether to proceed with test generation anyway.
-- **Chat/Cowork:** advise the user that the `autoit-testable-converter` skill is available
-  and can be installed, then ask whether to proceed with test generation anyway.
+- **Claude Code:** check for `.claude/skills/autoit-testable-converter/SKILL.md` or
+  `~/.claude/skills/autoit-testable-converter/SKILL.md`. If not found, try fetching it
+  from `https://raw.githubusercontent.com/crucialthread/AutoItTestFramework/main/.claude/skills/autoit-testable-converter/SKILL.md`
+  and apply it inline. If the fetch fails, advise the user and ask whether to proceed
+  with test generation anyway.
+- **Chat/Cowork:** check whether the `autoit-testable-converter` skill is listed in
+  context. If not, advise the user it is available and ask whether to proceed anyway.
 
 ## Output - what to produce
 
-Based on what is available, produce the right combination of:
-
 ### Always produce: a complete test file
 
-- Named after the source file or described function (e.g. `MyLib.au3` -> `MyLibTests.au3`)
+- Named after the source file or described function (e.g. `MyLib.au3` → `MyLibTests.au3`)
 - `#include <TestFramework.au3>` at the top (or `#include "TestFramework.au3"` if local)
 - `#include` for the file under test
-- One test function per public function or logical behavior group
+- One test function per public function or per distinct scenario when behaviors differ
 - All test functions wired into `_RunAllTests` with the cumulative `$bAllPassed` pattern
-- `_TestFmkSummary()` at the end
+- `_TestFmkSummary()` at the end of `_RunAllTests`
+- `_TestFmkRunAllTests(_RunAllTests)` as the entry point
+- Output file header comment block at the top
 - Ready to run with Go/F5 in SciTE immediately
 
-### When code does not exist yet: also produce stubs
+### When code does not exist yet: also produce placeholder implementations
 
-When generating tests for functions that do not exist yet (TDD/vibe code scenarios), also
-generate a matching stub file so the tests are runnable from the first moment:
-
-```autoit
-; Stub - replace with real implementation
-Func _MyFunc($sInput)
-    Return ""
-EndFunc
-```
-
-The stub file lets the tests run immediately (all red/failing), which is the correct starting
-point for TDD. The developer (or Claude Code continuing the task) then implements each
-function until all tests go green.
-
-### When asked to implement: also produce the implementation
-
-In vibe code or full TDD scenarios where the developer wants Claude to do everything, do not
-stop at tests and stubs. After generating the tests, implement the functions to make them
-pass. Verify the logic of each implementation against the test cases before writing it.
+When generating tests for functions that do not exist yet, also produce a matching file
+with placeholder implementations so the tests compile and run immediately (all failing —
+the correct TDD starting point). Placeholders must be syntactically valid and return a
+type-appropriate default (`False`, `0`, `""`) based on what the tests assert against.
 
 ## TestFramework.au3 API
 
 ```autoit
-; Prints a labeled section header to identify a group of related tests
-; $sColor is optional - default is $TFW_COLOR_ORANGE
-_TestFmkHeader($sTitle [, $sColor = $TFW_COLOR_ORANGE])
+; Prints a labeled section header — also resets stubs automatically (pass False to suppress)
+_TestFmkHeader($sTitle, $bResetStubs = True)
 
 ; Evaluates a condition and records pass or fail
 ; ALWAYS pass $vActual and $vExpected - never omit them
 _TestFmkAssert($bCondition, $sDescription, $vActual, $vExpected)
 
-; Runs a test function by reference and accumulates its result
-; Pass $bAllPassed as the second argument to chain results across tests
-_TestFmkRun($fTest [, $bCumulative = True])
+; Runs a test function by reference and accumulates its result into a cumulative boolean
+; ALWAYS pass $bNothingFailed as the second argument to chain results across test functions
+_TestFmkRun($hFuncTest, $bNothingFailed)
 
 ; Prints the final Total/Passed/Failed summary block
 ; Call once at the end of _RunAllTests(), never inside individual test functions
 _TestFmkSummary()
+
+; Prints a separator line of repeated characters to visually divide output
+_TestFmkSeparator($iLength = 80, $sChar = "-")
+
+; Enables or disables silent mode - suppresses pass results and headers, leaving only failures and the summary
+_TestFmk_SetSilentMode($bSilent = False)
+
+; Runs the test suite only when the script is executed directly, not when included in a combined script
+; Use as the entry point instead of a bare _RunAllTests() call
+_TestFmkRunAllTests($hRunnerFunction)
 ```
 
-## Standard path
+## Basic Test Structure
 
-The standard path uses `TestFramework.au3` only. Use this when the script under test does
-not call any built-ins that require user interaction or return values that affect program flow.
+Use when the script under test does not call any built-ins with side effects.
 
 ```autoit
 #include <TestFramework.au3>
 #include "SourceFile.au3"
 
-; ===========================================================================
-; Tests - FunctionName
-; ===========================================================================
-
 Func _TestFunctionName()
     _TestFmkHeader("Test: FunctionName()")
 
-    ; Happy path
-    Local $sResult = FunctionName("valid input")
-    _TestFmkAssert($sResult = "expected output", "Returns expected output for valid input", $sResult, "expected output")
+    ; Capture the result before asserting - never call the function inside _TestFmkAssert
+    Local $sResult = FunctionName("hello world")
+    _TestFmkAssert($sResult = "HELLO WORLD", "Converts to uppercase", $sResult, "HELLO WORLD")
 
-    ; Edge case
     Local $sEmpty = FunctionName("")
-    _TestFmkAssert($sEmpty = "", "Returns empty string for empty input", $sEmpty, "(empty)")
+    _TestFmkAssert($sEmpty = "", "Returns empty string for empty input", $sEmpty, "")
 
-    ; Error path - capture @error immediately
     FunctionName(0)
     Local $iErr = @error
-    _TestFmkAssert($iErr = 1, "Sets @error = 1 for invalid input", $iErr, "1")
+    _TestFmkAssert($iErr = 1, "Sets @error = 1 for invalid input type", $iErr, 1)
 EndFunc
-
-; ===========================================================================
-; Run all tests
-; ===========================================================================
 
 Func _RunAllTests()
     Local $bAllPassed = True
@@ -163,35 +139,23 @@ Func _RunAllTests()
     Return $bAllPassed
 EndFunc
 
-_RunAllTests()
+_TestFmkRunAllTests(_RunAllTests)
 ```
 
-## Testable/Stubs pattern
+## Testing with Testable Wrappers and Stubs
 
-Use this pattern when the script under test calls AutoIt built-ins that require user
-interaction or return values that affect program flow (dialogs, file system, registry,
-GUI, shell, etc.). This pattern builds on top of the standard path - it does not replace it.
-
-### When to use it
-
-Use the Testable/Stubs pattern when:
-- The script calls `MsgBox`, `InputBox`, or any dialog function
-- The script calls `FileExists`, `FileDelete`, `FileCopy`, `RegRead`, `RegWrite`, etc.
-- The script creates a GUI with `GUICreate` / `GUIGetMsg`
-- The script calls `ShellExecute`, `Run`, or similar
-- Any built-in that would actually execute during a test run and requires user interaction
-  or return values that affect program flow
+Use when the script under test calls AutoIt built-ins with side effects. Builds on top of
+the Basic Test Structure — it does not replace it.
 
 ### Script code structure
 
-In the script under test, use `_Tstbl_*` wrappers instead of AutoIt built-ins directly,
-and guard the entry point with a test mode sentinel:
+Guard the entry point with the `$__TFW_TEST_MODE` sentinel so test files can include the
+script without executing it:
 
 ```autoit
 #include <Testable.au3>
 
-; Guard the entry point so tests can include this file without executing it
-If Not IsDeclared("__MY_SCRIPT_TEST_MODE") Then
+If Not IsDeclared("__TFW_TEST_MODE") Then
     _Main()
 EndIf
 
@@ -213,179 +177,197 @@ Func MyFunction($sPath)
 EndFunc
 ```
 
-### Test file structure with stubs
+### Test file structure
+
+`$__TFW_TEST_MODE` is declared automatically by `TestFramework.au3` — never declare it
+manually. `_ResetStubs()` is called automatically by `_TestFmkHeader` — never call it
+manually.
 
 ```autoit
-Global $__MY_SCRIPT_TEST_MODE = True
 #include <TestFramework.au3>
-#include <Stubs.au3>
 #include "MyScript.au3"
 
 Func _TestMyFunction_FileNotFound()
     _TestFmkHeader("Test: MyFunction() - file not found")
 
-    _ResetStubs()
-    _SetStubReturn("FileExists", 1, False)
+    _SetStubReturn("FileExists", $_1st, False)
 
     Local $bResult = MyFunction("C:\temp\myfile.txt")
 
     _TestFmkAssert($bResult = False, "Returns False when file not found", $bResult, False)
-    _TestFmkAssert($g_StubCalls["MsgBox"].count = 1, "Shows error MsgBox", $g_StubCalls["MsgBox"].count, 1)
-    _TestFmkAssert(Not MapExists($g_StubCalls, "FileDelete"), "FileDelete not called", MapExists($g_StubCalls, "FileDelete"), False)
+    _TestFmkAssert(_StubCallCount("MsgBox") = 1, "Shows error MsgBox", _StubCallCount("MsgBox"), 1)
+    _TestFmkAssert(_StubCallCount("FileDelete") = 0, "FileDelete not called", _StubCallCount("FileDelete"), 0)
 EndFunc
 
 Func _TestMyFunction_UserConfirms()
-    _TestFmkHeader("Test: MyFunction() - user confirms")
+    _TestFmkHeader("Test: MyFunction() - user confirms deletion")
 
-    _ResetStubs()
-    _SetStubReturn("FileExists", 1, True)
-    _SetStubReturn("MsgBox", 1, $IDYES)
+    _SetStubReturn("FileExists", $_1st, True)
+    _SetStubReturn("MsgBox", $_1st, $IDYES)
+
+    Local $bResult = MyFunction("C:\temp\myfile.txt")
+    Local $sDeleted = _GetStubCall("FileDelete", $_1st, $Param_Filename)
+
+    _TestFmkAssert($bResult = True, "Returns True when user confirms", $bResult, True)
+    _TestFmkAssert(_StubCallCount("FileDelete") = 1, "FileDelete called once", _StubCallCount("FileDelete"), 1)
+    _TestFmkAssert($sDeleted = "C:\temp\myfile.txt", "Correct file deleted", $sDeleted, "C:\temp\myfile.txt")
+EndFunc
+
+Func _TestMyFunction_UserCancels()
+    _TestFmkHeader("Test: MyFunction() - user cancels")
+
+    _SetStubReturn("FileExists", $_1st, True)
+    _SetStubReturn("MsgBox", $_1st, $IDNO)
 
     Local $bResult = MyFunction("C:\temp\myfile.txt")
 
-    _TestFmkAssert($bResult = True, "Returns True when confirmed", $bResult, True)
-    _TestFmkAssert($g_StubCalls["FileDelete"].count = 1, "FileDelete called once", $g_StubCalls["FileDelete"].count, 1)
-    _TestFmkAssert($g_StubCalls["FileDelete"][1].sPath = "C:\temp\myfile.txt", _
-        "Correct file deleted", $g_StubCalls["FileDelete"][1].sPath, "C:\temp\myfile.txt")
+    _TestFmkAssert($bResult = False, "Returns False when user cancels", $bResult, False)
+    _TestFmkAssert(_StubCallCount("FileDelete") = 0, "FileDelete not called", _StubCallCount("FileDelete"), 0)
 EndFunc
 
 Func _RunAllTests()
     Local $bAllPassed = True
     $bAllPassed = _TestFmkRun(_TestMyFunction_FileNotFound, $bAllPassed)
     $bAllPassed = _TestFmkRun(_TestMyFunction_UserConfirms,  $bAllPassed)
+    $bAllPassed = _TestFmkRun(_TestMyFunction_UserCancels,   $bAllPassed)
     _TestFmkSummary()
     Return $bAllPassed
 EndFunc
 
-_RunAllTests()
+_TestFmkRunAllTests(_RunAllTests)
 ```
 
-### Stubs API
+Note: the example above covers all three branches of `MyFunction` — file not found, user
+confirms, user cancels. Every branch visible in the source must have a test.
+
+## Stubs API
 
 ```autoit
-; Clear all recorded calls and configured returns between tests
-_ResetStubs()
-
 ; Pre-configure what a stub returns for the Nth call (1-based)
-; Call before running the code under test
-_SetStubReturn("TypeName", iIdx, vValue)
+; Call after _TestFmkHeader, before running the code under test
+; Pass $STUB_ERROR as vValue to simulate the stub setting @error = 1
+_SetStubReturn("TypeName", $iIdx, $vValue)
 
-; Recorded calls - populated automatically by stubs during test run
-; $g_StubCalls["TypeName"].count     - how many times the stub was called
-; $g_StubCalls["TypeName"][N].prop - argument passed on the Nth call
+; Returns how many times a stub type was called
+_StubCallCount("TypeName")
+
+; Returns the value of a recorded parameter from the Nth call
+; Use $Param_* constants for parameter names and $_1st/$_2nd/... for call indexes
+_GetStubCall("TypeName", $iIdx, $Param_ParamName)
 ```
 
-### Stub type names and recorded properties
+## Stub type names and recorded parameters
 
-Common stub types and the properties they record:
+Common stub types and the `$Param_*` constants to use with `_GetStubCall()`:
 
-| Type | Recorded properties |
+| Type | Parameter constants |
 | --- | --- |
-| `"MsgBox"` | `iFlag`, `sTitle`, `sText` |
-| `"FileExists"` | `sPath` |
-| `"FileDelete"` | `sPath` |
-| `"FileCopy"` | `sSource`, `sDest` |
-| `"FileMove"` | `sSource`, `sDest` |
-| `"DirCreate"` | `sPath` |
-| `"DirRemove"` | `sPath` |
-| `"RegRead"` | `sKeyname`, `sValuename` |
-| `"RegWrite"` | `sKeyname`, `sValuename`, `sType`, `vValue` |
-| `"RegDelete"` | `sKeyname`, `sValuename` |
-| `"FileInstall"` | `sSource`, `sDest` |
-| `"ShellExecute"` | `sFilename`, `sParams` |
-| `"GUICreate"` | `sTitle` |
+| `"MsgBox"` | `$Param_Flag`, `$Param_Title`, `$Param_Text` |
+| `"FileExists"` | `$Param_Path` |
+| `"FileDelete"` | `$Param_Filename` |
+| `"FileCopy"` | `$Param_Source`, `$Param_Dest` |
+| `"FileMove"` | `$Param_Source`, `$Param_Dest` |
+| `"DirCreate"` | `$Param_Path` |
+| `"DirRemove"` | `$Param_Path` |
+| `"RegRead"` | `$Param_Keyname`, `$Param_Valuename` |
+| `"RegWrite"` | `$Param_Keyname`, `$Param_Valuename`, `$Param_Keytype`, `$Param_Value` |
+| `"RegDelete"` | `$Param_Keyname`, `$Param_Valuename` |
+| `"FileInstall"` | `$Param_Source`, `$Param_Dest` |
+| `"ShellExecute"` | `$Param_Filename`, `$Param_Parameters` |
+| `"GUICreate"` | `$Param_Title` |
 | `"GUIGetMsg"` | (none) |
-| `"GUICtrlSetData"` | `idCtrl`, `vData` |
-| `"GUICtrlRead"` | `idCtrl` |
+| `"GUICtrlSetData"` | `$Param_Controlid`, `$Param_Data` |
+| `"GUICtrlRead"` | `$Param_Controlid` |
 
 See the full list at https://crucialthread.github.io/AutoItTestFramework/stubs.htm
 
 ### FileInstall special case
 
 `FileInstall` cannot be routed through a function pointer like other testable wrappers.
-The script must define a custom wrapper function with a Select/Case block containing all
-literal FileInstall calls, then register it via `_Tstbl_Implement_FileInstall()`. The
-stub records calls normally once an implementation is registered.
+The script must define a custom wrapper function (typically `__FileInstall`) with a
+Select/Case block containing all literal `FileInstall` calls, register it via
+`_Tstbl_Implement_FileInstall(__FileInstall)` at script level, and call
+`_Tstbl_FileInstall(...)` instead of `FileInstall(...)` directly.
 
 When generating tests for a script that uses `FileInstall`:
 
-- If the script has raw `FileInstall()` calls without the pattern, the autoit-testable-converter
-  skill will handle the conversion automatically as part of its normal flow - no need to flag
-  it separately.
-- If the pattern is already in place, verify the script has a custom wrapper function
-  (typically `__FileInstall`) with literal paths in a Select/Case block, that it calls
-  `_Tstbl_Implement_FileInstall(__FileInstall)` at script level, and that it uses
-  `_Tstbl_FileInstall(...)` instead of `FileInstall(...)` directly.
-- In test code, access recorded calls via `$g_StubCalls["FileInstall"][N].sSource` and
-  `$g_StubCalls["FileInstall"][N].sDest`.
+- If the script has raw `FileInstall()` calls without the pattern, invoke the
+  `autoit-testable-converter` skill to handle the conversion before generating tests.
+- If the pattern is already in place, verify the three elements above are present before
+  generating test assertions.
+- Access recorded calls via `_GetStubCall("FileInstall", $_1st, $Param_Source)` and
+  `_GetStubCall("FileInstall", $_1st, $Param_Dest)`.
 
 ### Simulating @error with stubs
 
-For stubs that support it (e.g. `RegRead`), pass `"__ERROR__"` to simulate a function
-setting `@error = 1`:
+For stubs that support it (e.g. `RegRead`), pass `$STUB_ERROR` as the return value to
+simulate the stub setting `@error = 1`:
 
 ```autoit
-_SetStubReturn("RegRead", 1, "__ERROR__")
+_SetStubReturn("RegRead", $_1st, $STUB_ERROR)
+
+Local $sValue = _Tstbl_RegRead("HKLM\Software\MyApp", "Version")
+Local $iErr = @error
+_TestFmkAssert($iErr = 1, "Sets @error when key not found", $iErr, 1)
 ```
+
+Always capture `@error` into a local variable immediately after the call — any subsequent
+function call resets it.
 
 ## Rules - never break these
 
 **Assertions:**
-
 - ALWAYS pass `$vActual` and `$vExpected` to every `_TestFmkAssert` call. Never omit them.
-- Use realistic, meaningful test values. Never use placeholders like `"value1"`, `0`, or
-`"expected"`.
-- Always test both the success path and the failure/error path for any function that uses
-`SetError`.
+- ALWAYS capture the result of the function under test into a local variable before
+  asserting — never call the function directly inside `_TestFmkAssert`, as it evaluates
+  the expression twice and can consume extra stub returns or cause unexpected side effects.
+- Use realistic, meaningful test values. Never use placeholders like `"value1"` or
+  `"expected"`.
+- Always test both the success path and every failure/error path for any function that
+  uses `SetError`.
 
 **@error capture:**
-
 - ALWAYS capture `@error` into a local variable immediately after the call being tested,
-before any other function call (including `_TestFmkAssert` itself) resets it.
+  before any other function call resets it.
 - Correct: `Local $iErr = @error` then `_TestFmkAssert($iErr = 1, ...)`
-- Wrong: `_TestFmkAssert(@error = 1, ...)` - @error is already 0 by the time this runs
+- Wrong: `_TestFmkAssert(@error = 1, ...)` — `@error` is already 0 by the time this runs.
 
 **Test structure:**
-
-- ALWAYS use `_TestFmkRun` in `_RunAllTests` - never call test functions directly.
-- Name test functions `_Test<FunctionName>` or `_Test<FunctionName>_<Scenario>` for multiple
-groups covering the same function.
+- ALWAYS use `_TestFmkRun` in `_RunAllTests` — never call test functions directly.
+- ALWAYS use `_TestFmkRunAllTests(_RunAllTests)` as the entry point — never a bare
+  `_RunAllTests()` call.
+- Name test functions `_Test<FunctionName>` or `_Test<FunctionName>_<Scenario>` for
+  multiple scenarios covering the same function.
 - One `_TestFmkHeader` call per test function, at the top.
 
-**TDD stubs:**
-
-- When generating stubs for functions that do not exist yet, the stub MUST be syntactically
-valid AutoIt so the test file compiles and runs immediately (all failing, as expected for
-TDD red phase).
-- Never generate a test that calls a function that has no stub. The test file must always
-be runnable.
-
 **Testable/Stubs rules:**
-
-- ALWAYS declare `Global $__SCRIPT_TEST_MODE = True` before all includes in test files.
-- ALWAYS call `_ResetStubs()` at the start of each test function.
-- ALWAYS call `_SetStubReturn()` before running the code under test, never after.
-- Stub call indexes are 1-based. First call is index 1, second is index 2, and so on.
-- To assert a stub was never called, use `Not MapExists($g_StubCalls, "TypeName")` - never
-check `.count = 0` directly since if a stub was never called the map entry does not exist
-and accessing `.count` causes a runtime error.
-- Do NOT use `_StubCall()` or `_StubCallCount()` - these do not exist. Access stub data
-directly via `$g_StubCalls["TypeName"].count` and `$g_StubCalls["TypeName"][N].prop`.
+- `$__TFW_TEST_MODE` is declared automatically by `TestFramework.au3` — never declare
+  it manually in test files.
+- `_ResetStubs()` is called automatically by `_TestFmkHeader` — never call it manually.
+- ALWAYS call `_SetStubReturn()` after `_TestFmkHeader` and before running the code under
+  test, never after.
+- Use `$_1st`, `$_2nd`, ... constants for call indexes — never raw integers.
+- Use `$Param_*` constants for parameter names in `_GetStubCall()` — never raw strings.
+- Use `_StubCallCount("TypeName")` to check call counts — never access `$g_StubCalls`
+  directly.
+- Use `_GetStubCall("TypeName", $iIdx, $Param_Name)` to access recorded parameters —
+  never access `$g_StubCalls` directly.
+- To assert a stub was never called:
+  `_TestFmkAssert(_StubCallCount("TypeName") = 0, "TypeName not called", _StubCallCount("TypeName"), 0)`
 
 ## Test cases to always consider
 
-For every function, think through:
+For every function, map its code paths and cover:
 
 - Typical/happy path with realistic input values
+- Every branch driven by a parameter value or stub return
 - Empty string, zero, or null inputs where relevant
 - Boundary values (off-by-one for index-based functions, min/max for numeric ranges)
 - The `Default` keyword where parameters are optional
 - Every `SetError` or `Return SetError(...)` path visible in the code or spec
 - Case sensitivity for string comparisons where relevant
 - Behavior when called inside a `_Try()` block if the function is designed for use with
-TryCatch.au3
-- For scripts using stubs: all branches driven by stub return values (user confirms/cancels,
-file exists/not found, registry found/missing, etc.)
+  TryCatch.au3
 
 ## BDD/spec input handling
 
@@ -398,8 +380,8 @@ map scenario steps directly to test cases:
 - "And [additional outcome]" - additional `_TestFmkAssert` calls
 
 Each Gherkin Scenario maps to one or more `_TestFmkAssert` calls within a test function.
-Each Feature maps to one test function. Preserve the Scenario names as assertion descriptions
-so the test output is traceable back to the spec.
+Each Feature maps to one test function. Preserve the Scenario names as assertion
+descriptions so the test output is traceable back to the spec.
 
 ## Project audit mode
 
@@ -408,24 +390,20 @@ When pointed at a project folder:
 1. Scan all `.au3` files and list all public functions found
 2. Check for existing test files to understand what is already covered
 3. Identify untested functions
-4. Check whether scripts use raw AutoIt built-ins or `_Tstbl_*` wrappers. If raw built-ins
-   are found, check whether the `autoit-testable-converter` skill is available (see Input
-   section above for how to detect this in Claude Code vs Chat/Cowork). If available, invoke
-   it to audit and optionally convert before generating tests. If not available, follow the
-   same fallback flow described in the Input section.
+4. If raw AutoIt built-ins are found instead of `_Tstbl_*` wrappers, follow the
+   `autoit-testable-converter` detection and handoff flow from the Path selection section
 5. Generate a test file per source file (or one combined test file for small projects)
 6. Add a comment at the top of each generated test file noting which functions are covered
-   and which were already tested (if any existing tests were found)
+   and which were already tested
 
 ## Output file header
 
-Always add a comment block at the top of generated test files indicating what generated them
-and from what input, so the developer understands the context when reading the file later:
+Always add a comment block at the top of generated test files:
 
 ```autoit
 ; Generated by Claude using the autoit-testframework skill
 ; Source: <source file or description>
 ; Coverage: <list of functions covered>
-; Mode: <Regression | TDD | Vibe Code | Spec-driven>
-; Pattern: <Standard path | Standard path + Testable/Stubs>
+; Mode: <Regression | TDD | Spec-driven>
+; Pattern: <Basic Test Structure | Testing with Testable Wrappers and Stubs>
 ```

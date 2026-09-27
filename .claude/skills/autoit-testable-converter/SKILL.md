@@ -1,79 +1,96 @@
 ---
 name: autoit-testable-converter
-description: Audits, suggests, or converts AutoIt scripts to use _Tstbl_* testable wrappers from Testable.au3, making them compatible with the AutoIt Test Framework testable/stubs pattern. Use this skill when the user wants to make an AutoIt script testable, convert raw AutoIt built-in calls to testable wrappers, refactor a script for unit testing, or migrate existing code to use Testable.au3. Also used automatically by the autoit-testframework skill when it detects raw built-in calls in code the user wants to test. Triggers on phrases like "make this testable", "convert to testable", "refactor for testing", "migrate to testable wrappers", "I want to add tests to this script", or when an existing .au3 file is shared and contains raw calls to built-ins that require user interaction or return values that affect program flow (MsgBox, FileExists, FileDelete, RegRead, GUICreate, ShellExecute, etc.).
+description: Converts existing AutoIt scripts to use _Tstbl_* testable wrappers from Testable.au3, making them compatible with AutoIt Test Framework so their built-in calls can be stubbed in tests. Use when the user wants to make an AutoIt script testable, convert raw built-in calls to testable wrappers, or prepare an existing script for unit testing with the test framework.
 ---
 
 # AutoIt Testable Converter Skill
 
-Audits AutoIt scripts for raw built-in calls that require user interaction or return values
-that affect program flow, and converts them to use the Testable.au3 wrapper pattern, making
-the script compatible with the AutoIt Test Framework testable/stubs pattern.
+Converts existing AutoIt scripts to use the `_Tstbl_*` wrapper pattern from `Testable.au3`,
+replacing raw AutoIt built-in calls with testable equivalents that can be stubbed in unit
+tests written with AutoIt Test Framework.
 
-## Core principle
+This skill exists because adopting AutoIt Test Framework on an existing codebase means every
+script that calls AutoIt built-ins with side effects (dialogs, file system, registry, GUI,
+shell, etc.) must be converted before tests can stub those calls. This skill handles that
+conversion — mechanically and completely.
 
-Never modify files without explicit user permission. Default to audit or suggest mode unless
-the user explicitly asks to apply changes. When in convert mode, show a clear summary of
-every change made.
+## How to approach the task
+
+Follow these steps in order every time:
+
+1. **Read the entire source file first.** Do not start converting before this is done.
+2. **Audit the file** — identify every raw built-in call that has a `_Tstbl_*` equivalent,
+   note which structural changes are needed (include, entry point guard, `#RequireAdmin`),
+   and identify any `FileInstall` calls.
+3. **Report the audit** — show the user what was found and what will change.
+4. **In interactive mode**: end the report with a clear prompt asking whether to apply.
+   In approved mode: proceed directly to conversion after the audit.
+5. **Apply the changes** — replace every detected call, add the include and guard, handle
+   `FileInstall`, replace `#RequireAdmin` if present.
+6. **Produce a summary** of every change made.
+
+Never skip the audit step, even in approved mode — the summary must reflect what actually
+changed.
 
 ## Modes
 
 ### Interactive mode (default)
 
-Report what was found without changing anything. Produce a structured report:
+Audit the file and produce a structured report:
 
 - Which raw built-in calls were found and on which lines
-- Which have a `_Tstbl_*` equivalent available
-- Whether `#include <Testable.au3>` is already present
-- Whether the entry point guard (`If Not IsDeclared(...)`) is already present
-- Whether `#RequireAdmin` is present and should be replaced with `#pragma compile`
-- A summary of what would change if approved mode were run
+- Which structural changes are needed (`#include <Testable.au3>`, entry point guard,
+  `#RequireAdmin` replacement)
+- Whether any `FileInstall` calls were found and how they will be handled
+- A count of total changes that would be applied
 
-Always end the report with a clear prompt asking whether the user wants to apply the changes,
-or how to enable approved mode for autonomous use.
+End every interactive mode report with: **"Apply these changes?"** — a clear yes/no prompt.
+Do not apply anything until the user confirms.
 
 ### Approved mode
 
-Apply all changes - both modifying existing files and creating new files - without stopping
-to ask for per-action confirmation. The user has already granted blanket permission for the
-session upfront.
+Skip the confirmation prompt and apply all changes immediately after the audit. Approved
+mode is active when any of the following are true:
 
-Approved mode is active when any of the following are true:
-
-- The user explicitly says something like "apply the changes", "convert the file",
-  "go ahead and make the changes", "approved mode", or similar in the conversation
-- The task description or agent instruction contains explicit permission such as
-  "you have permission to modify files", "apply all changes", or similar
-- The skill is invoked with an environment variable or agent flag such as
-  `AUTOIT_CONVERTER_APPROVED=true`
-- The orchestrating agent has set approved mode in the task context
-
-When converting in approved mode, always produce a summary of every change applied:
-- Files modified
-- Files created
-- Number of built-in calls replaced
-- Whether `#include <Testable.au3>` was added
-- Whether the entry point guard was added
-- Whether `#pragma compile` replaced `#RequireAdmin`
+- The user says "apply the changes", "convert the file", "go ahead", "approved mode", or
+  similar
+- The task context contains explicit permission such as "you have permission to modify
+  files" or "apply all changes"
+- The skill is invoked with `AUTOIT_CONVERTER_APPROVED=true`
+- The orchestrating agent (e.g. autoit-testframework skill) has set approved mode
 
 ### Suggest mode
 
-Produce an annotated version of the file showing proposed changes inline as comments,
-without modifying the original:
+Produce an annotated version showing proposed changes inline as comments, without modifying
+the original file. Suggest mode is active when the user says "show me what would change",
+"show the diff", "show suggestions", or similar without granting approval to apply.
 
 ```autoit
 ; SUGGEST: replace with _Tstbl_MsgBox(...)
 MsgBox($MB_OK, "Title", "Text")
 ```
 
-Or produce a before/after diff showing exactly what would change. Suggest mode is useful
-when the user wants to review changes before committing to approved mode.
+## Output
+
+**In interactive mode and suggest mode:** produce the report or annotated diff in chat.
+Do not write or modify any file until the user confirms.
+
+**In approved mode (or after the user confirms in interactive mode):** overwrite the
+original file in place with the converted version, then produce a summary in chat:
+
+- File modified
+- Number of built-in calls replaced, by category
+- Whether `#include <Testable.au3>` was added
+- Whether the entry point guard was added
+- Whether `#RequireAdmin` was replaced
+- Whether a `__FileInstall` wrapper was generated
 
 ## What to detect and convert
 
 ### Built-in calls with _Tstbl_* equivalents
 
-Scan for raw calls to any of the following and replace with the `_Tstbl_*` equivalent.
-The wrapper accepts exactly the same parameters - only the function name changes.
+Replace each raw call with its `_Tstbl_*` equivalent. Parameters are identical — only the
+function name changes.
 
 **Dialogs:**
 `MsgBox` → `_Tstbl_MsgBox`
@@ -254,64 +271,76 @@ The wrapper accepts exactly the same parameters - only the function name changes
 `TrayItemGetState` → `_Tstbl_TrayItemGetState`
 `TrayItemGetText` → `_Tstbl_TrayItemGetText`
 
-### Additional changes to apply
+### Structural changes
 
-Beyond replacing built-in calls, also apply these structural changes:
+**Add `#include <Testable.au3>`** if not already present. Place it after any existing
+AutoIt standard library includes (`#include <...>`) and before the first function
+declaration.
 
-**Add `#include <Testable.au3>`** if not already present, after any existing AutoIt
-standard library includes and before the first function declaration.
-
-**Add the entry point guard** if the script has a top-level entry point call (e.g. `_Main()`
-or a direct call at script level). The guard allows test files to include the script without
-executing it:
+**Add the entry point guard** if the script has a top-level entry point call (`_Main()` or
+any direct call at script level). The guard prevents test files from executing the script
+when they include it:
 
 ```autoit
-If Not IsDeclared("__SCRIPTNAME_TEST_MODE") Then
+If Not IsDeclared("__TFW_TEST_MODE") Then
     _Main()
 EndIf
 ```
 
-Name the sentinel after the script filename in uppercase, e.g. for `MyInstaller.au3` use
-`$__MYINSTALLER_TEST_MODE`.
+Use `$__TFW_TEST_MODE` as the sentinel — this is the same variable declared automatically
+by `TestFramework.au3`, so including a test file in the same suite just works with no
+additional setup.
 
 **Replace `#RequireAdmin`** with `#pragma compile(ExecLevel, requireAdministrator)` if
 present. `#RequireAdmin` triggers a UAC prompt at interpreted runtime which breaks test
 execution; the pragma applies only to the compiled exe.
 
-### What NOT to convert
+### FileInstall — special handling required
 
-- `FileInstall` - requires special handling but can be converted automatically.
-  When `FileInstall("literal", ...)` calls are found:
-  1. Collect all literal source paths from every `FileInstall()` call in the script
-  2. Generate a `__FileInstall` wrapper function with a `Select` block where each
-     `Case` matches one source path and calls `FileInstall()` with that literal path:
-     ```autoit
-     Func __FileInstall($sSource, $sDest, $iFlag)
-         Select
-             Case $sSource = "path\to\file1.au3"
-                 FileInstall("path\to\file1.au3", $sDest, $iFlag)
-             Case $sSource = "..\path\to\file2.au3"
-                 FileInstall("..\path\to\file2.au3", $sDest, $iFlag)
-         EndSelect
-     EndFunc
-     ```
-  3. Add `_Tstbl_Implement_FileInstall(__FileInstall)` at script level immediately
-     after the `__FileInstall` function definition
-  4. Replace all `FileInstall(...)` calls in script code with `_Tstbl_FileInstall(...)`
-  In the audit report, describe this conversion clearly so the user understands what
-  was generated and why.
-- Calls inside comments - skip these.
-- String literals that happen to contain built-in names - skip these.
+`FileInstall` requires a wrapper pattern because AutoIt requires its first argument to be a
+literal string at compile time — it cannot be passed through a function pointer like other
+built-ins.
 
-## Rules
+When `FileInstall(...)` calls are found:
 
-- Default to interactive mode unless approved mode is explicitly active.
-- For `FileInstall`, always generate the `__FileInstall` wrapper and `_Tstbl_Implement_FileInstall()` call - never leave raw `FileInstall()` calls unconverted.
+1. Collect all literal source paths from every `FileInstall()` call in the script.
+2. Generate a `__FileInstall` wrapper function with a `Select` block where each `Case`
+   matches one source path and calls `FileInstall()` with that literal:
+
+```autoit
+Func __FileInstall($sSource, $sDest, $iFlag)
+    Select
+        Case $sSource = "path\to\file1.dat"
+            FileInstall("path\to\file1.dat", $sDest, $iFlag)
+        Case $sSource = "path\to\file2.dat"
+            FileInstall("path\to\file2.dat", $sDest, $iFlag)
+    EndSelect
+EndFunc
+```
+
+3. Add `_Tstbl_Implement_FileInstall(__FileInstall)` at script level immediately after the
+   `__FileInstall` function definition.
+4. Replace all `FileInstall(...)` calls in the script body with `_Tstbl_FileInstall(...)`.
+
+Include a clear explanation in the audit report so the user understands why this pattern
+was generated.
+
+### What to skip
+
+- Calls inside comments
+- Built-in names appearing inside string literals
+- `FileInstall` is NOT skipped — it is always converted using the wrapper pattern above
+
+## Rules — never break these
+
+- Always read the entire file before starting. Never convert based on a partial read.
 - Always preserve the original logic, parameters, and return value handling exactly.
-  The only change is the function name prefix.
-- In interactive mode, always end with a clear prompt asking whether the user wants to
-  apply the changes or enable approved mode.
-- When called by the autoit-testframework skill, return the audit result so the main skill
-  can decide whether to prompt the user before proceeding with test generation.
-- In approved mode, proceed with all changes without per-action confirmation, then produce
-  a full summary of everything that was changed.
+  The only change to built-in calls is the function name.
+- Default to interactive mode. Never modify files without confirmation unless approved
+  mode is explicitly active.
+- Always use `$__TFW_TEST_MODE` as the entry point guard sentinel — never a per-file name.
+- Always convert `FileInstall` using the wrapper pattern. Never leave raw `FileInstall()`
+  calls in a converted script.
+- When called by the autoit-testframework skill, return the audit result so that skill can
+  decide whether to prompt the user before proceeding with test generation.
+- In approved mode, apply all changes and produce the full summary — never partial.
