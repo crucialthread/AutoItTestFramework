@@ -20,14 +20,18 @@
 <h1>AutoIt Test Framework</h1>
 
 <p>
-<b>AutoIt Test Framework</b> is a simple, lightweight unit test framework for AutoIt.
-It provides colored console output, pass/fail tracking, and cumulative test result
-accumulation with zero dependencies beyond AutoIt itself.
+<b>AutoIt Test Framework</b> is a lightweight unit test framework for AutoIt, with zero
+dependencies beyond AutoIt itself. It provides colored console output, cumulative pass/fail
+tracking, and actionable failure details - including full support for testing code that
+calls built-ins like dialogs, file system, registry, and GUI without those operations
+executing for real.
 </p>
 
 <p>
-Designed to be used alongside any AutoIt script, AutoIt Test Framework makes it
-easy to write, run, and read test suites directly inside SciTE's console output pane.
+Designed to be used alongside any AutoIt script, AutoIt Test Framework makes it easy to
+write and run unit tests for your AutoIt code. Test results are printed directly to SciTE's
+console output pane, and suites can also be run from the command line as part of an
+automated workflow.
 </p>
 
 <hr>
@@ -35,12 +39,15 @@ easy to write, run, and read test suites directly inside SciTE's console output 
 <h2>Key Features</h2>
 
 <table>
+<tr><td>Testable wrappers and stubs</td><td>A pattern for testing code that calls AutoIt built-ins - dialogs, file system, registry, GUI - without those operations executing for real during tests.</td></tr>
+<tr><td>Cumulative pass/fail results</td><td>Every test always runs regardless of earlier failures, giving you a complete picture of the suite in one run.</td></tr>
+<tr><td>Clear failure output</td><td>On failure, the actual and expected values are printed alongside the description, including the file name and line number of the failing assertion.</td></tr>
 <tr><td>Colored console output</td><td>Pass/fail results are color-coded in SciTE's output pane for at-a-glance readability.</td></tr>
-<tr><td>Actual vs. expected display</td><td>On failure, the actual and expected values are printed alongside the description.</td></tr>
-<tr><td>Cumulative pass/fail tracking</td><td><a href="functions/TestFmkRun.htm">_TestFmkRun()</a> accumulates results across multiple test functions, so a single <code>$bAllPassed</code> variable reflects the entire suite.</td></tr>
-<tr><td>Summary block</td><td><a href="functions/TestFmkSummary.htm">_TestFmkSummary()</a> prints a final total/passed/failed count in the AutoIt convention used by Au3Check output.</td></tr>
-<tr><td>Testable wrappers and stubs</td><td><code>Testable.au3</code> and <code>Stubs.au3</code> provide a pattern to test scripts that require user interaction or return values that affect program flow, without those operations actually executing during tests.</td></tr>
-<tr><td>Zero dependencies</td><td>The core framework requires no <code>#include</code> beyond <code>TestFramework.au3</code> itself. <code>Testable.au3</code> and <code>Stubs.au3</code> are additional opt-in libraries for testing GUI and side-effecting code.</td></tr>
+<tr><td>Summary block</td><td>Prints a final Total, Passed, and Failed count to the console at the end of a test run.</td></tr>
+<tr><td>Silent mode</td><td>A mode that suppresses pass results and header output, leaving only failures and the final summary visible. Useful when running multiple test suites together.</td></tr>
+<tr><td>Composable test suites</td><td>Each test file can run its own test suite independently or be part of a single combined script that aggregates all test files and executes their test suites altogether.</td></tr>
+<tr><td>Command line support</td><td>Test suites can be run from the command line and report pass/fail via exit code, making them easy to integrate into build pipelines.</td></tr>
+<tr><td>Zero dependencies</td><td>A single <code>#include &lt;TestFramework.au3&gt;</code> is all that is needed - no third-party libraries or external dependencies beyond AutoIt itself.</td></tr>
 </table>
 
 <hr>
@@ -48,21 +55,41 @@ easy to write, run, and read test suites directly inside SciTE's console output 
 <h2>Quick Example</h2>
 
 <pre>
+; MyFunc.au3
+
+Func MyFunc($a, $b)
+    Return $a + $b
+EndFunc
+</pre>
+
+<pre>
+; MyFuncTests.au3
+
 #include &lt;TestFramework.au3&gt;
+#include "MyFunc.au3"
+
+Local Const $MY_TESTS = "MyFuncTests.au3"
 
 Func _TestMyFunc()
     _TestFmkHeader("Test: MyFunc")
-    _TestFmkAssert(MyFunc(2, 3) = 5, "MyFunc(2, 3) returns 5", MyFunc(2, 3), "5")
-    _TestFmkAssert(MyFunc(0, 0) = 0, "MyFunc(0, 0) returns 0", MyFunc(0, 0), "0")
+	
+    Local $vResult1 = MyFunc(2, 3)
+    Local $vResult2 = MyFunc(0, 0)
+	
+    _TestFmkAssert($vResult1 = 5, "MyFunc(2, 3) returns 5", $vResult1, 5, $MY_TESTS)
+    _TestFmkAssert($vResult2 = 0, "MyFunc(0, 0) returns 0", $vResult2, 0, $MY_TESTS)
 EndFunc
 
-Func _RunAllTests()
+Func _RunMyFuncTests($bWriteSummary = True)
     Local $bAllPassed = True
+	
     $bAllPassed = _TestFmkRun(_TestMyFunc, $bAllPassed)
-    _TestFmkSummary()
+	
+    If $bWriteSummary Then _TestFmkSummary()
+    Return $bAllPassed
 EndFunc
 
-_RunAllTests()
+_TestFmkRunAllTests(_RunMyFuncTests, $MY_TESTS)
 </pre>
 
 <p>Console output:</p>
@@ -81,12 +108,12 @@ _RunAllTests()
 
 <h2>Contents</h2>
 
-<p><a href="concepts.htm">Concepts</a> &mdash; How the solution works and the key concepts behind the standard path and Testable/Stubs pattern.</p>
-<p><a href="getting-started.htm">Getting Started</a> &mdash; Installation, anatomy of a test file, and a complete worked example.</p>
+<p><a href="concepts.htm">Concepts</a> &mdash; How the solution works and the key concepts behind the basic test structure, testable wrappers, stubs, and entry point guards.</p>
+<p><a href="getting-started.htm">Getting Started</a> &mdash; Usage, anatomy of a test file, and a complete worked example.</p>
 <p><a href="functions.htm">Function Reference</a> &mdash; Detailed documentation for every public function.</p>
 <p><a href="testable.htm">Testable Reference</a> &mdash; Wrapper functions for making built-in functions that require user interaction or manipulate external state testable.</p>
-<p><a href="stubs.htm">Stubs Reference</a> &mdash; Stub implementations that allow tests to mock testable wrappers and control their behavior.</p>
-<p><a href="constants.htm">Constants Reference</a> &mdash; The <code>$TFW_COLOR_*</code> console color constants.</p>
+<p><a href="stubs.htm">Stubs Reference</a> &mdash; Stub implementations that intercept testable wrappers during tests, recording calls and returning controlled values.</p>
+<p><a href="constants.htm">Constants Reference</a> &mdash; Console color constants and the Stub parameter name constants and indexes.</p>
 
 </body>
 </html>

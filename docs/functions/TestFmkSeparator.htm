@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>_TestFmkSeparator - AutoIt Test Framework</title>
+<link rel="stylesheet" type="text/css" href="../css/default.css">
+</head>
+<body>
+<div class="topnav">
+    <a href="../index.htm">Welcome</a>
+    <a href="../concepts.htm">Concepts</a>
+    <a href="../getting-started.htm">Getting Started</a>
+    <a href="../functions.htm">Function Reference</a>
+    <a href="../testable.htm">Testable Reference</a>
+    <a href="../stubs.htm">Stubs Reference</a>
+    <a href="../constants.htm">Constants</a>
+</div>
+
+<h1>Function Reference</h1>
+<hr>
+<h1>_TestFmkSeparator</h1>
+
+<p>Prints a separator line to the console to visually divide sections of output.</p>
+
+<div class="signature">
+#include &lt;TestFramework.au3&gt;<br>
+_TestFmkSeparator ( [$iLength = 80 [, $sChar = "-" [, $vNewLineBefore = @CRLF [, $vNewLineAfter = @CRLF]]]] )
+</div>
+
+<h2>Parameters</h2>
+<table>
+<tr><td>$iLength</td><td><b>[optional]</b> The number of characters in the separator line. Default is <code>80</code>.</td></tr>
+<tr><td>$sChar</td><td><b>[optional]</b> The character to repeat to form the separator line. Default is <code>"-"</code>.</td></tr>
+<tr><td>$vNewLineBefore</td><td><b>[optional]</b> The string printed before the separator line. Default is <code>@CRLF</code>. Pass <code>Null</code> to suppress the leading newline.</td></tr>
+<tr><td>$vNewLineAfter</td><td><b>[optional]</b> The string printed after the separator line. Default is <code>@CRLF</code>. Pass <code>Null</code> to suppress the trailing newline.</td></tr>
+</table>
+
+<h2>Return Value</h2>
+<table>
+<tr><td>None.</td><td>This function does not return a value.</td></tr>
+</table>
+
+<h2>Remarks</h2>
+<p>
+    Use <code>_TestFmkSeparator()</code> to visually divide groups of related tests from one
+    another in the console output. The standard pattern is to call it at the start of each
+    group function, just before the <a href="TestFmkRun.htm">_TestFmkRun()</a> calls
+    for that group. This produces a separator line between each group in the output, making
+    it easy to distinguish where one group ends and the next begins.
+</p>
+<p>
+    In a script that includes all test files, a wider separator using <code>"="</code>
+    characters is commonly used before the final combined summary to clearly mark the
+    transition from individual test output to the overall result.
+</p>
+<p>
+    Output is suppressed when silent mode is active via
+    <a href="TestFmkSetSilentMode.htm">_TestFmk_SetSilentMode(True)</a>.
+</p>
+
+<h2>Related</h2>
+<p>
+    <a href="TestFmkHeader.htm">_TestFmkHeader</a>,
+    <a href="TestFmkRun.htm">_TestFmkRun</a>,
+    <a href="TestFmkSummary.htm">_TestFmkSummary</a>,
+    <a href="TestFmkSetSilentMode.htm">_TestFmk_SetSilentMode</a>
+</p>
+
+<h2>Example</h2>
+<pre>
+#include &lt;TestFramework.au3&gt;
+#include "MathLib.au3"
+
+Local Const $MATH_LIB_TESTS = "MathLibTests.au3"
+
+Func _TestAdd_ReturnsSum()
+    _TestFmkHeader("Test: Add() - returns sum")
+	
+    Local $vResult = Add(2, 3)
+	
+    _TestFmkAssert($vResult = 5, "Add(2, 3) returns 5", $vResult, 5, $MATH_LIB_TESTS)
+EndFunc
+
+Func _TestAdd_NegativeNumbers()
+    _TestFmkHeader("Test: Add() - negative numbers")
+	
+    Local $vResult = Add(-1, 1)
+	
+    _TestFmkAssert($vResult = 0, "Add(-1, 1) returns 0", $vResult, 0, $MATH_LIB_TESTS)
+EndFunc
+
+Func _TestSubtract_ReturnsResult()
+    _TestFmkHeader("Test: Subtract() - returns result")
+	
+    Local $vResult = Subtract(5, 3)
+	
+    _TestFmkAssert($vResult = 2, "Subtract(5, 3) returns 2", $vResult, 2, $MATH_LIB_TESTS)
+EndFunc
+
+Func __RunMathLibTest_Add(ByRef $bAllPassed)
+    <span style="background-color: #ffffcc;">_TestFmkSeparator()</span>
+    $bAllPassed = _TestFmkRun(_TestAdd_ReturnsSum,      $bAllPassed)
+    $bAllPassed = _TestFmkRun(_TestAdd_NegativeNumbers, $bAllPassed)
+EndFunc
+
+Func __RunMathLibTest_Subtract(ByRef $bAllPassed)
+    <span style="background-color: #ffffcc;">_TestFmkSeparator()</span>
+    $bAllPassed = _TestFmkRun(_TestSubtract_ReturnsResult, $bAllPassed)
+EndFunc
+
+Func _RunMathLibTests($bWriteSummary = True)
+    Local $bAllPassed = True
+	
+    __RunMathLibTest_Add($bAllPassed)
+    __RunMathLibTest_Subtract($bAllPassed)
+	
+    If $bWriteSummary Then _TestFmkSummary()
+    Return $bAllPassed
+EndFunc
+
+_TestFmkRunAllTests(_RunMathLibTests, $MATH_LIB_TESTS)
+</pre>
+
+<p>Console output:</p>
+<div class="console">
+--------------------------------------------------------------------------------<br>
+<br>
+<span class="head">+ --- Test: Add() - returns sum ---</span><br>
+<span class="pass">&gt; [PASS] Add(2, 3) returns 5</span><br>
+<br>
+<span class="head">+ --- Test: Add() - negative numbers ---</span><br>
+<span class="pass">&gt; [PASS] Add(-1, 1) returns 0</span><br>
+<br>
+--------------------------------------------------------------------------------<br>
+<br>
+<span class="head">+ --- Test: Subtract() - returns result ---</span><br>
+<span class="pass">&gt; [PASS] Subtract(5, 3) returns 2</span>
+</div>
+
+</body>
+</html>

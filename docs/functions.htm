@@ -25,7 +25,7 @@
 <table>
 <tr>
     <td><a href="functions/TestFmkHeader.htm">_TestFmkHeader</a></td>
-    <td>Prints a labeled section header to the console to identify a group of related tests.</td>
+    <td>Prints a labeled section header to the console to identify a group of related tests. Resets stubs by default.</td>
 </tr>
 <tr>
     <td><a href="functions/TestFmkAssert.htm">_TestFmkAssert</a></td>
@@ -38,6 +38,18 @@
 <tr>
     <td><a href="functions/TestFmkSummary.htm">_TestFmkSummary</a></td>
     <td>Prints the final Total/Passed/Failed summary block to the console.</td>
+</tr>
+<tr>
+    <td><a href="functions/TestFmkSeparator.htm">_TestFmkSeparator</a></td>
+    <td>Prints a separator line to the console. Used to visually divide groups of related tests within a test file or between test suites in a script that includes all test files.</td>
+</tr>
+<tr>
+    <td><a href="functions/TestFmkRunAllTests.htm">_TestFmkRunAllTests</a></td>
+    <td>Runs the test suite function only when the script is executed directly, not when included by another script.</td>
+</tr>
+<tr>
+    <td><a href="functions/TestFmkSetSilentMode.htm">_TestFmk_SetSilentMode</a></td>
+    <td>Enables or disables silent mode. In silent mode, pass and header output is suppressed - only failures and the summary are printed.</td>
 </tr>
 </table>
 
@@ -87,6 +99,10 @@
     <td>Testable wrapper for <code>GUIGetMsg</code>.</td>
 </tr>
 <tr>
+    <td><code>_Tstbl_GUICtrlGetHandle</code></td>
+    <td>Testable wrapper for <code>GUICtrlGetHandle</code>.</td>
+</tr>
+<tr>
     <td><code>_Tstbl_ShellExecute</code></td>
     <td>Testable wrapper for <code>ShellExecute</code>.</td>
 </tr>
@@ -99,15 +115,15 @@
 <p>
     Each wrapper routes the call through a function pointer global (<code>$g_hFn_*</code>).
     In script code these point to the real AutoIt built-ins. In test files, including
-    <code>Stubs.au3</code> automatically rewires them to stubs.
+    <code>TestFramework.au3</code> automatically rewires them to stubs.
 </p>
 
 <hr>
 
-<h2>Stubs.au3</h2>
+<h2>Stubs</h2>
 
 <p>
-    Include <code>Stubs.au3</code> in test files to automatically wire all
+    Including <code>TestFramework.au3</code> in test files automatically wires all
     <code>_Tstbl_*</code> wrappers to stubs. Stubs record every call with its parameters
     and return controlled values so tests can verify behavior without executing real
     AutoIt built-ins. See the <a href="stubs.htm">Stubs Reference</a> for full details.
@@ -116,19 +132,45 @@
 <table>
 <tr>
     <td><code>_ResetStubs()</code></td>
-    <td>Clears all recorded calls and configured return values. Call between tests to start with a clean state.</td>
+    <td>Clears all recorded calls and configured return values. Called automatically by <code>_TestFmkHeader()</code>.</td>
 </tr>
 <tr>
     <td><code>_SetStubReturn($sType, $iIdx, $vValue)</code></td>
     <td>Pre-configures the return value for the Nth call of a given stub type. Call before running the code under test.</td>
 </tr>
 <tr>
-    <td><code>$g_StubCalls["TypeName"]</code></td>
-    <td>Map of recorded calls for a stub type. Each entry is keyed by 1-based call index and holds the parameters passed to that call. Also has a <code>.count</code> property.</td>
+    <td><code>_StubCallCount($sType)</code></td>
+    <td>Returns the number of times a stub type was called. Safe to call even when the stub was never called.</td>
 </tr>
 <tr>
-    <td><code>$g_StubReturns["TypeName"]</code></td>
-    <td>Map of pre-configured return values keyed by 1-based call index. Set via <code>_SetStubReturn()</code>.</td>
+    <td><code>_StubCall($sType, $iIdx, $sParam)</code></td>
+    <td>Returns the recorded argument value for a given stub type, call index, and parameter name.</td>
+</tr>
+<tr>
+    <td><code>_GetStubCall($sType, $iIdx, $sParam)</code></td>
+    <td>Alias for <code>_StubCall()</code> - use when reading a recorded argument for clarity.</td>
+</tr>
+</table>
+
+<hr>
+
+<h2>StubConstants.au3</h2>
+
+<p>
+    Optionally include <code>StubConstants.au3</code> in test files for named constants
+    that make stub calls more readable. Provides 1-based call index constants and
+    parameter name constants. See the <a href="constants.htm">Constants Reference</a> for
+    the full list.
+</p>
+
+<table>
+<tr>
+    <td><code>$_1st, $_2nd, $_3rd, ...</code></td>
+    <td>Named 1-based call index constants for use with <code>_SetStubReturn()</code>, <code>_StubCall()</code>, and <code>_GetStubCall()</code>.</td>
+</tr>
+<tr>
+    <td><code>$Param_Text, $Param_State, ...</code></td>
+    <td>Named parameter constants for use with <code>_StubCall()</code> and <code>_GetStubCall()</code> to identify recorded arguments by name.</td>
 </tr>
 </table>
 

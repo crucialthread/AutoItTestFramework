@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>_TestFmkRunAllTests - AutoIt Test Framework</title>
+<link rel="stylesheet" type="text/css" href="../css/default.css">
+</head>
+<body>
+<div class="topnav">
+    <a href="../index.htm">Welcome</a>
+    <a href="../concepts.htm">Concepts</a>
+    <a href="../getting-started.htm">Getting Started</a>
+    <a href="../functions.htm">Function Reference</a>
+    <a href="../testable.htm">Testable Reference</a>
+    <a href="../stubs.htm">Stubs Reference</a>
+    <a href="../constants.htm">Constants</a>
+</div>
+
+<h1>Function Reference</h1>
+<hr>
+<h1>_TestFmkRunAllTests</h1>
+
+<p>Runs the test suite function only when the script is executed directly, not when it is included by another script.</p>
+
+<div class="signature">
+#include &lt;TestFramework.au3&gt;<br>
+_TestFmkRunAllTests ( $hRunnerFunction [, $sScriptName = @ScriptName] )
+</div>
+
+<h2>Parameters</h2>
+<table>
+<tr><td>$hRunnerFunction</td><td>A function reference to the test suite function to call. Pass the function name directly without parentheses or quotes (e.g. <code>_RunMyTests</code>, not <code>"_RunMyTests"</code> or <code>_RunMyTests()</code>).</td></tr>
+<tr><td>$sScriptName</td><td><b>[optional]</b> The name of the test file. Defaults to <code>@ScriptName</code>. The test suite function is only called when <code>@ScriptName</code> matches this value. Pass the test file name so the AutoIt Test Framework can run the function only when the script is executed directly.</td></tr>
+</table>
+
+<h2>Return Value</h2>
+<table>
+<tr><td>None.</td><td>This function does not return a value.</td></tr>
+</table>
+
+<h2>Remarks</h2>
+<p>
+    Place a single call to <code>_TestFmkRunAllTests()</code> at the bottom of every test
+    file. It compares <code>@ScriptName</code> against <code>$sScriptName</code> and only
+    calls the test suite function when they match - meaning when the test file is run
+    directly. When the test file is included in a script that includes all test files,
+    <code>@ScriptName</code> will be that script's file name, not the test file's name,
+    so the test suite function will not run automatically.
+</p>
+<p>
+    It is recommended to declare a <code>Local Const</code> at the top of the test file
+    holding the file name, and pass it to both <code>_TestFmkRunAllTests()</code> and each
+    <a href="TestFmkAssert.htm">_TestFmkAssert()</a> call. This ensures failure output
+    correctly identifies which file each assertion came from when running in a combined
+    context.
+</p>
+
+<h2>Related</h2>
+<p>
+    <a href="TestFmkRun.htm">_TestFmkRun</a>,
+    <a href="TestFmkAssert.htm">_TestFmkAssert</a>,
+    <a href="TestFmkSummary.htm">_TestFmkSummary</a>,
+    <a href="TestFmkSetSilentMode.htm">_TestFmk_SetSilentMode</a>
+</p>
+
+<h2>Example</h2>
+<pre>
+#include &lt;TestFramework.au3&gt;
+#include "MathLib.au3"
+
+Local Const $MATH_LIB_TESTS = "MathLibTests.au3"
+
+Func _TestAdd()
+    _TestFmkHeader("Test: Add() - returns correct sum")
+	
+    Local $vResult = Add(2, 3)
+	
+    _TestFmkAssert($vResult = 5, "Add(2, 3) returns 5", $vResult, 5, $MATH_LIB_TESTS)
+EndFunc
+
+Func _RunMathLibTests($bWriteSummary = True)
+    Local $bAllPassed = True
+	
+    $bAllPassed = _TestFmkRun(_TestAdd, $bAllPassed)
+	
+    If $bWriteSummary Then _TestFmkSummary()
+    Return $bAllPassed
+EndFunc
+
+<span style="background-color: #ffffcc;">_TestFmkRunAllTests(_RunMathLibTests, $MATH_LIB_TESTS)</span>
+</pre>
+
+</body>
+</html>

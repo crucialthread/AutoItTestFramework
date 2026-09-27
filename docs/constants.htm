@@ -80,5 +80,241 @@ _TestFmkHeader("Test: Setup", $TFW_COLOR_YELLOW)
 _TestFmkHeader("Test: Main assertions")
 </pre>
 
+<hr>
+<br>
+<h1>StubConstants.au3</h1>
+
+<p>
+    Optional constants for use in test files. Include <code>StubConstants.au3</code> alongside
+    <code>TestFramework.au3</code> to use named indexes and parameter name constants instead
+    of raw numbers and strings, making stub calls more readable.
+</p>
+
+<pre>
+#include &lt;TestFramework.au3&gt;
+#include &lt;StubConstants.au3&gt;  ; <i><span style="background-color: #dddddd;">optional - named constants for indexes and parameter names</span></i>
+...
+</pre>
+
+<div class="note">
+    <b>Note:</b> Constant names are case-insensitive. <code>$Param_Title</code> and
+    <code>$PARAM_TITLE</code> are equivalent.
+</div>
+
+<h2>Call Index Constants</h2>
+
+<p>
+    1-based index constants for use with <code>_SetStubReturn()</code>,
+    <code>_StubCall()</code>, and <code>_GetStubCall()</code>.
+</p>
+
+<table>
+<tr><td><code>$_1st</code></td><td>1</td><td>First call index.</td></tr>
+<tr><td><code>$_2nd</code></td><td>2</td><td>Second call index.</td></tr>
+<tr><td><code>$_3rd</code></td><td>3</td><td>Third call index.</td></tr>
+<tr><td><code>$_4th</code></td><td>4</td><td>Fourth call index.</td></tr>
+<tr><td><code>$_5th</code></td><td>5</td><td>Fifth call index.</td></tr>
+<tr><td><code>$_6th</code></td><td>6</td><td>Sixth call index.</td></tr>
+<tr><td><code>$_7th</code></td><td>7</td><td>Seventh call index.</td></tr>
+<tr><td><code>$_8th</code></td><td>8</td><td>Eighth call index.</td></tr>
+<tr><td><code>$_9th</code></td><td>9</td><td>Ninth call index.</td></tr>
+</table>
+
+<p>
+    An alternative set of ID-style aliases is also available for contexts where the index
+    refers to a control or object ID:
+    <code>$_Id1</code>, <code>$_Id2</code>, <code>$_Id3</code> ... <code>$_Id9</code>.
+</p>
+
+<b><i>Example:</i></b>
+<pre>
+#include &lt;TestFramework.au3&gt;
+#include &lt;StubConstants.au3&gt;
+...
+	_SetStubReturn("FileExists", <span style="background-color: #ffffcc;">$_1st</span>, True) 			; <i><span style="background-color: #dddddd;">rather </span> _SetStubReturn("FileExists", <span style="background-color: #ffffcc;">1</span>, True)</i>
+	...
+	Local $sPath2 = _GetStubCall("FileDelete", <span style="background-color: #ffffcc;">$_2nd</span>, $Param_Path) 	; <i><span style="background-color: #dddddd;">rather </span> _GetStubCall("FileDelete", <span style="background-color: #ffffcc;">2</span>, $Param_Path)</i>
+...
+</pre>
+
+<h2>Parameter Name Constants</h2>
+
+<p>
+    Named constants for the recorded parameter keys used by stubs. Pass these to
+    <code>_StubCall()</code> or <code>_GetStubCall()</code> instead of raw strings.
+</p>
+
+<b><i>Example:</i></b>
+<pre>
+#include &lt;TestFramework.au3&gt;
+#include &lt;StubConstants.au3&gt;
+...
+	Local $sCopyDest = _GetStubCall("FileCopy", $_1st, <span style="background-color: #ffffcc;">$Param_Dest</span>)	; <i><span style="background-color: #dddddd;">rather </span> _GetStubCall("FileCopy", $_1st, <span style="background-color: #ffffcc;">"sDest"</span>)</i>
+	
+	; <i><b>Note</b>: <span style="background-color: #ffffcc;">$Param_Dest</span> matches any "*Dest" param (i.e: "vDest", "sDest", "dest")</i>
+...
+</pre>
+
+<div class="note">
+    <b>Prefix-agnostic matching:</b><br>
+	All <code>$Param_*</code> constants work across
+    Hungarian prefix variations. For example, <code>$Param_Default</code> matches both
+    <code>"sDefault"</code> and <code>"vDefault"</code> because <code>_StubCall()</code>
+    and <code>_GetStubCall()</code> fall back to a base name match when an exact key is
+    not found. This means you can use the same constant regardless of the type prefix
+    used by a particular stub. The table below shows the base name pattern each constant
+    matches.
+</div>
+
+<h4>Text and Strings</h4>
+<table>
+<tr><td><code>$Param_Default</code></td><td><code>"*Default"</code></td></tr>
+<tr><td><code>$Param_DefaultName</code></td><td><code>"*DefaultName"</code></td></tr>
+<tr><td><code>$Param_Title</code></td><td><code>"*Title"</code></td></tr>
+<tr><td><code>$Param_NewTitle</code></td><td><code>"*NewTitle"</code></td></tr>
+<tr><td><code>$Param_Text</code></td><td><code>"*Text"</code></td></tr>
+<tr><td><code>$Param_SubText</code></td><td><code>"*SubText"</code></td></tr>
+<tr><td><code>$Param_Msg</code></td><td><code>"*Msg"</code></td></tr>
+<tr><td><code>$Param_String</code></td><td><code>"*String"</code></td></tr>
+<tr><td><code>$Param_Prompt</code></td><td><code>"*Prompt"</code></td></tr>
+<tr><td><code>$Param_PasswordChar</code></td><td><code>"*PasswordChar"</code></td></tr>
+<tr><td><code>$Param_Tooltip</code></td><td><code>"*Tooltip"</code></td></tr>
+<tr><td><code>$Param_ClipValue</code></td><td><code>"*ClipValue"</code></td></tr>
+</table>
+
+<h4>Flags and Options</h4>
+<table>
+<tr><td><code>$Param_Flag</code></td><td><code>"*Flag"</code></td></tr>
+<tr><td><code>$Param_ShowFlag</code></td><td><code>"*ShowFlag"</code></td></tr>
+<tr><td><code>$Param_OptFlag</code></td><td><code>"*OptFlag"</code></td></tr>
+<tr><td><code>$Param_Option</code></td><td><code>"*Option"</code></td></tr>
+<tr><td><code>$Param_Options</code></td><td><code>"*Options"</code></td></tr>
+<tr><td><code>$Param_Style</code></td><td><code>"*Style"</code></td></tr>
+<tr><td><code>$Param_ExStyle</code></td><td><code>"*ExStyle"</code></td></tr>
+<tr><td><code>$Param_Mode</code></td><td><code>"*Mode"</code></td></tr>
+<tr><td><code>$Param_State</code></td><td><code>"*State"</code></td></tr>
+<tr><td><code>$Param_Advanced</code></td><td><code>"*Advanced"</code></td></tr>
+</table>
+
+<h4>Timing</h4>
+<table>
+<tr><td><code>$Param_Wait</code></td><td><code>"*Wait"</code></td></tr>
+<tr><td><code>$Param_Timeout</code></td><td><code>"*Timeout"</code></td></tr>
+<tr><td><code>$Param_Count</code></td><td><code>"*Count"</code></td></tr>
+<tr><td><code>$Param_Delay</code></td><td><code>"*Delay"</code></td></tr>
+</table>
+
+<h4>Window and Control Handles</h4>
+<table>
+<tr><td><code>$Param_Wnd</code></td><td><code>"*Wnd"</code></td></tr>
+<tr><td><code>$Param_WndParent</code></td><td><code>"*WndParent"</code></td></tr>
+<tr><td><code>$Param_Handle</code></td><td><code>"*Handle"</code></td></tr>
+<tr><td><code>$Param_TabItemId</code></td><td><code>"*TabItemId"</code></td></tr>
+<tr><td><code>$Param_ControlId</code></td><td><code>"*ControlId"</code></td></tr>
+<tr><td><code>$Param_ListViewId</code></td><td><code>"*ListViewId"</code></td></tr>
+<tr><td><code>$Param_TreeViewId</code></td><td><code>"*TreeViewId"</code></td></tr>
+<tr><td><code>$Param_InputControlId</code></td><td><code>"*InputControlId"</code></td></tr>
+<tr><td><code>$Param_MenuId</code></td><td><code>"*MenuId"</code></td></tr>
+<tr><td><code>$Param_ParentMenuId</code></td><td><code>"*ParentMenuId"</code></td></tr>
+</table>
+
+<h4>Dimensions and Position</h4>
+<table>
+<tr><td><code>$Param_Width</code></td><td><code>"*Width"</code></td></tr>
+<tr><td><code>$Param_Height</code></td><td><code>"*Height"</code></td></tr>
+<tr><td><code>$Param_Left</code></td><td><code>"*Left"</code></td></tr>
+<tr><td><code>$Param_Top</code></td><td><code>"*Top"</code></td></tr>
+<tr><td><code>$Param_XPos</code></td><td><code>"*XPos"</code></td></tr>
+<tr><td><code>$Param_YPos</code></td><td><code>"*YPos"</code></td></tr>
+<tr><td><code>$Param_Color</code></td><td><code>"*Color"</code></td></tr>
+</table>
+
+<h4>Font</h4>
+<table>
+<tr><td><code>$Param_FontAttribute</code></td><td><code>"*FontAttribute"</code></td></tr>
+<tr><td><code>$Param_FontName</code></td><td><code>"*FontName"</code></td></tr>
+<tr><td><code>$Param_FontWeight</code></td><td><code>"*FontWeight"</code></td></tr>
+<tr><td><code>$Param_FontQuality</code></td><td><code>"*FontQuality"</code></td></tr>
+<tr><td><code>$Param_FontSize</code></td><td><code>"*FontSize"</code></td></tr>
+</table>
+
+<h4>Menu</h4>
+<table>
+<tr><td><code>$Param_MenuEntry</code></td><td><code>"*MenuEntry"</code></td></tr>
+<tr><td><code>$Param_MenuRadioItem</code></td><td><code>"*MenuRadioItem"</code></td></tr>
+<tr><td><code>$Param_Index</code></td><td><code>"*Index"</code></td></tr>
+</table>
+
+<h4>File and Path</h4>
+<table>
+<tr><td><code>$Param_Source</code></td><td><code>"*Source"</code></td></tr>
+<tr><td><code>$Param_Dest</code></td><td><code>"*Dest"</code></td></tr>
+<tr><td><code>$Param_InitDir</code></td><td><code>"*InitDir"</code></td></tr>
+<tr><td><code>$Param_RootDir</code></td><td><code>"*RootDir"</code></td></tr>
+<tr><td><code>$Param_WorkingDir</code></td><td><code>"*WorkingDir"</code></td></tr>
+<tr><td><code>$Param_Filter</code></td><td><code>"*Filter"</code></td></tr>
+<tr><td><code>$Param_Path</code></td><td><code>"*Path"</code></td></tr>
+<tr><td><code>$Param_Lnk</code></td><td><code>"*Lnk"</code></td></tr>
+<tr><td><code>$Param_File</code></td><td><code>"*File"</code></td></tr>
+<tr><td><code>$Param_Filename</code></td><td><code>"*Filename"</code></td></tr>
+<tr><td><code>$Param_FilePattern</code></td><td><code>"*FilePattern"</code></td></tr>
+<tr><td><code>$Param_FileAttrib</code></td><td><code>"*FileAttrib"</code></td></tr>
+<tr><td><code>$Param_FileTimeFormat</code></td><td><code>"*FileTimeFormat"</code></td></tr>
+<tr><td><code>$Param_FileInfo</code></td><td><code>"*FileInfo"</code></td></tr>
+<tr><td><code>$Param_Time</code></td><td><code>"*Time"</code></td></tr>
+<tr><td><code>$Param_Line</code></td><td><code>"*Line"</code></td></tr>
+<tr><td><code>$Param_TextLine</code></td><td><code>"*TextLine"</code></td></tr>
+</table>
+
+<h4>Data and Values</h4>
+<table>
+<tr><td><code>$Param_Data</code></td><td><code>"*Data"</code></td></tr>
+<tr><td><code>$Param_Value</code></td><td><code>"*Value"</code></td></tr>
+<tr><td><code>$Param_Parameters</code></td><td><code>"*Parameters"</code></td></tr>
+<tr><td><code>$Param_WParam</code></td><td><code>"*WParam"</code></td></tr>
+<tr><td><code>$Param_LParam</code></td><td><code>"*LParam"</code></td></tr>
+</table>
+
+<h4>Registry and Ini</h4>
+<table>
+<tr><td><code>$Param_Key</code></td><td><code>"*Key"</code></td></tr>
+<tr><td><code>$Param_Section</code></td><td><code>"*Section"</code></td></tr>
+<tr><td><code>$Param_NewSection</code></td><td><code>"*NewSection"</code></td></tr>
+<tr><td><code>$Param_Keyname</code></td><td><code>"*Keyname"</code></td></tr>
+<tr><td><code>$Param_Valuename</code></td><td><code>"*Valuename"</code></td></tr>
+<tr><td><code>$Param_Keytype</code></td><td><code>"*Keytype"</code></td></tr>
+<tr><td><code>$Param_Keyinstance</code></td><td><code>"*Keyinstance"</code></td></tr>
+</table>
+
+<h4>Network</h4>
+<table>
+<tr><td><code>$Param_URL</code></td><td><code>"*URL"</code></td></tr>
+<tr><td><code>$Param_Host</code></td><td><code>"*Host"</code></td></tr>
+<tr><td><code>$Param_Background</code></td><td><code>"*Background"</code></td></tr>
+</table>
+
+<h4>Process and Shell</h4>
+<table>
+<tr><td><code>$Param_Process</code></td><td><code>"*Process"</code></td></tr>
+<tr><td><code>$Param_ProcessName</code></td><td><code>"*ProcessName"</code></td></tr>
+<tr><td><code>$Param_ShellVerb</code></td><td><code>"*ShellVerb"</code></td></tr>
+<tr><td><code>$Param_Peek</code></td><td><code>"*Peek"</code></td></tr>
+<tr><td><code>$Param_Binary</code></td><td><code>"*Binary"</code></td></tr>
+<tr><td><code>$Param_Percent</code></td><td><code>"*Percent"</code></td></tr>
+<tr><td><code>$Param_Code</code></td><td><code>"*Code"</code></td></tr>
+<tr><td><code>$Param_EnvVarName</code></td><td><code>"*EnvVarName"</code></td></tr>
+<tr><td><code>$Param_Drive</code></td><td><code>"*Drive"</code></td></tr>
+<tr><td><code>$Param_Operation</code></td><td><code>"*Operation"</code></td></tr>
+</table>
+
+<h4>Input</h4>
+<table>
+<tr><td><code>$Param_KeyStrokes</code></td><td><code>"*KeyStrokes"</code></td></tr>
+<tr><td><code>$Param_Button</code></td><td><code>"*Button"</code></td></tr>
+<tr><td><code>$Param_Clicks</code></td><td><code>"*Clicks"</code></td></tr>
+<tr><td><code>$Param_NumClicks</code></td><td><code>"*NumClicks"</code></td></tr>
+<tr><td><code>$Param_Speed</code></td><td><code>"*Speed"</code></td></tr>
+</table>
+
 </body>
 </html>

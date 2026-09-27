@@ -26,9 +26,7 @@
 </p>
 
 <div class="signature">
-#include &lt;TestFramework.au3&gt;<br>
-#include &lt;Testable.au3&gt;<br>
-#include &lt;Stubs.au3&gt;
+#include &lt;TestFramework.au3&gt;
 </div>
 
 <p>
@@ -36,9 +34,7 @@
 </p>
 
 <div class="signature">
-#include "TestFramework.au3"<br>
-#include "Testable.au3"<br>
-#include "Stubs.au3"
+#include "TestFramework.au3"
 </div>
 
 <hr>
@@ -53,49 +49,77 @@
 #include "MyLibrary.au3"
 </pre>
 
-<h3>2. Write one function per test group</h3>
+<h3>2. Declare a script name constant</h3>
+<p>
+    Declare a constant holding the test file name. This is passed to
+    <a href="functions/TestFmkAssert.htm">_TestFmkAssert()</a> and
+    <a href="functions/TestFmkRunAllTests.htm">_TestFmkRunAllTests()</a> so that failure
+    output correctly identifies which file an assertion came from, which is especially
+    useful when multiple test files are included and run together.
+</p>
+<pre>
+Local Const $MY_LIB_TESTS = "MyLibraryTests.au3"
+</pre>
+
+<h3>3. Write one function per test group</h3>
 <p>
     Each test function calls <a href="functions/TestFmkHeader.htm">_TestFmkHeader()</a> once
     at the top to label the group, then one or more
     <a href="functions/TestFmkAssert.htm">_TestFmkAssert()</a> calls to verify behavior.
+    Always capture the result of the function under test into a local variable before
+    asserting - calling the function directly inside <code>_TestFmkAssert()</code> calls it
+    twice, which can consume extra stub returns or trigger unexpected side effects.
     Always pass the actual value and the expected value as the 3rd and 4th arguments so that
     failures show exactly what went wrong.
 </p>
 <pre>
 Func _TestAdd()
-    _TestFmkHeader("Test: Add()")
-    _TestFmkAssert(Add(1, 2) = 3,   "Add(1, 2) returns 3",   Add(1, 2),   "3")
-    _TestFmkAssert(Add(-1, 1) = 0,  "Add(-1, 1) returns 0",  Add(-1, 1),  "0")
-    _TestFmkAssert(Add(0, 0) = 0,   "Add(0, 0) returns 0",   Add(0, 0),   "0")
+    _TestFmkHeader("Test: Add() - returns correct sum")
+	
+    Local $vResult1 = Add(1, 2)
+    Local $vResult2 = Add(-1, 1)
+    Local $vResult3 = Add(0, 0)
+	
+    _TestFmkAssert($vResult1 = 3, "Add(1, 2) returns 3",   $vResult1, 3, $MY_LIB_TESTS)
+    _TestFmkAssert($vResult2 = 0, "Add(-1, 1) returns 0",  $vResult2, 0, $MY_LIB_TESTS)
+    _TestFmkAssert($vResult3 = 0, "Add(0, 0) returns 0",   $vResult3, 0, $MY_LIB_TESTS)
 EndFunc
 </pre>
 
-<h3>3. Wire tests into _RunAllTests() using _TestFmkRun()</h3>
+<h3>4. Build a test suite function using _TestFmkRun()</h3>
 <p>
-    <a href="functions/TestFmkRun.htm">_TestFmkRun()</a> runs a test function and feeds its
-    pass/fail result into a cumulative <code>$bAllPassed</code> variable. This means even if
-    an early test fails, all remaining tests still run and are reported.
+    Use <a href="functions/TestFmkRun.htm">_TestFmkRun()</a> to execute a test and
+    accumulate its pass/fail result into a cumulative <code>$bAllPassed</code> variable.
+    Once any test fails the accumulated state becomes <code>False</code> and stays
+    <code>False</code>, but every test still runs giving you a complete picture in one run.
 </p>
 <pre>
-Func _RunAllTests()
+Func _RunMyLibraryTests($bWriteSummary = True)
     Local $bAllPassed = True
+	
     $bAllPassed = _TestFmkRun(_TestAdd,      $bAllPassed)
     $bAllPassed = _TestFmkRun(_TestSubtract, $bAllPassed)
     $bAllPassed = _TestFmkRun(_TestMultiply, $bAllPassed)
-    _TestFmkSummary()
+	
+    If $bWriteSummary Then _TestFmkSummary()
     Return $bAllPassed
 EndFunc
-
-_RunAllTests()
 </pre>
-
-<h3>4. Call _TestFmkSummary() at the end</h3>
 <p>
-    <a href="functions/TestFmkSummary.htm">_TestFmkSummary()</a> prints the final
-    Total/Passed/Failed block to the console. Call it once at the end of <code>_RunAllTests()</code>,
-    not inside individual test functions.
+    <b>Tip:</b> Accept a <code>$bWriteSummary</code> parameter so the
+    test suite function can be called without printing a summary when included in a script
+    that includes all test files.
 </p>
 
+<h3>5. Call _TestFmkRunAllTests() at the bottom</h3>
+<p>
+    <a href="functions/TestFmkRunAllTests.htm">_TestFmkRunAllTests()</a> runs the test suite
+    only when the script is executed directly, not when it is included by another script.
+    Pass the test suite function and the script name constant so the framework knows when to run.
+</p>
+<pre>
+_TestFmkRunAllTests(_RunMyLibraryTests, $MY_LIB_TESTS)
+</pre>
 <hr>
 
 <h2>Complete Worked Example</h2>
@@ -122,45 +146,66 @@ EndFunc
 #include &lt;TestFramework.au3&gt;
 #include "MathLib.au3"
 
+Local Const $MATH_LIB_TESTS = "MathLibTests.au3"
+
 Func _TestAdd()
-    _TestFmkHeader("Test: Add()")
-    _TestFmkAssert(Add(2, 3) = 5,   "Add(2, 3) returns 5",   Add(2, 3),   "5")
-    _TestFmkAssert(Add(-1, 1) = 0,  "Add(-1, 1) returns 0",  Add(-1, 1),  "0")
-    _TestFmkAssert(Add(0, 0) = 0,   "Add(0, 0) returns 0",   Add(0, 0),   "0")
+    _TestFmkHeader("Test: Add() - returns correct sum")
+
+    Local $vResult1 = Add(2, 3)
+    Local $vResult2 = Add(-1, 1)
+    Local $vResult3 = Add(0, 0)
+
+    _TestFmkAssert($vResult1 = 5,  "Add(2, 3) returns 5",   $vResult1, 5,  $MATH_LIB_TESTS)
+    _TestFmkAssert($vResult2 = 0,  "Add(-1, 1) returns 0",  $vResult2, 0,  $MATH_LIB_TESTS)
+    _TestFmkAssert($vResult3 = 0,  "Add(0, 0) returns 0",   $vResult3, 0,  $MATH_LIB_TESTS)
 EndFunc
 
-Func _TestDivide()
-    _TestFmkHeader("Test: Divide()")
-    _TestFmkAssert(Divide(10, 2) = 5,  "Divide(10, 2) returns 5",  Divide(10, 2),  "5")
-    _TestFmkAssert(Divide(7, 2) = 3.5, "Divide(7, 2) returns 3.5", Divide(7, 2),   "3.5")
+Func _TestDivide_ReturnsResult()
+    _TestFmkHeader("Test: Divide() - returns correct result")
 
-    ; Test divide by zero - capture @error immediately before any other call resets it
+    Local $vResult1 = Divide(10, 2)
+    Local $vResult2 = Divide(7, 2)
+
+    _TestFmkAssert($vResult1 = 5,   "Divide(10, 2) returns 5",   $vResult1, 5,   $MATH_LIB_TESTS)
+    _TestFmkAssert($vResult2 = 3.5, "Divide(7, 2) returns 3.5",  $vResult2, 3.5, $MATH_LIB_TESTS)
+EndFunc
+
+Func _TestDivide_DivideByZero()
+    _TestFmkHeader("Test: Divide() - sets @error on divide by zero")
+
+    ; Capture @error immediately before any other call resets it
     Divide(1, 0)
     Local $iErr = @error
-    _TestFmkAssert($iErr = 1, "Divide(1, 0) sets @error = 1", $iErr, "1")
+
+    _TestFmkAssert($iErr = 1, "Divide(1, 0) sets @error = 1", $iErr, 1, $MATH_LIB_TESTS)
 EndFunc
 
-Func _RunAllTests()
+Func _RunMathLibTests($bWriteSummary = True)
     Local $bAllPassed = True
-    $bAllPassed = _TestFmkRun(_TestAdd,    $bAllPassed)
-    $bAllPassed = _TestFmkRun(_TestDivide, $bAllPassed)
-    _TestFmkSummary()
+
+    $bAllPassed = _TestFmkRun(_TestAdd,                  $bAllPassed)
+    $bAllPassed = _TestFmkRun(_TestDivide_ReturnsResult, $bAllPassed)
+    $bAllPassed = _TestFmkRun(_TestDivide_DivideByZero,  $bAllPassed)
+
+    If $bWriteSummary Then _TestFmkSummary()
     Return $bAllPassed
 EndFunc
 
-_RunAllTests()
+_TestFmkRunAllTests(_RunMathLibTests, $MATH_LIB_TESTS)
 </pre>
 
 <h3>Console output (all passing)</h3>
 <div class="console">
-<span class="head">+ --- Test: Add() ---</span><br>
+<span class="head">+ --- Test: Add() - returns correct sum ---</span><br>
 <span class="pass">&gt; [PASS] Add(2, 3) returns 5</span><br>
 <span class="pass">&gt; [PASS] Add(-1, 1) returns 0</span><br>
 <span class="pass">&gt; [PASS] Add(0, 0) returns 0</span><br>
 <br>
-<span class="head">+ --- Test: Divide() ---</span><br>
+<span class="head">+ --- Test: Divide() - returns correct result ---</span><br>
 <span class="pass">&gt; [PASS] Divide(10, 2) returns 5</span><br>
 <span class="pass">&gt; [PASS] Divide(7, 2) returns 3.5</span><br>
+<br>
+<span class="head">+ --- Test: Divide() - sets @error on divide by zero ---</span><br>
 <span class="pass">&gt; [PASS] Divide(1, 0) sets @error = 1</span><br>
 <br>
 <span class="total">+ Total:  6</span><br>
@@ -168,15 +213,22 @@ _RunAllTests()
 : Failed: 0
 </div>
 
-<h3>Console output (one failure)</h3>
+<h3>Console output (example with one failure)</h3>
 <div class="console">
-<span class="head">+ --- Test: Add() ---</span><br>
+<span class="head">+ --- Test: Add() - returns correct sum ---</span><br>
 <span class="pass">&gt; [PASS] Add(2, 3) returns 5</span><br>
-<span class="fail">! [FAIL] Add(-1, 1) returns 0 (expected: 0, actual: 99)</span><br>
+<span class="fail">! [FAIL] Add(-1, 1) returns 0 (actual: 99, expected: 0) [MathLibTests.au3 - Line: 12]</span><br>
 <span class="pass">&gt; [PASS] Add(0, 0) returns 0</span><br>
 <br>
-<span class="total">+ Total:  3</span><br>
-<span class="pass">&gt; Passed: 2</span><br>
+<span class="head">+ --- Test: Divide() - returns correct result ---</span><br>
+<span class="pass">&gt; [PASS] Divide(10, 2) returns 5</span><br>
+<span class="pass">&gt; [PASS] Divide(7, 2) returns 3.5</span><br>
+<br>
+<span class="head">+ --- Test: Divide() - sets @error on divide by zero ---</span><br>
+<span class="pass">&gt; [PASS] Divide(1, 0) sets @error = 1</span><br>
+<br>
+<span class="total">+ Total:  6</span><br>
+<span class="pass">&gt; Passed: 5</span><br>
 <span class="fail">! Failed: 1</span>
 </div>
 
@@ -185,10 +237,11 @@ _RunAllTests()
 <h2>Testing Scripts with GUI and User Interaction</h2>
 
 <p>
-    When a script calls AutoIt built-ins that require user interaction or return values that
-    affect program flow (such as dialogs, file system, registry, or GUI functions), the
-    standard path alone is not enough. AutoIt Test Framework provides <code>Testable.au3</code>
-    and <code>Stubs.au3</code> to handle these cases.
+    When a script calls AutoIt built-ins that require user interaction or return values
+    that affect program flow (such as dialogs, file system, registry, or GUI functions),
+    those built-ins would execute for real during a test run. AutoIt Test Framework provides
+    <code>Testable.au3</code> and stubs to handle these cases by intercepting those
+    built-ins during tests, making such code testable without anything actually executing.
 </p>
 
 <h3>Step 1 - Use _Tstbl_* wrappers in your script</h3>
@@ -200,6 +253,8 @@ _RunAllTests()
 </p>
 
 <pre>
+; FileCleanup.au3
+
 #include &lt;Testable.au3&gt;
 
 Func DeleteFileWithConfirmation($sPath)
@@ -225,80 +280,152 @@ EndFunc
 <h3>Step 2 - Write tests with stubs</h3>
 
 <p>
-    In the test file, include <code>Stubs.au3</code> (it includes <code>Testable.au3</code>
-    automatically), then use <code>_ResetStubs()</code> and <code>_SetStubReturn()</code>
-    to control what each stub returns, and read <code>$g_StubCalls</code> to verify calls.
+    In the test file, include <code>TestFramework.au3</code> - stubs are ready to use
+    from that point on. Use <code>_SetStubReturn()</code> to control what each stub
+    returns, and <code>_StubCallCount()</code> and <code>_GetStubCall()</code> to verify
+    calls. For more readable tests, optionally include <code>StubConstants.au3</code> - it
+    provides named indexes like <code>$_1st</code>, <code>$_2nd</code>, <code>$_3rd</code>
+    instead of raw numbers, and parameter name constants like <code>$Param_Text</code>,
+    <code>$Param_State</code> instead of raw strings.
 </p>
 
 <pre>
+; FileCleanupTests.au3
+
 #include &lt;TestFramework.au3&gt;
-#include &lt;Stubs.au3&gt;
+#include &lt;StubConstants.au3&gt;  ; optional - named constants for indexes and parameter names
 #include "FileCleanup.au3"
+
+Local Const $FILE_CLEANUP_TESTS = "FileCleanupTests.au3"
 
 Func _TestDeleteFileWithConfirmation_FileNotFound()
     _TestFmkHeader("Test: DeleteFileWithConfirmation() - file not found")
 
-    _ResetStubs()
-    _SetStubReturn("FileExists", 1, False)
+    _SetStubReturn("FileExists", $_1st, False)
 
     Local $bResult = DeleteFileWithConfirmation("C:\temp\myfile.txt")
 
-    _TestFmkAssert($bResult = False, "Returns False when file not found", $bResult, False)
-    _TestFmkAssert($g_StubCalls["MsgBox"].count = 1, "Shows one MsgBox", $g_StubCalls["MsgBox"].count, 1)
-    _TestFmkAssert(Not MapExists($g_StubCalls, "FileDelete"), "FileDelete not called", MapExists($g_StubCalls, "FileDelete"), False)
+    _TestFmkAssert($bResult = False,                 "Returns False when file not found",  $bResult,                    False, $FILE_CLEANUP_TESTS)
+    _TestFmkAssert(_StubCallCount("MsgBox") = 1,     "Shows one MsgBox",                  _StubCallCount("MsgBox"),     1,     $FILE_CLEANUP_TESTS)
+    _TestFmkAssert(_StubCallCount("FileDelete") = 0, "FileDelete not called",             _StubCallCount("FileDelete"), 0,     $FILE_CLEANUP_TESTS)
 EndFunc
 
 Func _TestDeleteFileWithConfirmation_UserConfirms()
     _TestFmkHeader("Test: DeleteFileWithConfirmation() - user confirms")
 
-    _ResetStubs()
-    _SetStubReturn("FileExists", 1, True)
-    _SetStubReturn("MsgBox",     1, $IDYES)
+    _SetStubReturn("FileExists", $_1st, True)
+    _SetStubReturn("MsgBox",     $_1st, $IDYES)
 
-    Local $bResult = DeleteFileWithConfirmation("C:\temp\myfile.txt")
+    Local $bResult  = DeleteFileWithConfirmation("C:\temp\myfile.txt")
+    Local $sDeleted = _GetStubCall("FileDelete", $_1st, $Param_Path)
 
-    _TestFmkAssert($bResult = True, "Returns True when confirmed", $bResult, True)
-    _TestFmkAssert($g_StubCalls["FileDelete"].count = 1, "FileDelete called once", $g_StubCalls["FileDelete"].count, 1)
-    _TestFmkAssert($g_StubCalls["FileDelete"][1].sPath = "C:\temp\myfile.txt", _
-        "Correct file deleted", $g_StubCalls["FileDelete"][1].sPath, "C:\temp\myfile.txt")
+    _TestFmkAssert($bResult = True,                     "Returns True when confirmed",  $bResult,                     True,                 $FILE_CLEANUP_TESTS)
+    _TestFmkAssert(_StubCallCount("FileDelete") = 1,    "FileDelete called once",       _StubCallCount("FileDelete"), 1,                    $FILE_CLEANUP_TESTS)
+    _TestFmkAssert($sDeleted = "C:\temp\myfile.txt",    "Correct file deleted",         $sDeleted,                    "C:\temp\myfile.txt", $FILE_CLEANUP_TESTS)
 EndFunc
 
 Func _TestDeleteFileWithConfirmation_UserCancels()
     _TestFmkHeader("Test: DeleteFileWithConfirmation() - user cancels")
 
-    _ResetStubs()
-    _SetStubReturn("FileExists", 1, True)
-    _SetStubReturn("MsgBox",     1, $IDNO)
+    _SetStubReturn("FileExists", $_1st, True)
+    _SetStubReturn("MsgBox",     $_1st, $IDNO)
 
     Local $bResult = DeleteFileWithConfirmation("C:\temp\myfile.txt")
 
-    _TestFmkAssert($bResult = False, "Returns False when cancelled", $bResult, False)
-    _TestFmkAssert(Not MapExists($g_StubCalls, "FileDelete"), "FileDelete not called", MapExists($g_StubCalls, "FileDelete"), False)
+    _TestFmkAssert($bResult = False,                    "Returns False when cancelled", $bResult,                     False, $FILE_CLEANUP_TESTS)
+    _TestFmkAssert(_StubCallCount("FileDelete") = 0,    "FileDelete not called",        _StubCallCount("FileDelete"), 0,     $FILE_CLEANUP_TESTS)
 EndFunc
 
-Func _RunAllTests()
+Func _RunFileCleanupTests($bWriteSummary = True)
     Local $bAllPassed = True
+	
     $bAllPassed = _TestFmkRun(_TestDeleteFileWithConfirmation_FileNotFound, $bAllPassed)
     $bAllPassed = _TestFmkRun(_TestDeleteFileWithConfirmation_UserConfirms, $bAllPassed)
     $bAllPassed = _TestFmkRun(_TestDeleteFileWithConfirmation_UserCancels,  $bAllPassed)
-    _TestFmkSummary()
+	
+    If $bWriteSummary Then _TestFmkSummary()
     Return $bAllPassed
 EndFunc
 
-_RunAllTests()
+_TestFmkRunAllTests(_RunFileCleanupTests, $FILE_CLEANUP_TESTS)
 </pre>
 
 <div class="note">
     <b>Note:</b>
     <ul style="margin: 4px 0; padding-left: 20px;">
-		<li>Stub indexes are 1-based.</li>
-        <li><code>_SetStubReturn("MsgBox", 1, $IDYES)</code> - pre-configures what the first MsgBox call returns.</li>
-        <li><code>$g_StubCalls["MsgBox"].count</code> - returns how many times a stub was called.</li>
-        <li><code>$g_StubCalls["FileDelete"][1].sPath</code> - reads the <code>sPath</code> argument of the first FileDelete call.</li>
-        <li>Call <code>_ResetStubs()</code> between tests to clear all recorded calls and returns.</li>
-        <li>To assert a stub was never called use <code>Not MapExists($g_StubCalls, "TypeName")</code> rather than checking <code>.count = 0</code>, since if a stub was never called its map entry does not exist yet.</li>
+        <li>Stub indexes are 1-based. <code>StubConstants.au3</code> provides <code>$_1st</code>, <code>$_2nd</code>, <code>$_3rd</code>, etc. as readable aliases.</li>
+        <li><code>_SetStubReturn("MsgBox", $_1st, $IDYES)</code> - pre-configures what the first MsgBox call returns.</li>
+        <li><code>_StubCallCount("MsgBox")</code> - returns how many times a stub was called. Safe even when the stub was never called.</li>
+        <li><code>_GetStubCall("FileDelete", $_1st, $Param_Path)</code> - reads the path argument of the first FileDelete call.</li>
+        <li>Stubs are reset automatically when <code>_TestFmkHeader()</code> is called. Use <code>_ResetStubs()</code> if you need to reset manually outside of a header call.</li>
+        <li>Never call the function under test directly inside <code>_TestFmkAssert()</code> - capture the result to a local variable first to avoid calling it twice.</li>
     </ul>
 </div>
+
+<hr>
+
+<h2>Running Multiple Test Suites Together</h2>
+
+<p>
+    When a project has multiple test files, a script that includes all test files can
+    execute their test suites together, printing a single combined summary. Use
+    <a href="functions/TestFmkSetSilentMode.htm">_TestFmk_SetSilentMode(True)</a> to
+    suppress pass and header output across all suites, showing only failures and the
+    final combined summary. Pass <code>$bWriteSummary = False</code> to each test suite
+    function to prevent it from printing its own summary.
+</p>
+
+<pre>
+; RunAllTests.au3
+
+#include "MathLibTests.au3"
+#include "FileCleanupTests.au3"
+
+_TestFmk_SetSilentMode(True)
+
+Func _RunAllTests()
+    Local $bWriteSummary = False
+    Local $bAllPassed    = True
+
+    $bAllPassed = _RunMathLibTests($bWriteSummary)     And $bAllPassed
+    $bAllPassed = _RunFileCleanupTests($bWriteSummary) And $bAllPassed
+
+    _TestFmkSummary()
+
+    Return $bAllPassed
+EndFunc
+
+Exit Not _RunAllTests()
+</pre>
+
+<hr>
+
+<h2>Running Tests from the Command Line</h2>
+
+<p>
+    Test suites can be run from the command line. Launching <code>AutoIt3.exe</code> from
+    the command shell does not block the shell until the script finishes, so the shell reads
+    <code>%ERRORLEVEL%</code> before AutoIt has exited. Use <code>start /wait</code> to
+    force the shell to wait:
+</p>
+
+<pre>
+start /wait "" "C:\Program Files (x86)\AutoIt3\AutoIt3_x64.exe" "path\to\RunAllTests.au3" &gt; NUL
+echo %ERRORLEVEL%
+</pre>
+
+<p>
+    Exit code <code>0</code> means all tests passed. Exit code <code>1</code> means at least
+    one test failed. The runner script produces this exit code via:
+</p>
+
+<pre>
+Exit Not _RunAllTests()
+</pre>
+
+<p>
+    This makes it straightforward to integrate test runs into build pipelines or CI/CD workflows.
+</p>
 
 <hr>
 
@@ -309,30 +436,41 @@ _RunAllTests()
     in a test file.
 </p>
 
+<hr>
+
 <h3>Scripts with an entry point</h3>
 
 <p>
-    If the script you are writing tests for runs a function once executed (i.e. it has an
-    entry point), including it in a test file would execute that script code immediately.
-    Guard the entry point with a test mode sentinel so the test file can include the script
-    without running it:
+    If the script you are writing tests for calls a function at the top level when executed
+    (i.e. it has an entry point), including it in a test file would execute that code
+    immediately.
 </p>
-
-<pre>
-If Not IsDeclared("__MYSCRIPT_TEST_MODE") Then
-    _Main()
-EndIf
-</pre>
 
 <p>
-    In the test file, declare the sentinel before all includes:
+	<b>1</b> - Guard the entry point with the framework's test mode sentinel:
+</p>
+<pre>
+If Not IsDeclared("__TFW_TEST_MODE") Then _Main()
+</pre>
+
+<div class="note">
+    <b>Note:</b> The guard only prevents the entry point from running when the script is
+    included in a test file. When the script is run directly, <code>$__TFW_TEST_MODE</code>
+    is not declared and the entry point executes as normal.
+</div>
+
+<p>
+    <b>2</b> - In the test file, just include <code>TestFramework.au3</code> before the script under
+    test - the sentinel is declared by the framework automatically, preventing the script
+    entry point from running.
 </p>
 
 <pre>
-Global $__MYSCRIPT_TEST_MODE = True
 #include &lt;TestFramework.au3&gt;
 #include "MyScript.au3"
 </pre>
+
+<hr>
 
 <h3>Scripts that require administrator rights</h3>
 
@@ -346,6 +484,7 @@ Global $__MYSCRIPT_TEST_MODE = True
 #pragma compile(ExecLevel, requireAdministrator)
 </pre>
 
+<hr>
 <h3>Scripts that use FileInstall</h3>
 
 <p>
@@ -359,11 +498,12 @@ Global $__MYSCRIPT_TEST_MODE = True
 
 <ul style="font-size: 12px; line-height: 1.8;">
     <li><b>Always pass actual and expected values to _TestFmkAssert().</b> The 3rd and 4th arguments are optional, but without them a failure only tells you the description failed, not what the actual result was. Always include them.</li>
+    <li><b>Always capture results to a local variable before asserting.</b> Avoid to call the function under test directly inside <code>_TestFmkAssert()</code> - it would be called twice, which can consume extra stub returns or trigger unexpected side effects.</li>
+    <li><b>Use _StubCallCount() to check how many times a stub was called</b> - it is safe even when the stub was never called.</li>
     <li><b>Keep test functions focused.</b> One test function per unit of behavior. If a function has 20 assertions, consider splitting it into smaller, more specific test functions with clearer headers.</li>
     <li><b>Name test functions descriptively.</b> <code>_TestAdd_NegativeNumbers()</code> is more useful than <code>_TestAdd2()</code> when reading the console output after a failure.</li>
-    <li><b>Test both the happy path and the error path.</b> As shown in the <code>_TestDivide()</code> example above, testing that <code>@error</code> is correctly set on failure is just as important as testing correct return values on success. Always capture <code>@error</code> into a local variable immediately after the call, since any subsequent function call resets it.</li>
+    <li><b>Test both the happy path and the error path.</b> Testing that <code>@error</code> is correctly set on failure is just as important as testing correct return values on success. Always capture <code>@error</code> into a local variable immediately after the call, since any subsequent function call resets it.</li>
     <li><b>Write tests first (TDD).</b> AutoIt Test Framework supports a test-first workflow - write the tests before the implementation exists. The test suite will report all failures cleanly without stopping, so you get a clear picture of what needs to be built.</li>
-    <li><b>Stub access is safe when a stub was never called.</b> Accessing <code>$g_StubCalls["TypeName"][index]["property"]</code> on a call that was never recorded returns an empty string gracefully rather than crashing the script. This means tests that assert on stub calls will fail cleanly with a meaningful result rather than a runtime error (specially useful in TDD workflows where the implementation does not exist yet).</li>
 </ul>
 
 </body>

@@ -20,40 +20,44 @@
 <hr>
 <h1>_TestFmkRun</h1>
 
-<p>Runs a test function by reference and accumulates its pass/fail result into a cumulative boolean.</p>
+<p>Executes a test function and returns <code>True</code> only if the test passed and no previous test had already failed.</p>
 
 <div class="signature">
 #include &lt;TestFramework.au3&gt;<br>
-_TestFmkRun ( $fTest [, $bCumulative = True] )
+_TestFmkRun ( $hFuncTest [, $bNothingFailed = True] )
 </div>
 
 <h2>Parameters</h2>
 <table>
-<tr><td>$fTest</td><td>A function reference to the test function to run. Pass the function name directly without parentheses or quotes (e.g. <code>_TestMyFunc</code>, not <code>"_TestMyFunc"</code> or <code>_TestMyFunc()</code>).</td></tr>
-<tr><td>$bCumulative</td><td><b>[optional]</b> The accumulated result from all previously run tests. Pass <code>$bAllPassed</code> here to carry the running total forward. Default is <code>True</code>.</td></tr>
+<tr><td>$hFuncTest</td><td>A function reference to the test function to run. Pass the function name directly without parentheses or quotes (e.g. <code>_TestMyFunc</code>, not <code>"_TestMyFunc"</code> or <code>_TestMyFunc()</code>).<br><b>Note:</b> If the reference is invalid or the function cannot be called, a failure is recorded automatically.</td></tr>
+<tr><td>$bNothingFailed</td><td><b>[optional]</b> The accumulated state from all previously run tests. Pass the accumulated variable here to carry the running total forward. Default is <code>True</code>.</td></tr>
 </table>
 
 <h2>Return Value</h2>
 <table>
-<tr><td>Success:</td><td><code>True</code> if this test produced no new failures AND <code>$bCumulative</code> is <code>True</code>.</td></tr>
-<tr><td>Failure:</td><td><code>False</code> if this test produced at least one new failure, OR if <code>$bCumulative</code> was already <code>False</code>.</td></tr>
+<tr><td>Success:</td><td><code>True</code> if this test produced no new failures AND <code>$bNothingFailed</code> is <code>True</code>.</td></tr>
+<tr><td>Failure:</td><td><code>False</code> if this test produced at least one new failure, OR if <code>$bNothingFailed</code> was already <code>False</code>, OR if <code>$hFuncTest</code> is not a valid function reference.</td></tr>
 </table>
 
 <h2>Remarks</h2>
 <p>
-    <code>_TestFmkRun()</code> snapshots the internal failure counter before calling <code>$fTest()</code>,
-    then compares it afterward. If the count increased, the test is considered failed and
-    <code>False</code> is returned.
+    <code>_TestFmkRun()</code> snapshots the internal failure counter before calling
+    <code>$hFuncTest()</code>, then compares it afterward. If the count increased, the test
+    is considered failed and <code>False</code> is returned.
 </p>
 <p>
-    Critically, <code>_TestFmkRun()</code> <b>always</b> runs every test function, regardless
-    of whether previous tests have already failed. This is intentional: the full suite should
+    If <code>$hFuncTest</code> is not a valid function reference or cannot be called,
+    <code>_TestFmkRun()</code> records a failure automatically and returns <code>False</code>.
+</p>
+<p>
+    <code>_TestFmkRun()</code> <b>always</b> runs every test function, regardless of
+    whether previous tests have already failed. This is intentional: the full suite should
     always complete so you get a complete picture of what passes and fails in a single run,
     rather than stopping at the first failure.
 </p>
 <p>
-    The standard pattern is to assign the return value back to <code>$bAllPassed</code> on
-    each call, chaining the cumulative result through every test in the suite:
+    The standard pattern is to chain the return value into the next <code>_TestFmkRun()</code>
+    call, accumulating the result across the whole suite:
 </p>
 <pre>
 Local $bAllPassed = True
@@ -62,41 +66,52 @@ $bAllPassed = _TestFmkRun(_TestB, $bAllPassed)
 $bAllPassed = _TestFmkRun(_TestC, $bAllPassed)
 </pre>
 <p>
-    After all tests have run, <code>$bAllPassed</code> is <code>True</code> only if every
-    single test in the suite passed. This makes it usable as a return value from the overall
-    <code>_RunAllTests()</code> function for external callers that need a single pass/fail signal.
+    After all tests have run, the accumulated variable is <code>True</code> only if every
+    test in the suite passed. This makes it usable as a return value from the test suite
+    function for external callers that need a single pass/fail signal.
 </p>
 
 <h2>Related</h2>
 <p>
     <a href="TestFmkHeader.htm">_TestFmkHeader</a>,
     <a href="TestFmkAssert.htm">_TestFmkAssert</a>,
-    <a href="TestFmkSummary.htm">_TestFmkSummary</a>
+    <a href="TestFmkSummary.htm">_TestFmkSummary</a>,
+    <a href="TestFmkRunAllTests.htm">_TestFmkRunAllTests</a>
 </p>
 
 <h2>Example</h2>
 <pre>
 #include &lt;TestFramework.au3&gt;
 
+Local Const $MY_TESTS = "MyTests.au3"
+
 Func _TestAdd()
-    _TestFmkHeader("Test: Add()")
-    _TestFmkAssert(1 + 1 = 2, "1 + 1 = 2", 1 + 1, "2")
+    _TestFmkHeader("Test: Add() - returns correct sum")
+
+    Local $vResult = 1 + 1
+
+    _TestFmkAssert($vResult = 2, "1 + 1 = 2", $vResult, 2, $MY_TESTS)
 EndFunc
 
 Func _TestSubtract()
-    _TestFmkHeader("Test: Subtract()")
-    _TestFmkAssert(5 - 3 = 2, "5 - 3 = 2", 5 - 3, "2")
+    _TestFmkHeader("Test: Subtract() - returns correct result")
+
+    Local $vResult = 5 - 3
+
+    _TestFmkAssert($vResult = 2, "5 - 3 = 2", $vResult, 2, $MY_TESTS)
 EndFunc
 
-Func _RunAllTests()
+Func _RunMyTests($bWriteSummary = True)
     Local $bAllPassed = True
-    $bAllPassed = _TestFmkRun(_TestAdd,      $bAllPassed)
-    $bAllPassed = _TestFmkRun(_TestSubtract, $bAllPassed)
-    _TestFmkSummary()
+
+    $bAllPassed = <span style="background-color: #ffffcc;">_TestFmkRun</span>(_TestAdd,      $bAllPassed)
+    $bAllPassed = <span style="background-color: #ffffcc;">_TestFmkRun</span>(_TestSubtract, $bAllPassed)
+
+    If $bWriteSummary Then _TestFmkSummary()
     Return $bAllPassed
 EndFunc
 
-_RunAllTests()
+_TestFmkRunAllTests(_RunMyTests, $MY_TESTS)
 </pre>
 
 </body>

@@ -74,26 +74,42 @@ _Tstbl_FileInstall("..\lib\file2.au3", $sDestFolder & "\file2.au3", $FC_OVERWRIT
 <h2>Stubbing in Tests</h2>
 
 <p>
-    In test files, <code>Stubs.au3</code> wires the FileInstall stub automatically like any
-    other stub. Call recording and return control work the same way as all other stubs.
+    In test files, <code>Stubs.au3</code> through <code>TestFramework.au3</code> wires
+    the FileInstall stub automatically like any other stub. Call recording and return
+    control work the same way as all other stubs.
 </p>
 
 <pre>
-Global $__MY_SCRIPT_TEST_MODE = True
+; MyScriptTests.au3
+
 #include &lt;TestFramework.au3&gt;
-#include &lt;Stubs.au3&gt;
+#include &lt;StubConstants.au3&gt;
 #include "MyScript.au3"
+
+Local Const $MY_SCRIPT_TESTS = "MyScriptTests.au3"
 
 Func _TestMyInstall()
     _TestFmkHeader("Test: install copies files")
-    _ResetStubs()
 
-    __RunInstall(1, 2)
+    __RunInstall()
 
-    _TestFmkAssert($g_StubCalls["FileInstall"].count = 3, "Installs 3 files", $g_StubCalls["FileInstall"].count, 3)
-    _TestFmkAssert($g_StubCalls["FileInstall"][1].sSource = "file1.au3", _
-        "First file correct", $g_StubCalls["FileInstall"][1].sSource, "file1.au3")
+    Local $iCount   = _StubCallCount("FileInstall")
+    Local $sSource1 = _GetStubCall("FileInstall", $_1st, $Param_Source)
+	
+    _TestFmkAssert($iCount = 3,                  "Installs 3 files",    $iCount,   3,            $MY_SCRIPT_TESTS)
+    _TestFmkAssert($sSource1 = "file1.au3",      "First file correct",  $sSource1, "file1.au3",  $MY_SCRIPT_TESTS)
 EndFunc
+
+Func _RunMyScriptTests($bWriteSummary = True)
+    Local $bAllPassed = True
+	
+    $bAllPassed = _TestFmkRun(_TestMyInstall, $bAllPassed)
+	
+    If $bWriteSummary Then _TestFmkSummary()
+    Return $bAllPassed
+EndFunc
+
+_TestFmkRunAllTests(_RunMyScriptTests, $MY_SCRIPT_TESTS)
 </pre>
 
 <div class="note">
@@ -101,6 +117,6 @@ EndFunc
     implementation via <code>_Tstbl_Implement_FileInstall()</code>. If no implementation
     is registered, stub calls are ignored and <code>False</code> is returned.
 </div>
-
+<br>
 </body>
 </html>

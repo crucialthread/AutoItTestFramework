@@ -20,18 +20,20 @@
 <hr>
 <h1>_TestFmkHeader</h1>
 
-<p>Prints a labeled section header to the console to identify a group of related tests.</p>
+<p>Prints a labeled section header to the console to identify a group of related tests. Resets stubs by default.</p>
 
 <div class="signature">
 #include &lt;TestFramework.au3&gt;<br>
-_TestFmkHeader ( $sTitle [, $sColor = $TFW_COLOR_ORANGE] )
+_TestFmkHeader ( $sTitle [, $bResetStubs = True [, $sColor = $TFW_COLOR_ORANGE [, $LineNumber = @ScriptLineNumber]]] )
 </div>
 
 <h2>Parameters</h2>
 <table>
 <tr><td>$sTitle</td><td>The title text to display in the header.</td></tr>
+<tr><td>$bResetStubs</td><td><b>[optional]</b> Whether to reset all recorded stub calls and configured return values before the test group runs. Default is <code>True</code>. Pass <code>False</code> to preserve stub state from a previous call.</td></tr>
 <tr><td>$sColor</td><td><b>[optional]</b> Console color constant for the header line. Default is <a href="../constants.htm">$TFW_COLOR_ORANGE</a>.<br>
     Accepted values: <code>$TFW_COLOR_ORANGE</code>, <code>$TFW_COLOR_YELLOW</code>, <code>$TFW_COLOR_BLUE</code>, <code>$TFW_COLOR_RED</code>, <code>$TFW_COLOR_WHITE</code>.</td></tr>
+<tr><td>$LineNumber</td><td><b>[optional]</b> The line number in the calling script. Defaults to <code>@ScriptLineNumber</code> and is included in the header output for reference.</td></tr>
 </table>
 
 <h2>Return Value</h2>
@@ -46,6 +48,13 @@ _TestFmkHeader ( $sTitle [, $sColor = $TFW_COLOR_ORANGE] )
     blank line before it and surrounded by <code>---</code> markers for readability.
 </p>
 <p>
+    By default, <code>_TestFmkHeader()</code> calls <code>_ResetStubs()</code> automatically,
+    clearing all recorded stub calls and configured return values before the test group runs.
+    This ensures each test group starts with a clean stub state without requiring an explicit
+    <code>_ResetStubs()</code> call. Pass <code>False</code> as <code>$bResetStubs</code> when
+    you need to preserve stub state set up before the header call.
+</p>
+<p>
     The color constants control how SciTE colors the line in its output pane.
     See <a href="../constants.htm">Constants Reference</a> for details on the available colors.
 </p>
@@ -55,6 +64,7 @@ _TestFmkHeader ( $sTitle [, $sColor = $TFW_COLOR_ORANGE] )
     <a href="TestFmkAssert.htm">_TestFmkAssert</a>,
     <a href="TestFmkRun.htm">_TestFmkRun</a>,
     <a href="TestFmkSummary.htm">_TestFmkSummary</a>,
+    <a href="TestFmkSetSilentMode.htm">_TestFmk_SetSilentMode</a>,
     <a href="../constants.htm">$TFW_COLOR_*</a>
 </p>
 
@@ -62,18 +72,23 @@ _TestFmkHeader ( $sTitle [, $sColor = $TFW_COLOR_ORANGE] )
 <pre>
 #include &lt;TestFramework.au3&gt;
 
+Local Const $MY_TESTS = "MyTests.au3"
+
 Func _TestMyFunc()
-    _TestFmkHeader("Test: MyFunc")
-    _TestFmkAssert(True, "This assertion always passes")
+    <span style="background-color: #ffffcc;">_TestFmkHeader("Test: MyFunc")</span>
+	
+    Local $vResult = MyFunc(2, 3)
+	
+    _TestFmkAssert($vResult = 5, "MyFunc(2, 3) returns 5", $vResult, 5, $MY_TESTS)
 EndFunc
 
-_TestMyFunc()
+_TestFmkRunAllTests(_RunMyTests, $MY_TESTS)
 </pre>
 
 <p>Console output:</p>
 <div class="console">
 <span class="head">+ --- Test: MyFunc ---</span><br>
-<span class="pass">&gt; [PASS] This assertion always passes</span>
+<span class="pass">&gt; [PASS] MyFunc(2, 3) returns 5</span>
 </div>
 
 </body>

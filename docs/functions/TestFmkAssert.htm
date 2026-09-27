@@ -24,7 +24,7 @@
 
 <div class="signature">
 #include &lt;TestFramework.au3&gt;<br>
-_TestFmkAssert ( $bCondition, $sDescription [, $vActual = "" [, $vExpected = ""]] )
+_TestFmkAssert ( $bCondition, $sDescription [, $vActual = "" [, $vExpected = "" [, $sScriptName = @ScriptName [, $LineNumber = @ScriptLineNumber]]]] )
 </div>
 
 <h2>Parameters</h2>
@@ -33,6 +33,8 @@ _TestFmkAssert ( $bCondition, $sDescription [, $vActual = "" [, $vExpected = ""]
 <tr><td>$sDescription</td><td>A short description of what this assertion is checking. Printed alongside the pass/fail result.</td></tr>
 <tr><td>$vActual</td><td><b>[optional]</b> The actual value produced by the code under test. Displayed on failure so you can see what the code returned. Strongly recommended.</td></tr>
 <tr><td>$vExpected</td><td><b>[optional]</b> The expected value. Displayed on failure alongside <code>$vActual</code>. Strongly recommended.</td></tr>
+<tr><td>$sScriptName</td><td><b>[optional]</b> The name of the test file where the assertion lives. Defaults to <code>@ScriptName</code>. <br>When the value differs from the currently running script (e.g. when multiple test files are included in a script that includes all test files), the file name is included in the failure output so you can identify exactly which file the failing assertion came from. It is recommended to pass the script name constant declared at the top of each test file.</td></tr>
+<tr><td>$LineNumber</td><td><b>[optional]</b> The line number of the assertion in the test file. Defaults to <code>@ScriptLineNumber</code> and is included in the failure output for quick navigation to the failing assertion.</td></tr>
 </table>
 
 <h2>Return Value</h2>
@@ -45,12 +47,18 @@ _TestFmkAssert ( $bCondition, $sDescription [, $vActual = "" [, $vExpected = ""]
     Every call to <code>_TestFmkAssert()</code> increments the internal total counter.
     A passing assertion increments the passed counter and prints a blue
     <code>[PASS]</code> line. A failing assertion increments the failed counter
-    and prints a red <code>[FAIL]</code> line.
+    and prints a red <code>[FAIL]</code> line including the actual value, expected value,
+    file name (when it differs from the running script), and line number.
 </p>
 <p>
     Always provide <code>$vActual</code> and <code>$vExpected</code>. Without them, a failure
     only tells you which description failed, not what the actual value was. With them, you can
     diagnose the failure directly from the console output without re-running the script under a debugger.
+</p>
+<p>
+    Always capture the result of the function under test into a local variable before passing
+    it to <code>_TestFmkAssert()</code>. Calling the function directly inside the assert
+    calls it twice, which can consume extra stub returns or trigger unexpected side effects.
 </p>
 <p>
     <b>Important:</b> if you are asserting on <code>@error</code>, capture it into a local variable
@@ -66,27 +74,39 @@ _TestFmkAssert ( $bCondition, $sDescription [, $vActual = "" [, $vExpected = ""]
 <p>
     <a href="TestFmkHeader.htm">_TestFmkHeader</a>,
     <a href="TestFmkRun.htm">_TestFmkRun</a>,
-    <a href="TestFmkSummary.htm">_TestFmkSummary</a>
+    <a href="TestFmkSummary.htm">_TestFmkSummary</a>,
+    <a href="TestFmkRunAllTests.htm">_TestFmkRunAllTests</a>
 </p>
 
 <h2>Example</h2>
 <pre>
 #include &lt;TestFramework.au3&gt;
 
+Local Const $MY_TESTS = "MyTests.au3"
+
 Func _TestMyFunc()
     _TestFmkHeader("Test: MyFunc")
 
-    ; Basic assertion - always pass $vActual and $vExpected
+    ; Always capture the result before asserting
     Local $iResult = 2 + 3
-    _TestFmkAssert($iResult = 5, "2 + 3 equals 5", $iResult, "5")
+    <span style="background-color: #ffffcc;">_TestFmkAssert($iResult = 5, "2 + 3 equals 5", $iResult, 5, $MY_TESTS)</span>
 
     ; Asserting on @error - capture it immediately before any other call
     FileRead("nonexistent_file.txt")
     Local $iErr = @error
-    _TestFmkAssert($iErr &lt;&gt; 0, "FileRead on missing file sets @error", $iErr, "&lt;&gt; 0")
+    <span style="background-color: #ffffcc;">_TestFmkAssert($iErr &lt;&gt; 0, "FileRead on missing file sets @error", $iErr, "&lt;&gt; 0", $MY_TESTS)</span>
 EndFunc
 
-_TestMyFunc()
+Func _RunMyTests($bWriteSummary = True)
+    Local $bAllPassed = True
+	
+    $bAllPassed = _TestFmkRun(_TestMyFunc, $bAllPassed)
+	
+    If $bWriteSummary Then _TestFmkSummary()
+    Return $bAllPassed
+EndFunc
+
+_TestFmkRunAllTests(_RunMyTests, $MY_TESTS)
 </pre>
 
 <p>Console output (both passing):</p>
@@ -99,7 +119,7 @@ _TestMyFunc()
 <p>Console output (first assertion failing):</p>
 <div class="console">
 <span class="head">+ --- Test: MyFunc ---</span><br>
-<span class="fail">! [FAIL] 2 + 3 equals 5 (expected: 5, actual: 99)</span><br>
+<span class="fail">! [FAIL] 2 + 3 equals 5 (actual: 99, expected: 5) [MyTests.au3 - Line: 9]</span><br>
 <span class="pass">&gt; [PASS] FileRead on missing file sets @error</span>
 </div>
 
