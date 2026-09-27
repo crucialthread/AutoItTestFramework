@@ -1,15 +1,36 @@
+#include-once
+
+#include <StringConstants.au3>
+#include "Testable.au3"
+
 ; #INDEX# =======================================================================================================================
-; Title .........: AutoIt Test Framework - Stubs_Core.au3
-; Version .......: 0.0.1
+; Title .........: AutoIt Test Framework - StubsCore.au3
+; Version .......: 1.0.0
 ; AutoIt Version : 3.3.18.0
+; Language ......: English
 ; Author ........: Crucial Thread
 ; Description ...: Core stub infrastructure shared by all Stubs_*.au3 category files.
 ;                  Provides stub stores, helper functions, accessor functions, and reset/return utilities.
 ; ===============================================================================================================================
 
-#include-once
-#include <StringConstants.au3>
-#include "Testable.au3"
+;#FUNCTIONS# ====================================================================================================================
+; _ResetStubs			- Clears all recorded calls and configured return values
+; _SetStubReturn		- Pre-configures the return value for the Nth call of a given stub type
+; _StubCallCount		- Returns the number of times a stub type was called
+; _StubCall				- Returns the recorded argument value for a given stub type, call index, and parameter name
+; _GetStubCall			- Alias for _StubCall
+; ===============================================================================================================================
+
+;#INTERNAL_USE_ONLY# ============================================================================================================
+; __StubInitType
+; __SanitizeStubParam
+; __CoerceStubValue
+; __StubObject
+; __CallArgs
+; __DefineStub
+; __ParamOffset
+; __FallBackParam
+; ===============================================================================================================================
 
 ; ===============================================================================================================================
 ; Global stub stores
@@ -20,8 +41,12 @@ Global Const $STUB_ERROR = "__ERROR__"
 Global $g_StubCalls[]    ; $g_StubCalls["TypeName"][index]["property"]
 Global $g_StubReturns[]  ; $g_StubReturns["TypeName"][index] = return value
 
+;================================================================================================================================
+#Region ; >>> [INTERNAL_USE_ONLY]
+;================================================================================================================================
+
 ; #INTERNAL_USE_ONLY# ===========================================================================================================
-; Stub helper - initializes a type entry in the store if not already present
+; Stub helper - initializes a type entry in the stub call and stub return store if not already present
 ; ===============================================================================================================================
 Func __StubInitType($sType)
     If Not MapExists($g_StubCalls, $sType) Then
@@ -137,6 +162,8 @@ EndFunc
 ;                  Returns Null if no match is found.
 ; ===============================================================================================================================
 Func __FallBackParam($sParam, $aMapKeys)
+	If Not IsArray($aMapKeys) Then Return Null
+
 	$sParam = __SanitizeStubParam($sParam)
 	Local $ParamSearch = StringMid($sParam, __ParamOffset($sParam) + 1)
 
@@ -146,7 +173,15 @@ Func __FallBackParam($sParam, $aMapKeys)
 	Return Null
 EndFunc
 
-; ===============================================================================================================================
+;================================================================================================================================
+#EndRegion <<< [INTERNAL_USE_ONLY]
+;================================================================================================================================
+
+;================================================================================================================================
+#Region ; >>> [FUNCTIONS]
+;================================================================================================================================
+
+; #FUNCTION# ====================================================================================================================
 ; Reset - call between tests to clear all recorded calls and returns
 ; ===============================================================================================================================
 Func _ResetStubs()
@@ -155,7 +190,7 @@ Func _ResetStubs()
     $g_StubReturns = $mEmpty
 EndFunc
 
-; ===============================================================================================================================
+; #FUNCTION# ====================================================================================================================
 ; Set Stub value helper - set a stub return value to be used on a test
 ; ===============================================================================================================================
 Func _SetStubReturn($sType, $iIdx, $vValue)
@@ -166,11 +201,7 @@ Func _SetStubReturn($sType, $iIdx, $vValue)
     $g_StubReturns[$sType][$iIdx] = $vValue
 EndFunc
 
-; ===============================================================================================================================
-; Accessor functions
-; ===============================================================================================================================
-
-; ===============================================================================================================================
+; #FUNCTION# ====================================================================================================================
 ; Stub call count - returns the number of times a stub type was called, or 0 if it was never called.
 ;                   Safe alternative to $g_StubCalls["TypeName"].count which crashes if the type does not exist.
 ; ===============================================================================================================================
@@ -179,7 +210,7 @@ Func _StubCallCount($sType)
     Return $g_StubCalls[$sType].count
 EndFunc
 
-; ===============================================================================================================================
+; #FUNCTION# ====================================================================================================================
 ; Stub call accessor - returns the recorded argument value for a given stub type, call index, and parameter name.
 ;                      Falls back to a prefix-agnostic match if the exact parameter name is not found.
 ;                      Returns Null if the type, index, or parameter does not exist.
@@ -195,3 +226,14 @@ Func _StubCall($sType, $idStub, $sParam)
 		Return $vKey = Null ? Null : $g_StubCalls[$sType][$idStub][$vKey]
 	EndIf
 EndFunc
+
+; #FUNCTION# ====================================================================================================================
+; Alias for _StubCall
+; ===============================================================================================================================
+Func _GetStubCall($sType, $idStub, $sParam)
+	Return _StubCall($sType, $idStub, $sParam)
+EndFunc
+
+;================================================================================================================================
+#EndRegion <<< [FUNCTIONS]
+;================================================================================================================================
