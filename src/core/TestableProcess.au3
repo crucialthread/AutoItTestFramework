@@ -1,13 +1,14 @@
+#include-once
+
 ; #INDEX# =======================================================================================================================
-; Title .........: AutoIt Test Framework - Testable_Process.au3 library
-; Version .......: 0.0.1
+; Title .........: AutoIt Test Framework - TestableProcess.au3 library
+; Version .......: 1.0.0
 ; AutoIt Version : 3.3.18.0
+; Language ......: English
 ; Author ........: Crucial Thread
 ; Description ...: Testable wrappers for AutoIt process and shell functions.
 ;                  Can be included directly or via Testable.au3
 ; ===============================================================================================================================
-
-#include-once
 
 Global $g_hFn_ShellExecute     = ShellExecute
 Global $g_hFn_ShellExecuteWait = ShellExecuteWait

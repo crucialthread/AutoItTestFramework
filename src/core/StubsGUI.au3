@@ -1,15 +1,17 @@
+#include-once
+
+#include <GUIConstantsEx.au3>
+#include "StubsCore.au3"
+
 ; #INDEX# =======================================================================================================================
-; Title .........: AutoIt Test Framework - Stubs_GUI.au3 library
-; Version .......: 0.0.1
+; Title .........: AutoIt Test Framework - StubsGUI.au3 library
+; Version .......: 1.0.0
 ; AutoIt Version : 3.3.18.0
+; Language ......: English
 ; Author ........: Crucial Thread
 ; Description ...: Stub implementations for AutoIt GUI functions.
 ;                  Can be included directly or via Stubs.au3.
 ; ===============================================================================================================================
-
-#include-once
-#include <GUIConstantsEx.au3>
-#include "StubsCore.au3"
 
 Func __Stub_GUICreate($sTitle, $iWidth = -1, $iHeight = -1, $iLeft = -1, $iTop = -1, $iStyle = -1, $iExStyle = -1, $hWndParent = 0)
 	Local $aArgs = __CallArgs("sTitle = " & $sTitle, "iWidth = " & $iWidth, "iHeight = " & $iHeight, "iLeft = " & $iLeft, _
@@ -198,6 +200,11 @@ EndFunc
 
 ; --- Control interaction ---
 
+Func __Stub_GUICtrlGetHandle($hControlId)
+	Local $vReturn = __DefineStub("GUICtrlGetHandle", __CallArgs("hControlId = " & $hControlId), 0)
+	Return SetError(@error, 0, $vReturn)
+EndFunc
+
 Func __Stub_GUICtrlSetState($hControlId, $iState)
 	Local $vReturn = __DefineStub("GUICtrlSetState", __CallArgs("hControlId = " & $hControlId, "iState = " & $iState), 1)
 	Return SetError(@error, 0, $vReturn)
@@ -223,9 +230,9 @@ Func __Stub_GUICtrlDelete($hControlId)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func __Stub_GUICtrlSetFont($hControlId, $iFontSize, $iFontWeight = 0, $iFontAttribute = 0, $sName = "", $iFontQuality = 0)
+Func __Stub_GUICtrlSetFont($hControlId, $iFontSize, $iFontWeight = 0, $iFontAttribute = 0, $sFontName = "", $iFontQuality = 0)
 	Local $aArgs = __CallArgs("hControlId = " & $hControlId, "iFontSize = " & $iFontSize, "iFontWeight = " & $iFontWeight, _
-							  "iFontAttribute = " & $iFontAttribute, "sName = " & $sName, "iFontQuality = " & $iFontQuality)
+							  "iFontAttribute = " & $iFontAttribute, "sFontName = " & $sFontName, "iFontQuality = " & $iFontQuality)
 	Local $vReturn = __DefineStub("GUICtrlSetFont", $aArgs, 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
@@ -249,6 +256,12 @@ EndFunc
 Func __Stub_GUICtrlSetTip($hControlId, $sTooltip, $sTitle = "", $iIcon = 0, $iOptions = 0)
 	Local $aArgs = __CallArgs("hControlId = " & $hControlId, "sTooltip = " & $sTooltip, "sTitle = " & $sTitle, "iIcon = " & $iIcon, "iOptions = " & $iOptions)
 	Local $vReturn = __DefineStub("GUICtrlSetTip", $aArgs, 1)
+	Return SetError(@error, 0, $vReturn)
+EndFunc
+
+Func __Stub_GUICtrlSendMsg($hControlId, $sMsg, $vWParam, $vLParam)
+	Local $aArgs = __CallArgs("hControlId = " & $hControlId, "sMsg = " & $sMsg, "vWParam = " & $vWParam, "vLParam = " & $vLParam)
+	Local $vReturn = __DefineStub("GUICtrlSendMsg", $aArgs, 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
@@ -282,6 +295,7 @@ $g_hFn_GUICtrlCreateMenu     		= __Stub_GUICtrlCreateMenu
 $g_hFn_GUICtrlCreateMenuItem 		= __Stub_GUICtrlCreateMenuItem
 $g_hFn_GUICtrlCreateSlider   		= __Stub_GUICtrlCreateSlider
 $g_hFn_GUICtrlCreatePic      		= __Stub_GUICtrlCreatePic
+$g_hFn_GUICtrlGetHandle       		= __Stub_GUICtrlGetHandle
 $g_hFn_GUICtrlSetState       		= __Stub_GUICtrlSetState
 $g_hFn_GUICtrlGetState       		= __Stub_GUICtrlGetState
 $g_hFn_GUICtrlSetData        		= __Stub_GUICtrlSetData
@@ -292,3 +306,4 @@ $g_hFn_GUICtrlSetColor       		= __Stub_GUICtrlSetColor
 $g_hFn_GUICtrlSetBkColor     		= __Stub_GUICtrlSetBkColor
 $g_hFn_GUICtrlSetPos         		= __Stub_GUICtrlSetPos
 $g_hFn_GUICtrlSetTip         		= __Stub_GUICtrlSetTip
+$g_hFn_GUICtrlSendMsg    			= __Stub_GUICtrlSendMsg

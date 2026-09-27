@@ -1,18 +1,14 @@
+#include-once
+
 ; #INDEX# =======================================================================================================================
 ; Title .........: AutoIt Test Framework - Stubs.au3 library
-; Version .......: 0.0.1
+; Version .......: 1.0.0
 ; AutoIt Version : 3.3.18.0
+; Language ......: English
 ; Author ........: Crucial Thread
 ; Description ...: Includes Stubs_Core.au3 and all Stubs_*.au3 category files.
 ;                  Include this file in test code to automatically wire all function pointers to their stubs.
-; Usage .........: #include "Stubs.au3"
-;                  Use _ResetStubs() between tests to clear all recorded calls and returns.
-;                  Use _SetStubReturn($sType, $iIdx, $vValue) to pre-configure return values.
-;                  Use _StubCallCount($sType) to verify how many times a function was called.
-;                  Use _StubCall($sType, $iIdx, $sProperty) to inspect a specific call.
 ; ===============================================================================================================================
-
-#include-once
 
 #include "StubsCore.au3"
 #include "StubsDialogs.au3"

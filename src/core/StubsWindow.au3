@@ -1,15 +1,22 @@
+#include-once
+
+#include <AutoItConstants.au3>
+#include "StubsCore.au3"
+
 ; #INDEX# =======================================================================================================================
-; Title .........: AutoIt Test Framework - Stubs_Window.au3 library
-; Version .......: 0.0.1
+; Title .........: AutoIt Test Framework - StubsWindow.au3 library
+; Version .......: 1.0.0
 ; AutoIt Version : 3.3.18.0
+; Language ......: English
 ; Author ........: Crucial Thread
 ; Description ...: Stub implementations for AutoIt window management functions.
 ;                  Can be included directly or via Stubs.au3.
 ; ===============================================================================================================================
 
-#include-once
-#include <AutoItConstants.au3>
-#include "StubsCore.au3"
+Func __Stub_IsHWnd($hWnd)
+    Local $vReturn = __DefineStub("IsHWnd", __CallArgs("hWnd = " & $hWnd), False)
+    Return SetError(@error, 0, $vReturn)
+EndFunc
 
 Func __Stub_WinExists($sTitle, $sText = "")
 	Local $vReturn = __DefineStub("WinExists", __CallArgs("sTitle = " & $sTitle, "sText = " & $sText), 1)
@@ -88,6 +95,7 @@ Func __Stub_WinGetPos($sTitle, $sText = "")
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
+$g_hFn_IsHWnd 		   = __Stub_IsHWnd
 $g_hFn_WinExists       = __Stub_WinExists
 $g_hFn_WinActive       = __Stub_WinActive
 $g_hFn_WinActivate     = __Stub_WinActivate

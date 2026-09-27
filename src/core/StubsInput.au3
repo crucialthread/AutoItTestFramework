@@ -1,14 +1,16 @@
+#include-once
+
+#include "StubsCore.au3"
+
 ; #INDEX# =======================================================================================================================
-; Title .........: AutoIt Test Framework - Stubs_Input.au3 library
-; Version .......: 0.0.1
+; Title .........: AutoIt Test Framework - StubsInput.au3 library
+; Version .......: 1.0.0
 ; AutoIt Version : 3.3.18.0
+; Language ......: English
 ; Author ........: Crucial Thread
 ; Description ...: Stub implementations for AutoIt input simulation functions.
 ;                  Can be included directly or via Stubs.au3.
 ; ===============================================================================================================================
-
-#include-once
-#include "StubsCore.au3"
 
 Func __Stub_Send($sKeyStrokes, $iFlag = 0)
 	Local $vReturn = __DefineStub("Send", __CallArgs("sKeyStrokes = " & $sKeyStrokes, "iFlag = " & $iFlag))

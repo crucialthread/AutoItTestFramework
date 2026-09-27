@@ -1,13 +1,14 @@
+#include-once
+
 ; #INDEX# =======================================================================================================================
-; Title .........: AutoIt Test Framework - Testable_GUI.au3 library
-; Version .......: 0.0.1
+; Title .........: AutoIt Test Framework - TestableGUI.au3 library
+; Version .......: 1.0.0
 ; AutoIt Version : 3.3.18.0
+; Language ......: English
 ; Author ........: Crucial Thread
 ; Description ...: Testable wrappers for AutoIt GUI functions.
 ;                  Can be included directly or via Testable.au3
 ; ===============================================================================================================================
-
-#include-once
 
 ; GUI creation and lifecycle
 Global $g_hFn_GUICreate     = GUICreate
@@ -43,6 +44,7 @@ Global $g_hFn_GUICtrlCreateSlider       = GUICtrlCreateSlider
 Global $g_hFn_GUICtrlCreatePic          = GUICtrlCreatePic
 
 ; Control interaction
+Global $g_hFn_GUICtrlGetHandle  = GUICtrlGetHandle
 Global $g_hFn_GUICtrlSetState   = GUICtrlSetState
 Global $g_hFn_GUICtrlGetState   = GUICtrlGetState
 Global $g_hFn_GUICtrlSetData    = GUICtrlSetData
@@ -53,6 +55,7 @@ Global $g_hFn_GUICtrlSetColor   = GUICtrlSetColor
 Global $g_hFn_GUICtrlSetBkColor = GUICtrlSetBkColor
 Global $g_hFn_GUICtrlSetPos     = GUICtrlSetPos
 Global $g_hFn_GUICtrlSetTip     = GUICtrlSetTip
+Global $g_hFn_GUICtrlSendMsg    = GUICtrlSendMsg
 
 ; GUI creation and lifecycle wrappers
 Func _Tstbl_GUICreate($sTitle, $iWidth = -1, $iHeight = -1, $iLeft = -1, $iTop = -1, $iStyle = -1, $iExStyle = -1, $hWndParent = 0)
@@ -91,6 +94,7 @@ Func _Tstbl_GUISwitch($hWnd, $hTabItemId = Default)
 EndFunc
 
 ; Control creation wrappers
+
 Func _Tstbl_GUICtrlCreateLabel($sText, $iLeft, $iTop, $iWidth = Default, $iHeight = Default, $iStyle = -1, $iExStyle = -1)
     Local $vResult = $g_hFn_GUICtrlCreateLabel($sText, $iLeft, $iTop, $iWidth, $iHeight, $iStyle, $iExStyle)
     Return SetError(@error, @extended, $vResult)
@@ -202,6 +206,11 @@ Func _Tstbl_GUICtrlCreatePic($sFilename, $iLeft, $iTop, $iWidth = Default, $iHei
 EndFunc
 
 ; Control interaction wrappers
+Func _Tstbl_GUICtrlGetHandle($hControlId)
+    Local $vResult = $g_hFn_GUICtrlGetHandle($hControlId)
+    Return SetError(@error, @extended, $vResult)
+EndFunc
+
 Func _Tstbl_GUICtrlSetState($hControlId, $iState)
     Local $vResult = $g_hFn_GUICtrlSetState($hControlId, $iState)
     Return SetError(@error, @extended, $vResult)
@@ -227,8 +236,8 @@ Func _Tstbl_GUICtrlDelete($hControlId)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_GUICtrlSetFont($hControlId, $iFontSize, $iFontWeight = 0, $iFontAttribute = 0, $sName = "", $iFontQuality = 0)
-    Local $vResult = $g_hFn_GUICtrlSetFont($hControlId, $iFontSize, $iFontWeight, $iFontAttribute, $sName, $iFontQuality)
+Func _Tstbl_GUICtrlSetFont($hControlId, $iFontSize, $iFontWeight = 0, $iFontAttribute = 0, $sFontName = "", $iFontQuality = 0)
+    Local $vResult = $g_hFn_GUICtrlSetFont($hControlId, $iFontSize, $iFontWeight, $iFontAttribute, $sFontName, $iFontQuality)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
@@ -249,5 +258,10 @@ EndFunc
 
 Func _Tstbl_GUICtrlSetTip($hControlId, $sTooltip, $sTitle = "", $iIcon = 0, $iOptions = 0)
     Local $vResult = $g_hFn_GUICtrlSetTip($hControlId, $sTooltip, $sTitle, $iIcon, $iOptions)
+    Return SetError(@error, @extended, $vResult)
+EndFunc
+
+Func _Tstbl_GUICtrlSendMsg($hControlId, $sMsg, $vWParam, $vLParam)
+    Local $vResult = $g_hFn_GUICtrlSendMsg($hControlId, $sMsg, $vWParam, $vLParam)
     Return SetError(@error, @extended, $vResult)
 EndFunc

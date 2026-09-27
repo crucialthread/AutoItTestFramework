@@ -229,7 +229,7 @@ EndFunc
 ; Runs the given test function only when the current script matches $sScriptName.
 ; Allows test scripts to be included by another script without auto-executing their tests.
 ; Each test script should call this at the bottom passing its own runner function
-; Default $sScriptName = @ScriptName makes the test runner execute only when the script is run directly (TODO review, seems not be true)
+; Default $sScriptName = @ScriptName makes the test runner execute only when the script is run directly
 Func _TestFmkRunAllTests($hRunnerFunction, $sScriptName = @ScriptName)
 	If Not IsFunc($hRunnerFunction) Then Return
 	If @ScriptName = $sScriptName Then $hRunnerFunction()

@@ -1,14 +1,16 @@
+#include-once
+
 ; #INDEX# =======================================================================================================================
-; Title .........: AutoIt Test Framework - Testable_Window.au3 library
-; Version .......: 0.0.1
+; Title .........: AutoIt Test Framework - TestableWindow.au3 library
+; Version .......: 1.0.0
 ; AutoIt Version : 3.3.18.0
+; Language ......: English
 ; Author ........: Crucial Thread
 ; Description ...: Testable wrappers for AutoIt window management functions.
 ;                  Can be included directly or via Testable.au3
 ; ===============================================================================================================================
 
-#include-once
-
+Global $g_hFn_IsHWnd 		  = IsHWnd
 Global $g_hFn_WinExists       = WinExists
 Global $g_hFn_WinActive       = WinActive
 Global $g_hFn_WinActivate     = WinActivate
@@ -24,6 +26,11 @@ Global $g_hFn_WinSetState     = WinSetState
 Global $g_hFn_WinSetTitle     = WinSetTitle
 Global $g_hFn_WinMove         = WinMove
 Global $g_hFn_WinGetPos       = WinGetPos
+
+Func _Tstbl_IsHWnd($hWnd)
+    Local $vResult = $g_hFn_IsHWnd($hWnd)
+    Return SetError(@error, @extended, $vResult)
+EndFunc
 
 Func _Tstbl_WinExists($sTitle, $sText = "")
     Local $vResult = $g_hFn_WinExists($sTitle, $sText)

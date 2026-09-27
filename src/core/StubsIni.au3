@@ -1,15 +1,17 @@
+#include-once
+
+#include <Array.au3>
+#include "StubsCore.au3"
+
 ; #INDEX# =======================================================================================================================
-; Title .........: AutoIt Test Framework - Stubs_Ini.au3 library
-; Version .......: 0.0.1
+; Title .........: AutoIt Test Framework - StubsIni.au3 library
+; Version .......: 1.0.0
 ; AutoIt Version : 3.3.18.0
+; Language ......: English
 ; Author ........: Crucial Thread
 ; Description ...: Stub implementations for AutoIt INI file functions.
 ;                  Can be included directly or via Stubs.au3.
 ; ===============================================================================================================================
-
-#include-once
-#include <Array.au3>
-#include "StubsCore.au3"
 
 Func __Stub_IniRead($sFilename, $sSection, $sKey, $sDefault)
 	Local $vReturn = __DefineStub("IniRead", __CallArgs("sFilename = " & $sFilename, "sSection = " & $sSection, "sKey = " & $sKey, "sDefault = " & $sDefault), $sDefault)

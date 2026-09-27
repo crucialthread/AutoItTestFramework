@@ -1,14 +1,16 @@
+#include-once
+
+#include "StubsCore.au3"
+
 ; #INDEX# =======================================================================================================================
-; Title .........: AutoIt Test Framework - Stubs_Tray.au3 library
-; Version .......: 0.0.1
+; Title .........: AutoIt Test Framework - StubsTray.au3 library
+; Version .......: 1.0.0
 ; AutoIt Version : 3.3.18.0
+; Language ......: English
 ; Author ........: Crucial Thread
 ; Description ...: Stub implementations for AutoIt tray functions.
 ;                  Can be included directly or via Stubs.au3.
 ; ===============================================================================================================================
-
-#include-once
-#include "StubsCore.au3"
 
 Func __Stub_TrayTip($sTitle, $sText, $iTimeout, $iOption = 0)
 	Local $vReturn = __DefineStub("TrayTip", __CallArgs("sTitle = " & $sTitle, "sText = " & $sText, "iTimeout = " & $iTimeout, "iOption = " & $iOption))

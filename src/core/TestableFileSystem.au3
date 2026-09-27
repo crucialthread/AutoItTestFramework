@@ -1,13 +1,14 @@
+#include-once
+
 ; #INDEX# =======================================================================================================================
-; Title .........: AutoIt Test Framework - Testable_FileSystem.au3 library
-; Version .......: 0.0.1
+; Title .........: AutoIt Test Framework - TestableFileSystem.au3 library
+; Version .......: 1.0.0
 ; AutoIt Version : 3.3.18.0
+; Language ......: English
 ; Author ........: Crucial Thread
 ; Description ...: Testable wrappers for AutoIt file system functions.
 ;                  Can be included directly or via Testable.au3
 ; ===============================================================================================================================
-
-#include-once
 
 Global $g_hFn_FileExists         = FileExists
 Global $g_hFn_FileDelete         = FileDelete
@@ -109,7 +110,7 @@ Func _Tstbl_FileReadToArray($hFile)
 EndFunc
 
 Func _Tstbl_FileCreateShortcut($sFile, $sLnk, $sWorkDir = "", $sArgs = "", $sDesc = "", $sIconFilename = "", $sHotkey = "", $iIconIndex = 0, $iState = @SW_SHOWNORMAL)
-    Local $vResult = $g_hFn_FileCreateShortcut($sFile, $sLnk, $sWorkDir, $sArgs, $sDesc, $sHotkey, $iIconIndex, $iState)
+    Local $vResult = $g_hFn_FileCreateShortcut($sFile, $sLnk, $sWorkDir, $sArgs, $sDesc, $sIconFilename, $sHotkey, $iIconIndex, $iState)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 

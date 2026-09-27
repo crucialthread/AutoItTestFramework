@@ -1,14 +1,16 @@
+#include-once
+
+#include "StubsCore.au3"
+
 ; #INDEX# =======================================================================================================================
-; Title .........: AutoIt Test Framework - Stubs_Network.au3 library
-; Version .......: 0.0.1
+; Title .........: AutoIt Test Framework - StubsNetwork.au3 library
+; Version .......: 1.0.0
 ; AutoIt Version : 3.3.18.0
+; Language ......: English
 ; Author ........: Crucial Thread
 ; Description ...: Stub implementations for AutoIt network functions.
 ;                  Can be included directly or via Stubs.au3.
 ; ===============================================================================================================================
-
-#include-once
-#include "StubsCore.au3"
 
 Func __Stub_InetGet($sURL, $sFilename, $iOptions = 0, $iBackground  = 0)
 	Local $aArgs = __CallArgs("sURL = " & $sURL, "sFilename = " & $sFilename, "iOptions = " & $iOptions, "iBackground = " & $iBackground)
