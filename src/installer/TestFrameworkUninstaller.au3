@@ -3,9 +3,9 @@
 #AutoIt3Wrapper_Outfile_x64=..\..\.out\TestFrameworkUninstaller.exe
 #AutoIt3Wrapper_Res_Comment=A simple, lightweight unit test framework for AutoIt
 #AutoIt3Wrapper_Res_Description=AutoIt Test Framework Uninstaller
-#AutoIt3Wrapper_Res_Fileversion=0.0.1.0
+#AutoIt3Wrapper_Res_Fileversion=1.0.0.0
 #AutoIt3Wrapper_Res_ProductName=AutoIt Test Framework
-#AutoIt3Wrapper_Res_ProductVersion=0.0.1
+#AutoIt3Wrapper_Res_ProductVersion=1.0.0
 #AutoIt3Wrapper_Res_CompanyName=Crucial Thread
 #AutoIt3Wrapper_Res_LegalCopyright=MIT License
 #AutoIt3Wrapper_Res_SaveSource=y
@@ -13,10 +13,21 @@
 #AutoIt3Wrapper_Add_Constants=n
 #EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
 
+; This install script requires admin but a #RequireAdmin trigger a UAC prompt at interpreted runtime, which breaks testing
+; So it is using a compile-time directive instead
+#pragma compile(ExecLevel, requireAdministrator)
+
+#include <FontConstants.au3>
+#include <File.au3>
+#include "TestFmkInstallerConstants.au3"
+#include "..\..\lib\CrucialInstaller\CrucialInstaller.au3"
+#include "..\..\lib\TryCatch\TryCatch.au3"
+
 ; #INDEX# =======================================================================================================================
 ; Title .........: AutoIt Test Framework - TestFrameworkUninstaller.au3
-; Version .......: 0.0.1
+; Version .......: 1.0.0
 ; AutoIt Version : 3.3.18.0
+; Language ......: English
 ; Author ........: Crucial Thread
 ; Description ...: Uninstaller for AutoIt Test Framework.
 ;                  Reads installation paths from the registry written by TestFrameworkInstaller.au3,
@@ -24,389 +35,357 @@
 ;                  and removes the Add/Remove Programs entry.
 ;                  Removes the Vendor folder only if empty after uninstall.
 ;                  Removes the TestFramework folder only if empty after uninstall.
-;                  Removes only the TestFramework path from the AutoIt include registry value
+;                  Removes only the TestFramework path from the AutoIt include registry value _
 ;                  without affecting any other vendor paths registered there.
 ; Note ..........: Requires administrator rights to delete from Program Files.
+; Note ..........: The uninstall steps in __RunUninstall are mocked when running as a _
+;                  plain script outside of test mode ($__TFW_TEST_MODE not declared).
 ; ===============================================================================================================================
 
-#pragma compile(ExecLevel, requireAdministrator)
-#include <FontConstants.au3>
-#include <GUIConstantsEx.au3>
-#include <WindowsConstants.au3>
-#include <ButtonConstants.au3>
-#include <StaticConstants.au3>
-#include <ProgressConstants.au3>
-#include <MsgBoxConstants.au3>
-#include <File.au3>
-#include "..\core\Testable.au3"
+;================================================================================================================================
+#Region ; Entry point
+;================================================================================================================================
 
-; ===============================================================================================================================
-; Constants
-; ===============================================================================================================================
+; Guardrail to not run the entry point in test mode, so the functions can be tested
+If Not IsDeclared("__TFW_TEST_MODE") Then _MainUninstall()
 
-Global Const $UNINSTALLER_TITLE = "AutoIt Test Framework Uninstall"
-
-Global Const $WIN_WIDTH    = 540
-Global Const $WIN_HEIGHT   = 345
-Global Const $FONT_FACE    = "Segoe UI"
-Global Const $FONT_SIZE    = 11
-Global Const $BTN_W        = 130
-Global Const $BTN_H        = 34
-Global Const $BTN_GAP      = 10
-Global Const $BTN_Y        = $WIN_HEIGHT - 48
-Global Const $FOOTER_SEP_Y = $WIN_HEIGHT - 58
-Global Const $HEADER_H     = 70
-Global Const $CONTENT_TOP  = $HEADER_H + 10
-Global Const $CONTENT_W    = $WIN_WIDTH - 40
-
-Global Const $REG_INSTALL_KEY   = "HKEY_LOCAL_MACHINE\SOFTWARE\AutoIt TestFramework"
-Global Const $REG_UNINSTALL_KEY = "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\AutoItTestFramework"
-Global Const $REG_AUTOIT_INCLUDE = "HKEY_CURRENT_USER\Software\AutoIt v3\AutoIt"
-
-; ===============================================================================================================================
-; Global state
-; ===============================================================================================================================
-
-Global $g_sIncludePath = ""
-Global $g_sChmPath     = ""
-
-; ===============================================================================================================================
-; Entry point
-; ===============================================================================================================================
-
-If Not IsDeclared("__UNINSTALLER_TEST_MODE") Then
-    _Main()
-EndIf
-
-Func _Main()
+Func _MainUninstall()
     If Not __ReadInstallRecord() Then
-        _Tstbl_MsgBox($MB_OK + $MB_ICONERROR, $UNINSTALLER_TITLE, _
-            "AutoIt Test Framework installation record was not found." & @CRLF & @CRLF & _
-            "It may have already been uninstalled.")
-        Exit
+		_Tstbl_MsgBox($MB_OK + $MB_ICONERROR, $TFW_UNINSTALLER_TITLE, _
+			"AutoIt Test Framework installation record was not found." & @CRLF & @CRLF & _
+			"It may have already been uninstalled.")
+        Return
     EndIf
 
-    If StringInStr(StringLower(@ScriptFullPath), StringLower($g_sChmPath)) Then
-        Local $sTempExe = @TempDir & "\TestFrameworkUninstaller.exe"
-        _Tstbl_FileCopy(@ScriptFullPath, $sTempExe, $FC_OVERWRITE)
-        _Tstbl_ShellExecute($sTempExe)
-        Exit
+    If __IsRunningFromInstallFolder() Then
+        __RelaunchFromTemp()
+        Return
     EndIf
 
-    __RunWizard()
+	_InitWizard(__Uninstall())
 EndFunc
 
-; ===============================================================================================================================
-; Read install record
-; ===============================================================================================================================
+;================================================================================================================================
+#EndRegion <<<
+;================================================================================================================================
 
+;================================================================================================================================
+#Region ; Read install record
+;================================================================================================================================
+
+; #FUNCTION# ====================================================================================================================
+; Reads the installation record from the registry written by TestFrameworkInstaller.au3.
+; Populates $g_sIncludePath and $g_sInstallPath from the stored registry values.
+; Returns    : True if both paths were read successfully, False if either registry read fails
+; ===============================================================================================================================
 Func __ReadInstallRecord()
     $g_sIncludePath = _Tstbl_RegRead($REG_INSTALL_KEY, "IncludePath")
     If @error Then Return False
-    $g_sChmPath = _Tstbl_RegRead($REG_INSTALL_KEY, "ChmPath")
+    $g_sInstallPath = _Tstbl_RegRead($REG_INSTALL_KEY, "InstallPath")
     If @error Then Return False
     Return True
 EndFunc
 
+; #FUNCTION# ====================================================================================================================
+; Checks whether the uninstaller executable is currently running from within the install folder.
+; Used to detect the case where the uninstaller would delete itself mid-run.
+; Returns    : True if @ScriptFullPath is inside $g_sInstallPath, False otherwise
 ; ===============================================================================================================================
-; Wizard
-; ===============================================================================================================================
-
-Func __RunWizard()
-    Local $hWin = _Tstbl_GUICreate($UNINSTALLER_TITLE, $WIN_WIDTH, $WIN_HEIGHT, -1, -1, _
-        BitOR($WS_CAPTION, $WS_SYSMENU, $WS_MINIMIZEBOX))
-    _Tstbl_GUISetBkColor(0xF0F0F0)
-
-    ; --- Header bar ---
-    Local $idHeader = _Tstbl_GUICtrlCreateLabel("", 0, 0, $WIN_WIDTH, $HEADER_H)
-    _Tstbl_GUICtrlSetBkColor($idHeader, 0xFFFFFF)
-    Local $idHeaderTitle = _Tstbl_GUICtrlCreateLabel("AutoIt Test Framework", 15, 12, $WIN_WIDTH - 30, 26)
-    _Tstbl_GUICtrlSetFont($idHeaderTitle, 14, $FW_BOLD, $GUI_FONTNORMAL, $FONT_FACE)
-    _Tstbl_GUICtrlSetBkColor($idHeaderTitle, 0xFFFFFF)
-    Local $idHeaderSub = _Tstbl_GUICtrlCreateLabel("", 15, 38, $WIN_WIDTH - 30, 22)
-    _Tstbl_GUICtrlSetFont($idHeaderSub, $FONT_SIZE, $FW_NORMAL, $GUI_FONTNORMAL, $FONT_FACE)
-    _Tstbl_GUICtrlSetColor($idHeaderSub, 0x444444)
-    _Tstbl_GUICtrlSetBkColor($idHeaderSub, 0xFFFFFF)
-    Local $idHeaderSep = _Tstbl_GUICtrlCreateLabel("", 0, $HEADER_H, $WIN_WIDTH, 1)
-    _Tstbl_GUICtrlSetBkColor($idHeaderSep, 0xCCCCCC)
-
-    ; --- Footer separator ---
-    Local $idFooterSep = _Tstbl_GUICtrlCreateLabel("", 0, $FOOTER_SEP_Y, $WIN_WIDTH, 1)
-    _Tstbl_GUICtrlSetBkColor($idFooterSep, 0xD0D0D0)
-
-    ; --- Footer buttons ---
-    Local $iTotalBtnW  = (3 * $BTN_W) + (2 * $BTN_GAP)
-    Local $iBtnStartX  = ($WIN_WIDTH - $iTotalBtnW) / 2
-    Local $idBtnCancel = _Tstbl_GUICtrlCreateButton("Cancel", $iBtnStartX,                           $BTN_Y, $BTN_W, $BTN_H)
-    Local $idBtnBack   = _Tstbl_GUICtrlCreateButton("< Back", $iBtnStartX + $BTN_W + $BTN_GAP,       $BTN_Y, $BTN_W, $BTN_H)
-    Local $idBtnNext   = _Tstbl_GUICtrlCreateButton("Next >", $iBtnStartX + 2 * ($BTN_W + $BTN_GAP), $BTN_Y, $BTN_W, $BTN_H)
-    _Tstbl_GUICtrlSetFont($idBtnCancel, $FONT_SIZE, $FW_NORMAL, $GUI_FONTNORMAL, $FONT_FACE)
-    _Tstbl_GUICtrlSetFont($idBtnBack,   $FONT_SIZE, $FW_NORMAL, $GUI_FONTNORMAL, $FONT_FACE)
-    _Tstbl_GUICtrlSetFont($idBtnNext,   $FONT_SIZE, $FW_NORMAL, $GUI_FONTNORMAL, $FONT_FACE)
-
-    ; ===================================================================
-    ; Page 1 - Welcome / Confirm
-    ; ===================================================================
-    Local $aPage1[2]
-    $aPage1[0] = _Tstbl_GUICtrlCreateLabel( _
-        "This wizard will remove AutoIt Test Framework from your computer." & @CRLF & @CRLF & _
-        "Current installation:" & @CRLF & @CRLF & _
-        " Library:       " & $g_sIncludePath & @CRLF & _
-        " Documentation: " & $g_sChmPath & @CRLF & @CRLF & _
-        "Click Next to continue or Cancel to exit.", _
-        15, $CONTENT_TOP, $CONTENT_W, $FOOTER_SEP_Y - $CONTENT_TOP - 10)
-    _Tstbl_GUICtrlSetFont($aPage1[0], $FONT_SIZE, $FW_NORMAL, $GUI_FONTNORMAL, $FONT_FACE)
-    _Tstbl_GUICtrlSetBkColor($aPage1[0], $GUI_BKCOLOR_TRANSPARENT)
-    $aPage1[1] = _Tstbl_GUICtrlCreateLabel("", 0, 0, 0, 0)
-
-    ; ===================================================================
-    ; Page 2 - Ready to Uninstall
-    ; ===================================================================
-    Local $aPage2[2]
-    $aPage2[0] = _Tstbl_GUICtrlCreateLabel("The following actions will be performed:", 10, $CONTENT_TOP, $WIN_WIDTH - 20, 22)
-    _Tstbl_GUICtrlSetFont($aPage2[0], $FONT_SIZE, $FW_NORMAL, $GUI_FONTNORMAL, $FONT_FACE)
-    _Tstbl_GUICtrlSetBkColor($aPage2[0], $GUI_BKCOLOR_TRANSPARENT)
-    Local $sReadyText = ""
-    $sReadyText &= " - Delete TestFramework.au3 from: " & $g_sIncludePath & @CRLF
-    $sReadyText &= " - Remove include path from AutoIt registry entry" & @CRLF
-    $sReadyText &= " - Remove Vendor folder if empty" & @CRLF
-    $sReadyText &= " - Delete TestFramework.chm from: " & $g_sChmPath & @CRLF
-    $sReadyText &= " - Remove TestFramework folder if empty" & @CRLF
-    $sReadyText &= " - Remove from Add/Remove Programs"
-    $aPage2[1] = _Tstbl_GUICtrlCreateLabel($sReadyText, 10, $CONTENT_TOP + 30, $WIN_WIDTH - 20, $FOOTER_SEP_Y - $CONTENT_TOP - 40)
-    _Tstbl_GUICtrlSetFont($aPage2[1], 10, $FW_NORMAL, $GUI_FONTNORMAL, $FONT_FACE)
-    _Tstbl_GUICtrlSetBkColor($aPage2[1], $GUI_BKCOLOR_TRANSPARENT)
-
-    ; ===================================================================
-    ; Page 3 - Progress + Finish
-    ; ===================================================================
-    Local $aPage3[3]
-    $aPage3[0] = _Tstbl_GUICtrlCreateLabel("", 15, $CONTENT_TOP, $CONTENT_W, 24)
-    _Tstbl_GUICtrlSetFont($aPage3[0], $FONT_SIZE, $FW_NORMAL, $GUI_FONTNORMAL, $FONT_FACE)
-    _Tstbl_GUICtrlSetBkColor($aPage3[0], $GUI_BKCOLOR_TRANSPARENT)
-    $aPage3[1] = _Tstbl_GUICtrlCreateProgress(15, $CONTENT_TOP + 32, $CONTENT_W, 24)
-    $aPage3[2] = _Tstbl_GUICtrlCreateLabel("", 15, $CONTENT_TOP + 70, $CONTENT_W, $FOOTER_SEP_Y - ($CONTENT_TOP + 70) - 40)
-    _Tstbl_GUICtrlSetFont($aPage3[2], $FONT_SIZE, $FW_NORMAL, $GUI_FONTNORMAL, $FONT_FACE)
-    _Tstbl_GUICtrlSetBkColor($aPage3[2], $GUI_BKCOLOR_TRANSPARENT)
-
-    ; --- Hide all pages ---
-    __HidePage($aPage1)
-    __HidePage($aPage2)
-    __HidePage($aPage3)
-
-    _Tstbl_GUISetState(@SW_SHOW, $hWin)
-
-    Local $iPage = 1
-    __ShowPage($iPage, $aPage1, $aPage2, $aPage3, $idHeaderSub, $idBtnNext, $idBtnBack, $idBtnCancel)
-
-    ; ===================================================================
-    ; Event loop
-    ; ===================================================================
-    While True
-        Local $iMsg = _Tstbl_GUIGetMsg()
-        Switch $iMsg
-            Case $GUI_EVENT_CLOSE, $idBtnCancel
-                If $iPage < 3 Then
-                    If _Tstbl_MsgBox($MB_YESNO + $MB_ICONQUESTION, $UNINSTALLER_TITLE, _
-                        "Are you sure you want to cancel the uninstallation?") = $IDYES Then
-                        _Tstbl_GUIDelete($hWin)
-                        Exit
-                    EndIf
-                EndIf
-
-            Case $idBtnNext
-                Switch $iPage
-                    Case 1
-                        $iPage = 2
-
-                    Case 2
-                        $iPage = 3
-                        _Tstbl_GUICtrlSetState($idBtnNext,   $GUI_DISABLE)
-                        _Tstbl_GUICtrlSetState($idBtnBack,   $GUI_DISABLE)
-                        _Tstbl_GUICtrlSetState($idBtnCancel, $GUI_DISABLE)
-                        __ShowPage($iPage, $aPage1, $aPage2, $aPage3, $idHeaderSub, $idBtnNext, $idBtnBack, $idBtnCancel)
-                        __RunUninstall($aPage3[0], $aPage3[1])
-                        _Tstbl_GUICtrlSetData($aPage3[0], "")
-                        _Tstbl_GUICtrlSetData($aPage3[2], _
-                            "AutoIt Test Framework has been successfully uninstalled." & @CRLF & @CRLF & _
-                            "Thank you for using AutoIt Test Framework.")
-                        _Tstbl_GUICtrlSetData($idHeaderSub, "Uninstallation complete")
-                        _Tstbl_GUICtrlSetData($idBtnNext, "Finish")
-                        _Tstbl_GUICtrlSetState($idBtnNext, $GUI_ENABLE)
-                        $iPage = 4
-
-                    Case 4
-                        _Tstbl_GUIDelete($hWin)
-                        Exit
-                EndSwitch
-
-                If $iPage <> 4 Then
-                    __ShowPage($iPage, $aPage1, $aPage2, $aPage3, $idHeaderSub, $idBtnNext, $idBtnBack, $idBtnCancel)
-                EndIf
-
-            Case $idBtnBack
-                Switch $iPage
-                    Case 2
-                        $iPage = 1
-                EndSwitch
-                __ShowPage($iPage, $aPage1, $aPage2, $aPage3, $idHeaderSub, $idBtnNext, $idBtnBack, $idBtnCancel)
-        EndSwitch
-    WEnd
+Func __IsRunningFromInstallFolder()
+    Return StringInStr(StringLower(@ScriptFullPath), StringLower($g_sInstallPath))
 EndFunc
 
+; #FUNCTION# ====================================================================================================================
+; Copies the uninstaller executable to the system temp folder and launches it from there.
+; Called when the uninstaller is running from within the install folder to avoid self-deletion.
+; Returns    : None
 ; ===============================================================================================================================
-; Page helpers
-; ===============================================================================================================================
-
-Func __ShowPage($iPage, ByRef $aPage1, ByRef $aPage2, ByRef $aPage3, _
-    $idHeaderSub, $idBtnNext, $idBtnBack, $idBtnCancel)
-
-    __HidePage($aPage1)
-    __HidePage($aPage2)
-    __HidePage($aPage3)
-
-    Switch $iPage
-        Case 1
-            _Tstbl_GUICtrlSetData($idHeaderSub, "Welcome to AutoIt Test Framework Uninstall")
-            _Tstbl_GUICtrlSetState($idBtnBack,   $GUI_DISABLE)
-            _Tstbl_GUICtrlSetState($idBtnNext,   $GUI_ENABLE)
-            _Tstbl_GUICtrlSetState($idBtnCancel, $GUI_ENABLE)
-            _Tstbl_GUICtrlSetData($idBtnNext, "Next >")
-            __ShowPageControls($aPage1)
-
-        Case 2
-            _Tstbl_GUICtrlSetData($idHeaderSub, "Ready to uninstall")
-            _Tstbl_GUICtrlSetState($idBtnBack,   $GUI_ENABLE)
-            _Tstbl_GUICtrlSetState($idBtnNext,   $GUI_ENABLE)
-            _Tstbl_GUICtrlSetState($idBtnCancel, $GUI_ENABLE)
-            _Tstbl_GUICtrlSetData($idBtnNext, "Uninstall")
-            __ShowPageControls($aPage2)
-
-        Case 3
-            _Tstbl_GUICtrlSetData($idHeaderSub, "Uninstalling, please wait...")
-            _Tstbl_GUICtrlSetState($idBtnBack,   $GUI_DISABLE)
-            _Tstbl_GUICtrlSetState($idBtnNext,   $GUI_DISABLE)
-            _Tstbl_GUICtrlSetState($idBtnCancel, $GUI_DISABLE)
-            __ShowPageControls($aPage3)
-    EndSwitch
+Func __RelaunchFromTemp()
+    Local $sTempExe = @TempDir & "\TestFrameworkUninstaller.exe"
+    _Tstbl_FileCopy(@ScriptFullPath, $sTempExe, $FC_OVERWRITE)
+    _Tstbl_ShellExecute($sTempExe)
 EndFunc
 
-Func __HidePage(ByRef $aPage)
-    For $i = 0 To UBound($aPage) - 1
-        _Tstbl_GUICtrlSetState($aPage[$i], $GUI_HIDE)
-    Next
-EndFunc
+;================================================================================================================================
+#EndRegion <<<
+;================================================================================================================================
 
-Func __ShowPageControls(ByRef $aPage)
-    For $i = 0 To UBound($aPage) - 1
-        _Tstbl_GUICtrlSetState($aPage[$i], $GUI_SHOW)
-    Next
-EndFunc
+;================================================================================================================================
+#Region ; Registry & Folder remove
+;================================================================================================================================
 
+; #FUNCTION# ====================================================================================================================
+; Removes $g_sIncludePath from the AutoIt Include registry value without affecting other registered paths.
+; If the path is the only entry the registry value is deleted entirely; otherwise it is rewritten
+; with the remaining paths. Resume if the Include registry doesn't exist already.
+; Uses _OnErrorResume() as a TryCatch guard. Throws "RegDeleteException" when delete registry fails _
+; or "RegWriteException" when write registry fails.
+; Returns    : None on success, SetError on failure
 ; ===============================================================================================================================
-; Uninstall logic
-; ===============================================================================================================================
-
-Func __RunUninstall($idStatusLabel, $idProgress)
-    Local $iStep  = 0
-    Local $iSteps = 8
-
-    __ProgressStep($idStatusLabel, $idProgress, $iStep, $iSteps, "Removing TestFramework.au3...")
-    _Tstbl_FileDelete($g_sIncludePath & "\TestFramework.au3")
-    $iStep += 1
-
-    __ProgressStep($idStatusLabel, $idProgress, $iStep, $iSteps, "Removing Testable library...")
-    _Tstbl_FileDelete($g_sIncludePath & "\Testable.au3")
-    _Tstbl_FileDelete($g_sIncludePath & "\Testable_Clipboard.au3")
-    _Tstbl_FileDelete($g_sIncludePath & "\Testable_Dialogs.au3")
-    _Tstbl_FileDelete($g_sIncludePath & "\Testable_FileSystem.au3")
-    _Tstbl_FileDelete($g_sIncludePath & "\Testable_GUI.au3")
-    _Tstbl_FileDelete($g_sIncludePath & "\Testable_Ini.au3")
-    _Tstbl_FileDelete($g_sIncludePath & "\Testable_Input.au3")
-    _Tstbl_FileDelete($g_sIncludePath & "\Testable_Network.au3")
-    _Tstbl_FileDelete($g_sIncludePath & "\Testable_Process.au3")
-    _Tstbl_FileDelete($g_sIncludePath & "\Testable_Registry.au3")
-    _Tstbl_FileDelete($g_sIncludePath & "\Testable_Sound.au3")
-    _Tstbl_FileDelete($g_sIncludePath & "\Testable_Splash.au3")
-    _Tstbl_FileDelete($g_sIncludePath & "\Testable_System.au3")
-    _Tstbl_FileDelete($g_sIncludePath & "\Testable_Tray.au3")
-    _Tstbl_FileDelete($g_sIncludePath & "\Testable_Window.au3")
-    $iStep += 1
-
-    __ProgressStep($idStatusLabel, $idProgress, $iStep, $iSteps, "Removing Stubs library...")
-    _Tstbl_FileDelete($g_sIncludePath & "\Stubs.au3")
-    _Tstbl_FileDelete($g_sIncludePath & "\Stubs_Core.au3")
-    _Tstbl_FileDelete($g_sIncludePath & "\Stubs_Clipboard.au3")
-    _Tstbl_FileDelete($g_sIncludePath & "\Stubs_Dialogs.au3")
-    _Tstbl_FileDelete($g_sIncludePath & "\Stubs_FileSystem.au3")
-    _Tstbl_FileDelete($g_sIncludePath & "\Stubs_GUI.au3")
-    _Tstbl_FileDelete($g_sIncludePath & "\Stubs_Ini.au3")
-    _Tstbl_FileDelete($g_sIncludePath & "\Stubs_Input.au3")
-    _Tstbl_FileDelete($g_sIncludePath & "\Stubs_Network.au3")
-    _Tstbl_FileDelete($g_sIncludePath & "\Stubs_Process.au3")
-    _Tstbl_FileDelete($g_sIncludePath & "\Stubs_Registry.au3")
-    _Tstbl_FileDelete($g_sIncludePath & "\Stubs_Sound.au3")
-    _Tstbl_FileDelete($g_sIncludePath & "\Stubs_Splash.au3")
-    _Tstbl_FileDelete($g_sIncludePath & "\Stubs_System.au3")
-    _Tstbl_FileDelete($g_sIncludePath & "\Stubs_Tray.au3")
-    _Tstbl_FileDelete($g_sIncludePath & "\Stubs_Window.au3")
-    $iStep += 1
-
-    __ProgressStep($idStatusLabel, $idProgress, $iStep, $iSteps, "Updating AutoIt include registry entry...")
-    __RemoveIncludeRegistry()
-    $iStep += 1
-
-    __ProgressStep($idStatusLabel, $idProgress, $iStep, $iSteps, "Removing Vendor folder if empty...")
-    __RemoveFolderIfEmpty($g_sIncludePath)
-    $iStep += 1
-
-    __ProgressStep($idStatusLabel, $idProgress, $iStep, $iSteps, "Removing TestFramework.chm...")
-    _Tstbl_FileDelete($g_sChmPath & "\TestFramework.chm")
-    _Tstbl_FileDelete($g_sChmPath & "\TestFrameworkUninstaller.exe")
-    $iStep += 1
-
-    __ProgressStep($idStatusLabel, $idProgress, $iStep, $iSteps, "Removing TestFramework folder if empty...")
-    __RemoveFolderIfEmpty($g_sChmPath)
-    $iStep += 1
-
-    __ProgressStep($idStatusLabel, $idProgress, $iStep, $iSteps, "Removing registry entries...")
-    _Tstbl_RegDelete($REG_INSTALL_KEY)
-    _Tstbl_RegDelete($REG_UNINSTALL_KEY)
-
-    _Tstbl_GUICtrlSetData($idProgress, 100)
-EndFunc
-
-Func __ProgressStep($idLabel, $idProgress, $iStep, $iSteps, $sStatus)
-    _Tstbl_GUICtrlSetData($idLabel,    $sStatus)
-    _Tstbl_GUICtrlSetData($idProgress, Int(($iStep / $iSteps) * 100))
-EndFunc
-
-; ===============================================================================================================================
-; Helpers
-; ===============================================================================================================================
-
 Func __RemoveIncludeRegistry()
-    Local $sExisting = _Tstbl_RegRead($REG_AUTOIT_INCLUDE, "Include")
+	If _OnErrorResume() Then Return SetError(__GetStackCount(), 0, False)
+
+    ; If the Include registry entry doesn't exist then there is nothing to be done
+	Local $sExisting = _Tstbl_RegRead($REG_AUTOIT_INCLUDE, "Include")
     If @error Then Return
 
-    Local $aPaths = StringSplit($sExisting, ";", 1)
+    Local $aPaths = StringSplit($sExisting, ";", $STR_ENTIRESPLIT)
     Local $sNew = ""
     For $i = 1 To $aPaths[0]
-        Local $sPath = StringStripWS($aPaths[$i], 3)
+        Local $sPath = StringStripWS($aPaths[$i], $STR_STRIPLEADING + $STR_STRIPTRAILING)
         If $sPath <> "" And StringLower($sPath) <> StringLower($g_sIncludePath) Then
             $sNew &= ($sNew = "") ? $sPath : ";" & $sPath
         EndIf
     Next
 
     If $sNew = "" Then
-        _Tstbl_RegDelete($REG_AUTOIT_INCLUDE, "Include")
+        Local $iRegDel = _Tstbl_RegDelete($REG_AUTOIT_INCLUDE, "Include")
+		If $iRegDel <> 1 Then
+			Local $iExCode = _ThrowException("RegDeleteException", "Failed to remove registry key", __RemoveIncludeRegistry) Or 1
+			Return SetError($iExCode, 0, False)
+		EndIf
     Else
-        _Tstbl_RegWrite($REG_AUTOIT_INCLUDE, "Include", "REG_SZ", $sNew)
+        local $iRegWrite = _Tstbl_RegWrite($REG_AUTOIT_INCLUDE, "Include", "REG_SZ", $sNew)
+		If Not $iRegWrite Then
+			Local $iExCode = _ThrowException("RegWriteException", "Failed to re-write the registry key", __RemoveIncludeRegistry) Or 1
+			Return SetError($iExCode, 0, False)
+		EndIf
     EndIf
 EndFunc
 
+; #FUNCTION# ====================================================================================================================
+; Removes the specified folder only if it contains no files.
+; Uses _OnErrorResume() as a TryCatch guard. Throws a "RemoveFolderException" on dir remove failure.
+; $sFolder   - Full path of the folder to remove if empty
+; Returns    : None on success or when folder is not empty, SetError on failure
+; ===============================================================================================================================
 Func __RemoveFolderIfEmpty($sFolder)
-    If Not _Tstbl_FileExists($sFolder) Then Return
-    Local $aFiles = _FileListToArray($sFolder)
-    If @error Or $aFiles[0] = 0 Then _Tstbl_DirRemove($sFolder)
+	If _OnErrorResume() Then Return SetError(__GetStackCount(), 0, False)
+
+    Local $aSize = _Tstbl_DirGetSize($sFolder, $DIR_EXTENDED)
+    If @error Or $aSize[1] <> 0 Then Return
+
+	Local $iDirRemove = _Tstbl_DirRemove($sFolder)
+	If Not $iDirRemove Then
+		Local $iExCode = _ThrowException("RemoveFolderException", "Failed to remove folder: " & $sFolder, __RemoveFolderIfEmpty) Or 1
+		Return SetError($iExCode, 0, False)
+	EndIf
 EndFunc
+
+; #FUNCTION# ====================================================================================================================
+; Deletes a single installed file. Skips silently if the file does not exist.
+; Uses _OnErrorResume() as a TryCatch guard. Throws a "RemoveFileException" on file delete failure.
+; $sFilePath   - Full path of the file to delete
+; Returns      : True on success, None if file does not exist, SetError on failure
+; ===============================================================================================================================
+Func __RemoveInstalledFile($sFilePath)
+	If _OnErrorResume() Then Return SetError(__GetStackCount(), 0, False)
+
+	; If the file doesn't exist already then there is nothing to be done
+	If Not _Tstbl_FileExists($sFilePath) Then Return
+
+	Local $iDelete = _Tstbl_FileDelete($sFilePath)
+	If Not $iDelete Then
+		Local $iExCode = _ThrowException("RemoveFileException", "Failed to delete file: " & $sFilePath, __RemoveInstalledFile) Or 1
+		Return SetError($iExCode, 0, False)
+	EndIf
+
+	Return True
+EndFunc
+
+;================================================================================================================================
+#EndRegion <<<
+;================================================================================================================================
+
+;================================================================================================================================
+#Region ; Uninstall logic
+;================================================================================================================================
+
+; #FUNCTION# ====================================================================================================================
+; Executes the full 8-step uninstall sequence: removes all library files, the CHM help file, and the
+; uninstaller executable; cleans the AutoIt include registry entry; removes the Vendor and TestFramework
+; folders if empty; and deletes the install and Add/Remove Programs registry keys.
+; In uncompiled script mode (outside of test mode) all file and registry steps are skipped and a mock
+; message is written to the console instead.
+; Wraps all steps in a TryCatch block; any thrown exception aborts the uninstall and returns False.
+; Note ..........: Called by the wizard Progress page to execute the uninstallation steps.
+; $idStatusLabel - Control ID of the progress status label
+; $idProgress    - Control ID of the progress bar
+; Returns    	 : True on success, False on failure or when not running as admin in compiled mode
+; ===============================================================================================================================
+Func __RunUninstall($idStatusLabel, $idProgress)
+	If @Compiled And Not _Tstbl_IsAdmin() Then Return False
+
+	Local $bSkip = (Not @Compiled And Not IsDeclared("__TFW_TEST_MODE"))? True : False
+
+	_Try()
+		Local $iStep  = 0
+		Local $iSteps = 8
+
+		If $bSkip then ConsoleWrite("- ### [MOCKING] function __RunUninstall ### " & @CRLF)
+
+		_ProgressStep($idStatusLabel, $idProgress, $iStep, $iSteps, "Removing TestFramework.au3...")
+		If Not $bSkip Then __RemoveInstalledFile($g_sIncludePath & "\TestFramework.au3")
+		$iStep += 1
+
+		_ProgressStep($idStatusLabel, $idProgress, $iStep, $iSteps, "Removing Testable library...")
+		If Not $bSkip Then
+			__RemoveInstalledFile($g_sIncludePath & "\Testable.au3")
+			__RemoveInstalledFile($g_sIncludePath & "\TestableClipboard.au3")
+			__RemoveInstalledFile($g_sIncludePath & "\TestableDialogs.au3")
+			__RemoveInstalledFile($g_sIncludePath & "\TestableFileInstall.au3")
+			__RemoveInstalledFile($g_sIncludePath & "\TestableFileSystem.au3")
+			__RemoveInstalledFile($g_sIncludePath & "\TestableGUI.au3")
+			__RemoveInstalledFile($g_sIncludePath & "\TestableIni.au3")
+			__RemoveInstalledFile($g_sIncludePath & "\TestableInput.au3")
+			__RemoveInstalledFile($g_sIncludePath & "\TestableNetwork.au3")
+			__RemoveInstalledFile($g_sIncludePath & "\TestableProcess.au3")
+			__RemoveInstalledFile($g_sIncludePath & "\TestableRegistry.au3")
+			__RemoveInstalledFile($g_sIncludePath & "\TestableSound.au3")
+			__RemoveInstalledFile($g_sIncludePath & "\TestableSplash.au3")
+			__RemoveInstalledFile($g_sIncludePath & "\TestableSystem.au3")
+			__RemoveInstalledFile($g_sIncludePath & "\TestableTray.au3")
+			__RemoveInstalledFile($g_sIncludePath & "\TestableWindow.au3")
+		EndIf
+		$iStep += 1
+
+		_ProgressStep($idStatusLabel, $idProgress, $iStep, $iSteps, "Removing Stubs library...")
+		If Not $bSkip Then
+			__RemoveInstalledFile($g_sIncludePath & "\Stubs.au3")
+			__RemoveInstalledFile($g_sIncludePath & "\StubConstants.au3")
+			__RemoveInstalledFile($g_sIncludePath & "\StubsCore.au3")
+			__RemoveInstalledFile($g_sIncludePath & "\StubsClipboard.au3")
+			__RemoveInstalledFile($g_sIncludePath & "\StubsDialogs.au3")
+			__RemoveInstalledFile($g_sIncludePath & "\StubsFileInstall.au3")
+			__RemoveInstalledFile($g_sIncludePath & "\StubsFileSystem.au3")
+			__RemoveInstalledFile($g_sIncludePath & "\StubsGUI.au3")
+			__RemoveInstalledFile($g_sIncludePath & "\StubsIni.au3")
+			__RemoveInstalledFile($g_sIncludePath & "\StubsInput.au3")
+			__RemoveInstalledFile($g_sIncludePath & "\StubsNetwork.au3")
+			__RemoveInstalledFile($g_sIncludePath & "\StubsProcess.au3")
+			__RemoveInstalledFile($g_sIncludePath & "\StubsRegistry.au3")
+			__RemoveInstalledFile($g_sIncludePath & "\StubsSound.au3")
+			__RemoveInstalledFile($g_sIncludePath & "\StubsSplash.au3")
+			__RemoveInstalledFile($g_sIncludePath & "\StubsSystem.au3")
+			__RemoveInstalledFile($g_sIncludePath & "\StubsTray.au3")
+			__RemoveInstalledFile($g_sIncludePath & "\StubsWindow.au3")
+		EndIf
+		$iStep += 1
+
+		_ProgressStep($idStatusLabel, $idProgress, $iStep, $iSteps, "Updating AutoIt include registry entry...")
+		If Not $bSkip Then __RemoveIncludeRegistry()
+		$iStep += 1
+
+		_ProgressStep($idStatusLabel, $idProgress, $iStep, $iSteps, "Removing Vendor folder if empty...")
+		If Not $bSkip Then __RemoveFolderIfEmpty($g_sIncludePath)
+		$iStep += 1
+
+		_ProgressStep($idStatusLabel, $idProgress, $iStep, $iSteps, "Removing TestFramework.chm...")
+		If Not $bSkip Then __RemoveInstalledFile($g_sInstallPath & "\TestFramework.chm")
+		If Not $bSkip Then __RemoveInstalledFile($g_sInstallPath & "\TestFrameworkUninstaller.exe")
+		$iStep += 1
+
+		_ProgressStep($idStatusLabel, $idProgress, $iStep, $iSteps, "Removing TestFramework folder if empty...")
+		If Not $bSkip Then __RemoveFolderIfEmpty($g_sInstallPath)
+		$iStep += 1
+
+		_ProgressStep($idStatusLabel, $idProgress, $iStep, $iSteps, "Removing registry entries...")
+		If Not $bSkip Then _TryWith(_NoErr() ? _Tstbl_RegDelete($REG_INSTALL_KEY) : Null)
+		If Not $bSkip Then _TryWith(_NoErr() ? _Tstbl_RegDelete($REG_UNINSTALL_KEY) : Null)
+        $iStep += 1
+
+		_ProgressStep($idStatusLabel, $idProgress, $iStep, $iSteps, "Finished!")
+
+		Local $e
+		If _Catch($e) Then
+			_Tstbl_ConsoleWrite("!" & _StackTrace(_FormatStackTrace) & @CRLF)
+			_EndTry()
+			Return False
+		EndIf
+    _EndTry()
+	Return True
+
+EndFunc
+
+;================================================================================================================================
+#EndRegion <<<
+;================================================================================================================================
+
+;================================================================================================================================
+#Region ; Uninstall Wizard Setup
+;================================================================================================================================
+
+; #FUNCTION# ====================================================================================================================
+; Builds and returns the summary text displayed on the Ready to Uninstall page.
+; Lists all actions the uninstaller will perform, using the current values of $g_sIncludePath and $g_sInstallPath.
+; Returns    : String containing the formatted list of uninstallation steps
+; ===============================================================================================================================
+Func _UninstallUpdateReadyPage()
+    Local $sReadyText = ""
+    $sReadyText &= " - Delete TestFramework.au3 from: " & $g_sIncludePath & @CRLF
+    $sReadyText &= " - Remove include path from AutoIt registry entry" & @CRLF
+    $sReadyText &= " - Remove Vendor folder if empty" & @CRLF
+    $sReadyText &= " - Delete TestFramework.chm from: " & $g_sInstallPath & @CRLF
+    $sReadyText &= " - Remove TestFramework folder if empty" & @CRLF
+    $sReadyText &= " - Remove from Add/Remove Programs"
+	Return $sReadyText
+EndFunc
+
+; #FUNCTION# ====================================================================================================================
+; Creates and configures the full 4-page uninstall wizard: Welcome, Ready to Uninstall, Progress, and Finish.
+; Sets the Apply button caption to "Uninstall" via the installer config.
+; Returns    : Wizard map ($mWizard) ready to be passed to _InitWizard()
+; ===============================================================================================================================
+Func __Uninstall()
+
+	Local $mCfg = _NewInstallerCfg()
+	$mCfg.sBtnCaptApply = "Uninstall"
+
+	Local $sUninstallerTitle = $TFW_UNINSTALLER_TITLE
+	Local $sHeaderTitle = "AutoIt Test Framework"
+	Local $mWizard = _NewWizard($mCfg, $sUninstallerTitle, $sHeaderTitle)
+
+    ; ===================================================================
+    ; Page 1 - Welcome
+    ; ===================================================================
+    Local $sIntroText = "This wizard will remove AutoIt Test Framework from your computer." & @CRLF & @CRLF & _
+        "Current installation:" & @CRLF & @CRLF & _
+        " Library:       " & $g_sIncludePath & @CRLF & _
+        " Documentation: " & $g_sInstallPath & @CRLF & @CRLF & _
+        "Click Next to continue or Cancel to exit."
+	Local $sIntroSubHeading = "Welcome to AutoIt Test Framework Uninstall"
+	Local $iIntroPageId = _AddIntroPage($mWizard, $mCfg, $sIntroText, $sIntroSubHeading)
+
+    ; ===================================================================
+    ; Page 2 - Ready to Uninstall
+    ; ===================================================================
+	Local $sReadyInfo = ""
+	Local $sReadySubHeading = "Ready to uninstall"
+	Local $iReadyPageId = _AddReadyPage($mWizard, $mCfg, $sReadyInfo, $sReadySubHeading, _UninstallUpdateReadyPage)
+
+    ; ===================================================================
+    ; Page 3 - Progress
+    ; ===================================================================
+	Local $sProgressSubHeading = "Uninstalling, please wait..."
+	Local $sFailureMsg = "Uninstallation failed. Please try again."
+	Local $iProgressPageId = _AddProgressPage($mWizard, $mCfg, __RunUninstall, $sFailureMsg, $sProgressSubHeading)
+
+    ; ===================================================================
+    ; Page 4 - Finish
+    ; ===================================================================
+	Local $idLblProgress = _GetPageCtrl(_GetWizardPage($mWizard, $iProgressPageId), "LblProgress")
+	Local $idProgressbar = _GetPageCtrl(_GetWizardPage($mWizard, $iProgressPageId), "Progressbar")
+
+	Local $sFinishMsg = "AutoIt Test Framework has been successfully uninstalled." & @CRLF & @CRLF & _
+						"Thank you for using AutoIt Test Framework."
+
+	Local $sFinishSubHeading = "Uninstallation complete"
+	Local $iFinishPageId = _AddFinishPage($mWizard, $mCfg, $idLblProgress, $idProgressbar, $sFinishMsg, Default, $sFinishSubHeading)
+
+	Return $mWizard
+
+EndFunc
+
+;================================================================================================================================
+#EndRegion <<<
+;================================================================================================================================
