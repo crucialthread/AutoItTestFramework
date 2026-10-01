@@ -3,14 +3,14 @@
 #AutoIt3Wrapper_Outfile_x64=..\..\.out\TestFrameworkInstaller.exe
 #AutoIt3Wrapper_Res_Comment=A simple, lightweight unit test framework for AutoIt
 #AutoIt3Wrapper_Res_Description=AutoIt Test Framework Installer
-#AutoIt3Wrapper_Res_Fileversion=1.0.0.0
+#AutoIt3Wrapper_Res_Fileversion=1.1.0.0
 #AutoIt3Wrapper_Res_ProductName=AutoIt Test Framework
-#AutoIt3Wrapper_Res_ProductVersion=1.0.0
+#AutoIt3Wrapper_Res_ProductVersion=1.1.0
 #AutoIt3Wrapper_Res_CompanyName=Crucial Thread
 #AutoIt3Wrapper_Res_LegalCopyright=MIT License
 #AutoIt3Wrapper_Res_SaveSource=y
 #AutoIt3Wrapper_Res_Language=1033
-#AutoIt3Wrapper_Add_Constants=n
+#AutoIt3Wrapper_Res_requestedExecutionLevel=requireAdministrator
 #EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
 
 ; This install script requires admin but a #RequireAdmin trigger a UAC prompt at interpreted runtime, which breaks testing
@@ -18,13 +18,11 @@
 #pragma compile(ExecLevel, requireAdministrator)
 
 #include <FileConstants.au3>
-#include "TestFmkInstallerConstants.au3"
-#include "..\..\lib\CrucialInstaller\CrucialInstaller.au3"
-#include "..\..\lib\TryCatch\TryCatch.au3"
+#include "TestFmkInstallerShared.au3"
 
 ; #INDEX# =======================================================================================================================
 ; Title .........: AutoIt Test Framework - TestFrameworkInstaller.au3
-; Version .......: 1.0.0
+; Version .......: 1.1.0
 ; AutoIt Version : 3.3.18.0
 ; Language ......: English
 ; Author ........: Crucial Thread
@@ -75,7 +73,7 @@ Func __DetectPaths()
     If @error Then $g_sAutoItDir = _Tstbl_RegRead($REG_AUTOIT_KEY, "InstallDir")
     If @error Then $g_sAutoItDir = "C:\Program Files (x86)\AutoIt3"
 
-    $g_sIncludePath = $g_sAutoItDir & "\Include\Vendor"
+    $g_sIncludePath = $g_sAutoItDir & "\Include\Vendor\TestFramework"
     $g_sInstallPath = $g_sAutoItDir & "\TestFramework"
 EndFunc
 
@@ -159,7 +157,7 @@ Func __WriteUninstallRegistry()
     Local $sUninstallerPath = $g_sInstallPath & "\TestFrameworkUninstaller.exe"
 
 	Local $iReturnRegWrite = True
-    $iReturnRegWrite = $iReturnRegWrite And _Tstbl_RegWrite($REG_UNINSTALL_KEY, "DisplayName",     "REG_SZ",    "AutoIt Test Framework")
+    $iReturnRegWrite = $iReturnRegWrite And _Tstbl_RegWrite($REG_UNINSTALL_KEY, "DisplayName",     "REG_SZ",    $TFW_APP_NAME)
     $iReturnRegWrite = $iReturnRegWrite And _Tstbl_RegWrite($REG_UNINSTALL_KEY, "DisplayVersion",  "REG_SZ",    $TFW_INSTALLER_VERSION)
     $iReturnRegWrite = $iReturnRegWrite And _Tstbl_RegWrite($REG_UNINSTALL_KEY, "Publisher",       "REG_SZ",    "Crucial Thread")
     $iReturnRegWrite = $iReturnRegWrite And _Tstbl_RegWrite($REG_UNINSTALL_KEY, "UninstallString", "REG_SZ",    '"' & $sUninstallerPath & '"')
@@ -325,18 +323,18 @@ Func __RunInstall($idStatusLabel, $idProgress)
 
 		If $bSkip then ConsoleWrite("- ### [MOCKING] function __RunInstall ### " & @CRLF)
 
-        _ProgressStep($idStatusLabel, $idProgress, $iStep, $iSteps, "Creating install folders...")
+        __UpdateProgressBar($idStatusLabel, $idProgress, $iStep, $iSteps, "Creating install folders...")
 		If Not $bSkip Then
 			_TryWith(_NoErr() ? _Tstbl_DirCreate($g_sIncludePath) : Null)
 			_TryWith(_NoErr() ? _Tstbl_DirCreate($g_sInstallPath) : Null)
 		EndIf
         $iStep += 1
 
-        _ProgressStep($idStatusLabel, $idProgress, $iStep, $iSteps, "Copying TestFramework.au3...")
+        __UpdateProgressBar($idStatusLabel, $idProgress, $iStep, $iSteps, "Copying TestFramework.au3...")
         If Not $bSkip Then __InstallFile("..\core\TestFramework.au3", $g_sIncludePath & "\TestFramework.au3", $FC_OVERWRITE)
         $iStep += 1
 
-        _ProgressStep($idStatusLabel, $idProgress, $iStep, $iSteps, "Copying Testable library...")
+        __UpdateProgressBar($idStatusLabel, $idProgress, $iStep, $iSteps, "Copying Testable library...")
         If Not $bSkip Then
 			__InstallFile("..\core\Testable.au3",            $g_sIncludePath & "\Testable.au3",            $FC_OVERWRITE)
 			__InstallFile("..\core\TestableClipboard.au3",   $g_sIncludePath & "\TestableClipboard.au3",   $FC_OVERWRITE)
@@ -357,7 +355,7 @@ Func __RunInstall($idStatusLabel, $idProgress)
 		EndIf
         $iStep += 1
 
-        _ProgressStep($idStatusLabel, $idProgress, $iStep, $iSteps, "Copying Stubs library...")
+        __UpdateProgressBar($idStatusLabel, $idProgress, $iStep, $iSteps, "Copying Stubs library...")
         If Not $bSkip Then
 			__InstallFile("..\core\Stubs.au3",            $g_sIncludePath & "\Stubs.au3",            $FC_OVERWRITE)
 			__InstallFile("..\core\StubConstants.au3",    $g_sIncludePath & "\StubConstants.au3",    $FC_OVERWRITE)
@@ -380,30 +378,30 @@ Func __RunInstall($idStatusLabel, $idProgress)
 		EndIf
         $iStep += 1
 
-        _ProgressStep($idStatusLabel, $idProgress, $iStep, $iSteps, "Copying TestFramework.chm...")
+        __UpdateProgressBar($idStatusLabel, $idProgress, $iStep, $iSteps, "Copying TestFramework.chm...")
         If Not $bSkip Then __InstallFile("..\..\chm\TestFramework.chm", $g_sInstallPath & "\TestFramework.chm", $FC_OVERWRITE)
         $iStep += 1
 
-        _ProgressStep($idStatusLabel, $idProgress, $iStep, $iSteps, "Copying TestFrameworkUninstaller.exe...")
+        __UpdateProgressBar($idStatusLabel, $idProgress, $iStep, $iSteps, "Copying TestFrameworkUninstaller.exe...")
         If Not $bSkip Then __InstallFile("..\..\.out\TestFrameworkUninstaller.exe", $g_sInstallPath & "\TestFrameworkUninstaller.exe", $FC_OVERWRITE)
         $iStep += 1
 
-        _ProgressStep($idStatusLabel, $idProgress, $iStep, $iSteps, "Writing AutoIt include registry entry...")
+        __UpdateProgressBar($idStatusLabel, $idProgress, $iStep, $iSteps, "Writing AutoIt include registry entry...")
         If Not $bSkip Then __WriteIncludeRegistry()
         $iStep += 1
 
-        _ProgressStep($idStatusLabel, $idProgress, $iStep, $iSteps, "Finalizing installation...")
+        __UpdateProgressBar($idStatusLabel, $idProgress, $iStep, $iSteps, "Finalizing installation...")
         If Not $bSkip Then
 			__WriteInstallRegistry()
 			__WriteUninstallRegistry()
 		EndIf
         $iStep += 1
 
-		_ProgressStep($idStatusLabel, $idProgress, $iStep, $iSteps, "Finished!")
+		__UpdateProgressBar($idStatusLabel, $idProgress, $iStep, $iSteps, "Finished!")
 
 		Local $e
 		If _Catch($e) Then
-			_Tstbl_ConsoleWrite("!" & _StackTrace(_FormatStackTrace) & @CRLF)
+			_Tstbl_MsgBox($MB_OK + $MB_ICONERROR, $TFW_APP_NAME, _StackTrace(_FormatStackTrace))
 			_EndTry()
 			Return False
 		EndIf
@@ -453,24 +451,24 @@ EndFunc
 ; ===============================================================================================================================
 Func __Installation()
 	Local $mCfg = _NewInstallerCfg()
-	Local $sInstallerTitle = "AutoIt Test Framework Setup"
-	Local $sHeaderTitle = "AutoIt Test Framework"
+	Local $sInstallerTitle = $TFW_APP_NAME
+	Local $sHeaderTitle = $TFW_APP_NAME
 	Local $mWizard = _NewWizard($mCfg, $sInstallerTitle, $sHeaderTitle)
 
     ; ===================================================================
     ; Page 1 - Welcome
     ; ===================================================================
     Local $sIntroText = $g_bIsUpgrade ? _
-        "Welcome to the AutoIt Test Framework Setup Wizard." & @CRLF & @CRLF & _
-        "This wizard will upgrade AutoIt Test Framework on your computer." & @CRLF & @CRLF & _
+		"Welcome to " & $TFW_APP_NAME & " Installer." & @CRLF & @CRLF & _
+		"This process will upgrade " & $TFW_APP_NAME & " on your computer." & @CRLF & @CRLF & _
         "Click Next to continue or Cancel to exit." : _
-        "Welcome to the AutoIt Test Framework Setup Wizard." & @CRLF & @CRLF & _
-        "This wizard will install AutoIt Test Framework on your computer," & @CRLF & _
+		"Welcome to " & $TFW_APP_NAME & " Installer." & @CRLF & @CRLF & _
+        "This process will install " & $TFW_APP_NAME & " on your computer," & @CRLF & _
         "making it available from any AutoIt project via:" & @CRLF & @CRLF & _
         " #include <TestFramework.au3>" & @CRLF & @CRLF & _
         "Click Next to continue or Cancel to exit."
 
-	Local $sIntroSubHeading = ($g_bIsUpgrade ? "Upgrading " : "Welcome ") & $sHeaderTitle
+	Local $sIntroSubHeading = ($g_bIsUpgrade ? "Upgrading " : "Install ") & $sHeaderTitle
 	Local $iIntroPageId = _AddIntroPage($mWizard, $mCfg, $sIntroText, $sIntroSubHeading, $TFW_INSTALLER_VERSION)
 
     ; ===================================================================
@@ -505,10 +503,9 @@ Func __Installation()
 	Local $idProgressbar = _GetPageCtrl(_GetWizardPage($mWizard, $iProgressPageId), "Progressbar")
 	Local $sDocFile = $g_sInstallPath & "\TestFramework.chm"
 
-	Local $sFinishMsg = "AutoIt Test Framework has been successfully installed." & @CRLF & @CRLF & _
-						"You can now use it from any AutoIt project:" & @CRLF & @CRLF & _
-						" #include <TestFramework.au3>" & @CRLF & @CRLF & _
-						"Thank you for installing AutoIt Test Framework."
+	Local $sFinishMsg = $TFW_APP_NAME & " has been successfully installed." & @CRLF & @CRLF & _
+						"You can now use it from any AutoIt project:" & @CRLF & _
+						" #include <TestFramework.au3>"
 
 	Local $sFinishSubHeading = "Installation complete"
 	Local $iFinishPageId = _AddFinishPage($mWizard, $mCfg, $idLblProgress, $idProgressbar, $sFinishMsg, $sDocFile, $sFinishSubHeading)
