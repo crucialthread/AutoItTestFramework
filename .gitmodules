@@ -10,3 +10,7 @@
 	path = lib/TestFramework
 	url = https://github.com/crucialthread/AutoItTestFramework
 	branch = dist
+[submodule "lib/CrucialSetupWizard"]
+	path = lib/CrucialSetupWizard
+	url = https://github.com/crucialthread/CrucialSetupWizard
+	branch = dist
