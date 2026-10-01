@@ -4,7 +4,7 @@
 
 ; #INDEX# =======================================================================================================================
 ; Title .........: AutoIt Test Framework - TestFrameworkUninstallerTests.au3
-; Version .......: 1.0.0
+; Version .......: 1.1.0
 ; AutoIt Version : 3.3.18.0
 ; Language ......: English
 ; Author ........: Crucial Thread
@@ -21,7 +21,7 @@ Local Const $TST_FMK_UNINSTALLER_TESTS = "TestFrameworkUninstallerTests.au3"
 Func _TestReadInstallRecord_Success()
     _TestFmkHeader("Test: __ReadInstallRecord() - reads paths from registry and returns True")
 
-	Local $sIncludePath = "C:\AutoIt3\Include\Vendor"
+	Local $sIncludePath = "C:\AutoIt3\Include\Vendor\TestFramework"
     Local $sInstallPath = "C:\AutoIt3\TestFramework"
     _SetStubReturn("RegRead", $_1st, $sIncludePath)
     _SetStubReturn("RegRead", $_2nd, $sInstallPath)
@@ -52,7 +52,7 @@ EndFunc
 Func _TestReadInstallRecord_InstallPathMissing()
     _TestFmkHeader("Test: __ReadInstallRecord() - returns False when InstallPath missing from registry")
 
-    _SetStubReturn("RegRead", $_1st, "C:\AutoIt3\Include\Vendor")
+    _SetStubReturn("RegRead", $_1st, "C:\AutoIt3\Include\Vendor\TestFramework")
     _SetStubReturn("RegRead", $_2nd, $STUB_ERROR)
 
     Local $bResult = __ReadInstallRecord()
@@ -118,8 +118,8 @@ EndFunc
 Func _TestRemoveIncludeRegistry_RemovesOnlyTFWPath()
     _TestFmkHeader("Test: __RemoveIncludeRegistry() - removes only TestFramework path leaving others intact")
 
-    $g_sIncludePath = "C:\AutoIt3\Include\Vendor"
-    _SetStubReturn("RegRead",  $_1st, "C:\OtherVendor;C:\AutoIt3\Include\Vendor")
+    $g_sIncludePath = "C:\AutoIt3\Include\Vendor\TestFramework"
+    _SetStubReturn("RegRead",  $_1st, "C:\OtherVendor;C:\AutoIt3\Include\Vendor\TestFramework")
     _SetStubReturn("RegWrite", $_1st, 1)
 
 	_Try()
@@ -133,8 +133,8 @@ EndFunc
 Func _TestRemoveIncludeRegistry_DeletesKeyWhenOnlyTFWPath()
     _TestFmkHeader("Test: __RemoveIncludeRegistry() - deletes registry key when TestFramework is the only path")
 
-    $g_sIncludePath = "C:\AutoIt3\Include\Vendor"
-    _SetStubReturn("RegRead",   $_1st, "C:\AutoIt3\Include\Vendor")
+    $g_sIncludePath = "C:\AutoIt3\Include\Vendor\TestFramework"
+    _SetStubReturn("RegRead",   $_1st, "C:\AutoIt3\Include\Vendor\TestFramework")
     _SetStubReturn("RegDelete", $_1st, 1)
 
 	_Try()
@@ -167,8 +167,8 @@ EndFunc
 Func _TestRemoveIncludeRegistry_ErrorOnRegDeleteFailure()
     _TestFmkHeader("Test: __RemoveIncludeRegistry() - sets @error when RegDelete() fails")
 
-    $g_sIncludePath = "C:\AutoIt3\Include\Vendor"
-    _SetStubReturn("RegRead",   $_1st, "C:\AutoIt3\Include\Vendor")
+    $g_sIncludePath = "C:\AutoIt3\Include\Vendor\TestFramework"
+    _SetStubReturn("RegRead",   $_1st, "C:\AutoIt3\Include\Vendor\TestFramework")
     _SetStubReturn("RegDelete", $_1st, 0)
 
 	Local $bResult = __RemoveIncludeRegistry()
@@ -181,7 +181,7 @@ EndFunc
 Func _TestRemoveIncludeRegistry_ErrorOnRegWriteFailure()
     _TestFmkHeader("Test: __RemoveIncludeRegistry() - sets @error when RegWrite() fails")
 
-    $g_sIncludePath = "C:\AutoIt3\Include\Vendor"
+    $g_sIncludePath = "C:\AutoIt3\Include\Vendor\TestFramework"
     _SetStubReturn("RegRead",  $_1st, "C:\OtherVendor;C:\AutoIt3\Include\Vendor")
     _SetStubReturn("RegWrite", $_1st, 0)
 
@@ -195,8 +195,8 @@ EndFunc
 Func _TestRemoveIncludeRegistry_ThrowsOnRegDeleteFailure()
     _TestFmkHeader("Test: __RemoveIncludeRegistry() - thrown expected exception when RegDelete() fails")
 
-    $g_sIncludePath = "C:\AutoIt3\Include\Vendor"
-    _SetStubReturn("RegRead",   $_1st, "C:\AutoIt3\Include\Vendor")
+    $g_sIncludePath = "C:\AutoIt3\Include\Vendor\TestFramework"
+    _SetStubReturn("RegRead",   $_1st, "C:\AutoIt3\Include\Vendor\TestFramework")
     _SetStubReturn("RegDelete", $_1st, 0)
 
     _Try()
@@ -211,7 +211,7 @@ EndFunc
 Func _TestRemoveIncludeRegistry_ThrowsOnRegWriteFailure()
     _TestFmkHeader("Test: __RemoveIncludeRegistry() - thrown expected exception when RegWrite() fails")
 
-    $g_sIncludePath = "C:\AutoIt3\Include\Vendor"
+    $g_sIncludePath = "C:\AutoIt3\Include\Vendor\TestFramework"
     _SetStubReturn("RegRead",  $_1st, "C:\OtherVendor;C:\AutoIt3\Include\Vendor")
     _SetStubReturn("RegWrite", $_1st, 0)
 
@@ -240,7 +240,7 @@ Func _TestRemoveFolderIfEmpty_RemovesWhenEmpty()
     _SetStubReturn("DirRemove",  $_1st, 1)
 
     _Try()
-        __RemoveFolderIfEmpty("C:\AutoIt3\Include\Vendor")
+        __RemoveFolderIfEmpty("C:\AutoIt3\Include\Vendor\TestFramework")
         Local $e
         Local $bExceptionThrown = _Catch($e) ? True : False
     _EndTry()
@@ -256,7 +256,7 @@ Func _TestRemoveFolderIfEmpty_DoesNotRemoveWhenNotEmpty()
     _SetStubReturn("DirGetSize", $_1st, $aSize)
 
 	_Try()
-		__RemoveFolderIfEmpty("C:\AutoIt3\Include\Vendor")
+		__RemoveFolderIfEmpty("C:\AutoIt3\Include\Vendor\TestFramework")
         Local $e
         Local $bExceptionThrown = _Catch($e) ? True : False
 	_EndTry()
@@ -287,7 +287,7 @@ Func _TestRemoveFolderIfEmpty_ErrorOnDirRemoveFailure()
     _SetStubReturn("DirGetSize", $_1st, $aSize)
     _SetStubReturn("DirRemove",  $_1st, 0)
 
-	Local $bResult = __RemoveFolderIfEmpty("C:\AutoIt3\Include\Vendor")
+	Local $bResult = __RemoveFolderIfEmpty("C:\AutoIt3\Include\Vendor\TestFramework")
 	Local $iErr    = @error
 
     _TestFmkAssert($bResult = False, "Returns False on DirRemove failure", $bResult, False, $TST_FMK_UNINSTALLER_TESTS)
@@ -302,7 +302,7 @@ Func _TestRemoveFolderIfEmpty_ThrowsOnDirRemoveFailure()
     _SetStubReturn("DirRemove",  $_1st, 0)
 
     _Try()
-        Local $bResult = __RemoveFolderIfEmpty("C:\AutoIt3\Include\Vendor")
+        Local $bResult = __RemoveFolderIfEmpty("C:\AutoIt3\Include\Vendor\TestFramework")
 		Local $e
 		Local $bExceptionThrown = _Catch($e, _AsExceptionType("RemoveFolderException")) ? True : False
     _EndTry()
@@ -396,11 +396,11 @@ EndFunc
 Func _TestRunUninstall_ReturnsTrueOnSuccess()
     _TestFmkHeader("Test: __RunUninstall() - returns True when all steps succeed")
 
-    $g_sIncludePath = "C:\AutoIt3\Include\Vendor"
+    $g_sIncludePath = "C:\AutoIt3\Include\Vendor\TestFramework"
     $g_sInstallPath = "C:\AutoIt3\TestFramework"
 
     Local $aEmptySize[3] = [0, 0, 0]
-    _SetStubReturn("RegRead",    $_1st, "C:\AutoIt3\Include\Vendor") ; __RemoveIncludeRegistry - only TFW path
+    _SetStubReturn("RegRead",    $_1st, "C:\AutoIt3\Include\Vendor\TestFramework") ; __RemoveIncludeRegistry - only TFW path
     _SetStubReturn("RegDelete",  $_1st, 1)                           ; __RemoveIncludeRegistry - delete include key
     _SetStubReturn("DirGetSize", $_1st, $aEmptySize)                 ; __RemoveFolderIfEmpty for IncludePath - empty, remove
     _SetStubReturn("DirRemove",  $_1st, 1)                           ; IncludePath folder removed
@@ -427,17 +427,17 @@ EndFunc
 Func _TestRunUninstall_ReturnsFalseOnFailure()
     _TestFmkHeader("Test: __RunUninstall() - returns False when a step fails")
 
-    $g_sIncludePath = "C:\AutoIt3\Include\Vendor"
+    $g_sIncludePath = "C:\AutoIt3\Include\Vendor\TestFramework"
     $g_sInstallPath = "C:\AutoIt3\TestFramework"
 
     _SetStubReturn("FileDelete", $_1st, 0)  ; first file delete fails - throws RemoveFileException
 
     Local $bResult = __RunUninstall(10, 11)
-	Local $sConsoleWriteReturn = _GetStubCall("ConsoleWrite", $_1st, $Param_Text)
-	Local $bPrintException = StringInStr($sConsoleWriteReturn, "RemoveFileException") ? True : False
+	Local $sStackMsg = _GetStubCall("MsgBox", $_1st, $Param_Text)
+	Local $bPrintException = StringInStr($sStackMsg, "RemoveFileException") ? True : False
 
-    _TestFmkAssert($bResult = False, 		"Returns False on failure", 					   $bResult, 		 False, $TST_FMK_UNINSTALLER_TESTS)
-	_TestFmkAssert($bPrintException = True, "Write expected exception stack entry on console", $bPrintException, True,  $TST_FMK_UNINSTALLER_TESTS)
+    _TestFmkAssert($bResult = False, 		"Returns False on failure", 				 $bResult, 		   False, $TST_FMK_UNINSTALLER_TESTS)
+	_TestFmkAssert($bPrintException = True, "Display a message with expected exception", $bPrintException, True,  $TST_FMK_UNINSTALLER_TESTS)
 EndFunc
 
 ;================================================================================================================================
@@ -451,7 +451,7 @@ EndFunc
 Func _TestUpdateReadyPage_ContainsPaths()
     _TestFmkHeader("Test: _UninstallUpdateReadyPage() - returned text contains include and install paths")
 
-    $g_sIncludePath = "C:\AutoIt3\Include\Vendor"
+    $g_sIncludePath = "C:\AutoIt3\Include\Vendor\TestFramework"
     $g_sInstallPath = "C:\AutoIt3\TestFramework"
 
     Local $sResult = _UninstallUpdateReadyPage()
@@ -480,7 +480,7 @@ Func _TestUninstall_BuildsWizardCorrectly()
     _SetStubReturn("GUICtrlCreateButton", $_2nd, 11)
     _SetStubReturn("GUICtrlCreateButton", $_3rd, 12)
 
-    $g_sIncludePath = "C:\AutoIt3\Include\Vendor"
+    $g_sIncludePath = "C:\AutoIt3\Include\Vendor\TestFramework"
     $g_sInstallPath = "C:\AutoIt3\TestFramework"
 
     Local $mWizard = __Uninstall()

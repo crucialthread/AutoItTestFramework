@@ -4,7 +4,7 @@
 
 ; #INDEX# =======================================================================================================================
 ; Title .........: AutoIt Test Framework - TestFrameworkInstallerTests.au3
-; Version .......: 1.0.0
+; Version .......: 1.1.0
 ; AutoIt Version : 3.3.18.0
 ; Language ......: English
 ; Author ........: Crucial Thread
@@ -22,7 +22,7 @@ Func _TestDetectPaths_FromWowKey()
     _TestFmkHeader("Test: __DetectPaths() - reads AutoIt dir from WOW registry key")
 
 	Local $sWoWAutoItDir = "C:\Program Files (x86)\AutoIt3"
-	Local $sDerivedIncludePath = $sWoWAutoItDir & "\Include\Vendor"
+	Local $sDerivedIncludePath = $sWoWAutoItDir & "\Include\Vendor\TestFramework"
 	Local $sDerivedInstallPath = $sWoWAutoItDir & "\TestFramework"
 	_SetStubReturn("RegRead", $_1st, $sWoWAutoItDir)
 
@@ -89,12 +89,12 @@ Func _TestCheckExistingInstall_UpdatesIncludePathWhenExists()
     _TestFmkHeader("Test: __CheckExistingInstall() - updates IncludePath from registry when path exists on disk")
 
     _SetStubReturn("RegRead",     $_1st, "0.0.1")
-    _SetStubReturn("RegRead",     $_2nd, "C:\AutoIt3\Include\Vendor")
+    _SetStubReturn("RegRead",     $_2nd, "C:\AutoIt3\Include\Vendor\TestFramework")
     _SetStubReturn("FileExists",  $_1st, True)
 
     __CheckExistingInstall()
 
-    _TestFmkAssert($g_sIncludePath = "C:\AutoIt3\Include\Vendor", "IncludePath updated", $g_sIncludePath, "C:\AutoIt3\Include\Vendor", $TST_FMK_INSTALLER_TESTS)
+    _TestFmkAssert($g_sIncludePath = "C:\AutoIt3\Include\Vendor\TestFramework", "IncludePath updated", $g_sIncludePath, "C:\AutoIt3\Include\Vendor\TestFramework", $TST_FMK_INSTALLER_TESTS)
 EndFunc
 
 Func _TestCheckExistingInstall_KeepsDetectedIncludePathWhenNotExists()
@@ -102,7 +102,7 @@ Func _TestCheckExistingInstall_KeepsDetectedIncludePathWhenNotExists()
 
     $g_sIncludePath = "C:\Detected\Include"
     _SetStubReturn("RegRead",    $_1st, "0.0.1")
-    _SetStubReturn("RegRead",    $_2nd, "C:\AutoIt3\Include\Vendor")
+    _SetStubReturn("RegRead",    $_2nd, "C:\AutoIt3\Include\Vendor\TestFramework")
     _SetStubReturn("FileExists", $_1st, False)
 
     __CheckExistingInstall()
@@ -148,7 +148,7 @@ EndFunc
 Func _TestWriteIncludeRegistry_WritesWhenEmpty()
     _TestFmkHeader("Test: __WriteIncludeRegistry() - writes path when registry entry is empty")
 
-    $g_sIncludePath = "C:\AutoIt3\Include\Vendor"
+    $g_sIncludePath = "C:\AutoIt3\Include\Vendor\TestFramework"
     _SetStubReturn("RegRead", $_1st, $STUB_ERROR)
 
 	_Try()
@@ -166,7 +166,7 @@ EndFunc
 Func _TestWriteIncludeRegistry_AppendsWhenOtherPathsExist()
     _TestFmkHeader("Test: __WriteIncludeRegistry() - appends path when other paths exist in registry")
 
-    $g_sIncludePath = "C:\AutoIt3\Include\Vendor"
+    $g_sIncludePath = "C:\AutoIt3\Include\Vendor\TestFramework"
     _SetStubReturn("RegRead", $_1st, "C:\OtherPath")
 
 	_Try()
@@ -184,8 +184,8 @@ EndFunc
 Func _TestWriteIncludeRegistry_DoesNotWriteWhenAlreadyPresent()
     _TestFmkHeader("Test: __WriteIncludeRegistry() - does not write when path already present")
 
-    $g_sIncludePath = "C:\AutoIt3\Include\Vendor"
-    _SetStubReturn("RegRead", $_1st, "C:\AutoIt3\Include\Vendor")
+    $g_sIncludePath = "C:\AutoIt3\Include\Vendor\TestFramework"
+    _SetStubReturn("RegRead", $_1st, "C:\AutoIt3\Include\Vendor\TestFramework")
 
 	__WriteIncludeRegistry()
 
@@ -195,7 +195,7 @@ EndFunc
 Func _TestWriteIncludeRegistry_ErrorOnRegWriteFailure()
     _TestFmkHeader("Test: __WriteIncludeRegistry() - sets @error when RegWrite() fails")
 
-    $g_sIncludePath = "C:\AutoIt3\Include\Vendor"
+    $g_sIncludePath = "C:\AutoIt3\Include\Vendor\TestFramework"
     _SetStubReturn("RegRead", $_1st, $STUB_ERROR)
 	_SetStubReturn("RegWrite", $_1st, $STUB_ERROR)
 
@@ -209,7 +209,7 @@ EndFunc
 Func _TestWriteIncludeRegistry_ThrowsOnRegWriteFailure()
     _TestFmkHeader("Test: __WriteIncludeRegistry() - thrown expected exception when RegWrite() fails")
 
-    $g_sIncludePath = "C:\AutoIt3\Include\Vendor"
+    $g_sIncludePath = "C:\AutoIt3\Include\Vendor\TestFramework"
     _SetStubReturn("RegRead", $_1st, $STUB_ERROR)
 	_SetStubReturn("RegWrite", $_1st, $STUB_ERROR)
 
@@ -234,7 +234,7 @@ EndFunc
 Func _TestWriteInstallRegistry_WritesAllKeys()
     _TestFmkHeader("Test: __WriteInstallRegistry() - writes version, include path and install path")
 
-    $g_sIncludePath = "C:\AutoIt3\Include\Vendor"
+    $g_sIncludePath = "C:\AutoIt3\Include\Vendor\TestFramework"
     $g_sInstallPath = "C:\AutoIt3\TestFramework"
 
 	_Try()
@@ -255,7 +255,7 @@ EndFunc
 Func _TestWriteInstallRegistry_ErrorOnRegWriteFailForVersion()
     _TestFmkHeader("Test: __WriteIncludeRegistry() - sets @error when RegWrite() for Version fails")
 
-    $g_sIncludePath = "C:\AutoIt3\Include\Vendor"
+    $g_sIncludePath = "C:\AutoIt3\Include\Vendor\TestFramework"
     $g_sInstallPath = "C:\AutoIt3\TestFramework"
 
 	Local Const $STUB_SUCESS = 1
@@ -274,7 +274,7 @@ EndFunc
 Func _TestWriteInstallRegistry_ErrorOnRegWriteFailForInclude()
     _TestFmkHeader("Test: __WriteIncludeRegistry() - sets @error when RegWrite() for IncludePath fails")
 
-    $g_sIncludePath = "C:\AutoIt3\Include\Vendor"
+    $g_sIncludePath = "C:\AutoIt3\Include\Vendor\TestFramework"
     $g_sInstallPath = "C:\AutoIt3\TestFramework"
 
 	Local Const $STUB_SUCESS = 1
@@ -293,7 +293,7 @@ EndFunc
 Func _TestWriteInstallRegistry_ErrorOnRegWriteFailForInstall()
     _TestFmkHeader("Test: __WriteIncludeRegistry() - sets @error when RegWrite() for InstallPath fails")
 
-    $g_sIncludePath = "C:\AutoIt3\Include\Vendor"
+    $g_sIncludePath = "C:\AutoIt3\Include\Vendor\TestFramework"
     $g_sInstallPath = "C:\AutoIt3\TestFramework"
 
 	Local Const $STUB_SUCESS = 1
@@ -312,7 +312,7 @@ EndFunc
 Func _TestWriteInstallRegistry_ThrowsOnRegWriteFailure()
     _TestFmkHeader("Test: __WriteInstallRegistry() - thrown expected exception when any RegWrite() fails")
 
-    $g_sIncludePath = "C:\AutoIt3\Include\Vendor"
+    $g_sIncludePath = "C:\AutoIt3\Include\Vendor\TestFramework"
     $g_sInstallPath = "C:\AutoIt3\TestFramework"
 
 	Local Const $STUB_SUCESS = 1
@@ -500,7 +500,7 @@ EndFunc
 Func _TestInstallFile_ReturnsTrueOnSuccess()
     _TestFmkHeader("Test: __InstallFile() - returns True when file included successfully")
 
-	$g_sIncludePath = "C:\AutoIt3\Include\Vendor"
+	$g_sIncludePath = "C:\AutoIt3\Include\Vendor\TestFramework"
 	Local $sFilePath = "..\core\TestFramework.au3"
 
 	_Tstbl_Implement_FileInstall(__FileInstall)
@@ -516,7 +516,7 @@ EndFunc
 Func _TestInstallFile_SetErrorOnFailure()
     _TestFmkHeader("Test: __InstallFile() - sets @error and returns False when FileInstall() fails")
 
-	$g_sIncludePath = "C:\AutoIt3\Include\Vendor"
+	$g_sIncludePath = "C:\AutoIt3\Include\Vendor\TestFramework"
 	_Tstbl_Implement_FileInstall(__FileInstall)
     _SetStubReturn("FileInstall", $_1st, 0)
 
@@ -530,7 +530,7 @@ EndFunc
 Func _TestInstallFile_ThrowsOnFailure()
     _TestFmkHeader("Test: __InstallFile() - thrown expected exception when FileInstall() fails")
 
-	$g_sIncludePath = "C:\AutoIt3\Include\Vendor"
+	$g_sIncludePath = "C:\AutoIt3\Include\Vendor\TestFramework"
 	_Tstbl_Implement_FileInstall(__FileInstall)
     _SetStubReturn("FileInstall", $_1st, 0)
 
@@ -554,7 +554,7 @@ EndFunc
 Func _TestRunInstall_ReturnsTrueOnSuccess()
     _TestFmkHeader("Test: __RunInstall() - returns True when all steps succeed")
 
-    $g_sIncludePath = "C:\AutoIt3\Include\Vendor"
+    $g_sIncludePath = "C:\AutoIt3\Include\Vendor\TestFramework"
     $g_sInstallPath = "C:\AutoIt3\TestFramework"
 
     Local $bResult = __RunInstall(10, 11)
@@ -580,16 +580,16 @@ EndFunc
 Func _TestRunInstall_ReturnsFalseOnFailure()
     _TestFmkHeader("Test: __RunInstall() - returns False when a step fails")
 
-    $g_sIncludePath = "C:\AutoIt3\Include\Vendor"
+    $g_sIncludePath = "C:\AutoIt3\Include\Vendor\TestFramework"
     $g_sInstallPath = "C:\AutoIt3\TestFramework"
     _SetStubReturn("FileInstall", $_1st, 0)
 
     Local $bResult = __RunInstall(10, 11)
-	Local $sConsoleWriteReturn = _GetStubCall("ConsoleWrite", $_1st, $Param_Text)
-	Local $bPrintException = StringInStr($sConsoleWriteReturn, "FileInstallException") ? True : False
+	Local $sStackMsg = _GetStubCall("MsgBox", $_1st, $Param_Text)
+	Local $bPrintException = StringInStr($sStackMsg, "FileInstallException") ? True : False
 
-    _TestFmkAssert($bResult = False, 		"Returns False on failure", 					   $bResult, 		 False, $TST_FMK_INSTALLER_TESTS)
-	_TestFmkAssert($bPrintException = True, "Write expected exception stack entry on console", $bPrintException, True,  $TST_FMK_INSTALLER_TESTS)
+    _TestFmkAssert($bResult = False, 		"Returns False on failure", 				 $bResult, 		   False, $TST_FMK_INSTALLER_TESTS)
+	_TestFmkAssert($bPrintException = True, "Display a message with expected exception", $bPrintException, True,  $TST_FMK_INSTALLER_TESTS)
 EndFunc
 
 ;================================================================================================================================
@@ -621,7 +621,7 @@ EndFunc
 Func _TestUpdateReadyPage_ContainsIncludePath()
     _TestFmkHeader("Test: _UpdateReadyPage() - returned text contains include path")
 
-    $g_sIncludePath = "C:\AutoIt3\Include\Vendor"
+    $g_sIncludePath = "C:\AutoIt3\Include\Vendor\TestFramework"
     $g_sInstallPath = "C:\AutoIt3\TestFramework"
 
     Local $sResult = _UpdateReadyPage()
@@ -632,7 +632,7 @@ EndFunc
 Func _TestUpdateReadyPage_ContainsInstallPath()
     _TestFmkHeader("Test: _UpdateReadyPage() - returned text contains install path")
 
-    $g_sIncludePath = "C:\AutoIt3\Include\Vendor"
+    $g_sIncludePath = "C:\AutoIt3\Include\Vendor\TestFramework"
     $g_sInstallPath = "C:\AutoIt3\TestFramework"
 
     Local $sResult = _UpdateReadyPage()
@@ -658,7 +658,7 @@ Func _TestInstallation_BuildsWizardWithCorrectPageCount()
     _SetStubReturn("GUICtrlCreateButton", $_2nd, 11)
     _SetStubReturn("GUICtrlCreateButton", $_3rd, 12)
 
-    $g_sIncludePath = "C:\AutoIt3\Include\Vendor"
+    $g_sIncludePath = "C:\AutoIt3\Include\Vendor\TestFramework"
     $g_sInstallPath = "C:\AutoIt3\TestFramework"
 
     Local $mWizard = __Installation()
@@ -676,7 +676,7 @@ Func _TestInstallation_StoresPageIds()
     _SetStubReturn("GUICtrlCreateButton", $_2nd, 11)
     _SetStubReturn("GUICtrlCreateButton", $_3rd, 12)
 
-    $g_sIncludePath = "C:\AutoIt3\Include\Vendor"
+    $g_sIncludePath = "C:\AutoIt3\Include\Vendor\TestFramework"
     $g_sInstallPath = "C:\AutoIt3\TestFramework"
 
     Local $mWizard = __Installation()
