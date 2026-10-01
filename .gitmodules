@@ -2,10 +2,6 @@
 	path = lib/TryCatch
 	url = https://github.com/crucialthread/AutoItTryCatch
 	branch = dist
-[submodule "lib/CrucialInstaller"]
-	path = lib/CrucialInstaller
-	url = https://github.com/crucialthread/CrucialInstaller
-	branch = dist
 [submodule "lib/TestFramework"]
 	path = lib/TestFramework
 	url = https://github.com/crucialthread/AutoItTestFramework
