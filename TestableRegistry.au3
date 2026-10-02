@@ -2,7 +2,7 @@
 
 ; #INDEX# =======================================================================================================================
 ; Title .........: AutoIt Test Framework - TestableRegistry.au3 library
-; Version .......: 1.0.0
+; Version .......: 1.0.1
 ; AutoIt Version : 3.3.18.0
 ; Language ......: English
 ; Author ........: Crucial Thread
@@ -26,8 +26,9 @@ Func _Tstbl_RegWrite($sKeyName, $sValueName = "", $sKeyType = "REG_SZ", $sValue 
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
-Func _Tstbl_RegDelete($sKeyName, $sValueName = "")
-    Local $vResult = $g_hFn_RegDelete($sKeyName, $sValueName)
+Func _Tstbl_RegDelete($sKeyName, $sValueName = Default)
+	Local $vResult = ($sValueName = Default) ? $g_hFn_RegDelete($sKeyName): _
+											   $g_hFn_RegDelete($sKeyName, $sValueName)
     Return SetError(@error, @extended, $vResult)
 EndFunc
 
