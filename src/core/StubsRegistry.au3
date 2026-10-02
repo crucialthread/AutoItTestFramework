@@ -4,7 +4,7 @@
 
 ; #INDEX# =======================================================================================================================
 ; Title .........: AutoIt Test Framework - StubsRegistry.au3 library
-; Version .......: 1.0.0
+; Version .......: 1.0.1
 ; AutoIt Version : 3.3.18.0
 ; Language ......: English
 ; Author ........: Crucial Thread
@@ -22,8 +22,10 @@ Func __Stub_RegWrite($sKeyName, $sValueName = "", $sKeyType = "REG_SZ", $sValue 
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
-Func __Stub_RegDelete($sKeyName, $sValueName = "")
-	Local $vReturn = __DefineStub("RegDelete", __CallArgs("sKeyName = " & $sKeyName, "sValueName = " & $sValueName), 1)
+Func __Stub_RegDelete($sKeyName, $sValueName = Default)
+	Local $aArgs = ($sValueName = Default) ? __CallArgs("sKeyName = " & $sKeyName) : _
+											 __CallArgs("sKeyName = " & $sKeyName, "sValueName = " & $sValueName)
+	Local $vReturn = __DefineStub("RegDelete", $aArgs, 1)
 	Return SetError(@error, 0, $vReturn)
 EndFunc
 
