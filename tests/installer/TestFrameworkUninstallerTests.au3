@@ -229,6 +229,87 @@ EndFunc
 ;================================================================================================================================
 
 ;================================================================================================================================
+#Region ; Tests - __RemoveRegistryKey
+;================================================================================================================================
+
+Func _TestRemoveRegistryKey_ReturnsTrueOnSuccess()
+	_TestFmkHeader("Test: __RemoveRegistryKey() - returns True when registry key is deleted successfully")
+
+    _SetStubReturn("RegDelete", $_1st, 1)
+
+    Local $bResult = __RemoveRegistryKey($REG_INSTALL_KEY)
+
+    _TestFmkAssert($bResult = True, "Returns True on success", $bResult, True, $TST_FMK_UNINSTALLER_TESTS)
+EndFunc
+
+Func _TestRemoveRegistryKey_ReturnsTrueWhenKeyDoesNotExist()
+	_TestFmkHeader("Test: __RemoveRegistryKey() - returns True when registry key does not exist")
+
+	_SetStubReturn("RegDelete", $_1st, 0)
+	_SetStubReturn("RegRead", $_1st, $STUB_ERROR)
+
+	Local $bResult = __RemoveRegistryKey($REG_INSTALL_KEY)
+	Local $iErr    = @error
+
+    _Try()
+        Local $bResult = __RemoveRegistryKey($REG_INSTALL_KEY)
+        Local $e
+        Local $bExceptionThrown = _Catch($e) ? True : False
+    _EndTry()
+
+	Local $iRegReadCount = _StubCallCount("RegRead")
+
+    _TestFmkAssert($iRegReadCount = 1, 		  "RegRead called once", 							   $iRegReadCount, 	  1, 	 $TST_FMK_UNINSTALLER_TESTS)
+	_TestFmkAssert($bResult = True, 		  "Returns True when the registry key does not exist", $bResult, 		  False, $TST_FMK_UNINSTALLER_TESTS)
+	_TestFmkAssert($bExceptionThrown = False, "No exception thrown",   							   $bExceptionThrown, False, $TST_FMK_UNINSTALLER_TESTS)
+EndFunc
+
+Func _TestRemoveRegistryKey_SetErrorOnFailure()
+    _TestFmkHeader("Test: __RemoveRegistryKey() - sets @error and returns False when RegDelete() fails")
+
+	_SetStubReturn("RegDelete", $_1st, $STUB_ERROR)
+
+	Local $bResult = __RemoveRegistryKey($REG_INSTALL_KEY)
+	Local $iErr    = @error
+
+    _TestFmkAssert(_StubCallCount("RegRead") = 0, "RegRead not called", _StubCallCount("RegRead"), 0, $TST_FMK_UNINSTALLER_TESTS)
+	_TestFmkAssert($bResult = False, "Returns False on failure", $bResult, False, $TST_FMK_UNINSTALLER_TESTS)
+    _TestFmkAssert($iErr > 0,        "Sets @error on failure",   $iErr > 0, True, $TST_FMK_UNINSTALLER_TESTS)
+EndFunc
+
+Func _TestRemoveRegistryKey_SetErrorIfExistButCannotFind()
+	_TestFmkHeader("Test: __RemoveRegistryKey() - sets @error and returns False when the Key exist but RegDelete() cannot find it")
+
+	_SetStubReturn("RegDelete", $_1st, 0)
+	_SetStubReturn("RegRead", $_1st, "Exist")
+
+	Local $bResult = __RemoveRegistryKey($REG_INSTALL_KEY)
+	Local $iErr    = @error
+
+    _TestFmkAssert(_StubCallCount("RegRead") = 1, "RegRead called once", _StubCallCount("RegRead"), 1, $TST_FMK_UNINSTALLER_TESTS)
+	_TestFmkAssert($bResult = False, "Returns False when the Key exist but RegDelete() cannot find it", $bResult, False, $TST_FMK_UNINSTALLER_TESTS)
+    _TestFmkAssert($iErr > 0,        "Sets @error when the Key exist but RegDelete() cannot find it",   $iErr > 0, True, $TST_FMK_UNINSTALLER_TESTS)
+EndFunc
+
+Func _TestRemoveRegistryKey_ThrowsOnRegDeleteFailure()
+    _TestFmkHeader("Test: __RemoveRegistryKey() - thrown expected exception when RegDelete() fails")
+
+	_SetStubReturn("RegDelete", $_1st, $STUB_ERROR)
+
+    _Try()
+        Local $bResult = __RemoveRegistryKey($REG_INSTALL_KEY)
+		Local $e
+		Local $bExceptionThrown = _Catch($e, _AsExceptionType("RegDeleteException")) ? True : False
+    _EndTry()
+
+	_TestFmkAssert($bExceptionThrown = True, """RegDeleteException"" type thrown", $bExceptionThrown, True, $TST_FMK_UNINSTALLER_TESTS)
+EndFunc
+
+;================================================================================================================================
+#EndRegion <<<
+;================================================================================================================================
+
+;================================================================================================================================
 #Region ; Tests - __RemoveFolderIfEmpty
 ;================================================================================================================================
 
@@ -523,10 +604,19 @@ Func __RunTestFrameworkUninstallerTest_RemoveIncludeRegistry(ByRef $bAllPassed)
     $bAllPassed = _TestFmkRun(_TestRemoveIncludeRegistry_RemovesOnlyTFWPath,        $bAllPassed)
     $bAllPassed = _TestFmkRun(_TestRemoveIncludeRegistry_DeletesKeyWhenOnlyTFWPath, $bAllPassed)
     $bAllPassed = _TestFmkRun(_TestRemoveIncludeRegistry_DoesNothingWhenMissing,    $bAllPassed)
-	$bAllPassed = _TestFmkRun(_TestRemoveIncludeRegistry_ErrorOnRegDeleteFailure,  $bAllPassed)
-	$bAllPassed = _TestFmkRun(_TestRemoveIncludeRegistry_ErrorOnRegWriteFailure,   $bAllPassed)
+	$bAllPassed = _TestFmkRun(_TestRemoveIncludeRegistry_ErrorOnRegDeleteFailure,   $bAllPassed)
+	$bAllPassed = _TestFmkRun(_TestRemoveIncludeRegistry_ErrorOnRegWriteFailure,    $bAllPassed)
 	$bAllPassed = _TestFmkRun(_TestRemoveIncludeRegistry_ThrowsOnRegDeleteFailure,  $bAllPassed)
 	$bAllPassed = _TestFmkRun(_TestRemoveIncludeRegistry_ThrowsOnRegWriteFailure,   $bAllPassed)
+EndFunc
+
+Func __RunTestFrameworkUninstallerTest_RemoveRegistryKey(ByRef $bAllPassed)
+    _TestFmkSeparator()
+    $bAllPassed = _TestFmkRun(_TestRemoveRegistryKey_ReturnsTrueOnSuccess, 			 $bAllPassed)
+	$bAllPassed = _TestFmkRun(_TestRemoveRegistryKey_ReturnsTrueWhenKeyDoesNotExist, $bAllPassed)
+	$bAllPassed = _TestFmkRun(_TestRemoveRegistryKey_SetErrorOnFailure, 			 $bAllPassed)
+	$bAllPassed = _TestFmkRun(_TestRemoveRegistryKey_SetErrorIfExistButCannotFind, 	 $bAllPassed)
+	$bAllPassed = _TestFmkRun(_TestRemoveRegistryKey_ThrowsOnRegDeleteFailure, 		 $bAllPassed)
 EndFunc
 
 Func __RunTestFrameworkUninstallerTest_RemoveFolderIfEmpty(ByRef $bAllPassed)
@@ -577,6 +667,7 @@ Func _RunTestFrameworkUninstallerTests($bWriteSummary = True)
     __RunTestFrameworkUninstallerTest_IsRunningFromInstallFolder($bAllPassed)
     __RunTestFrameworkUninstallerTest_RelaunchFromTemp($bAllPassed)
     __RunTestFrameworkUninstallerTest_RemoveIncludeRegistry($bAllPassed)
+	__RunTestFrameworkUninstallerTest_RemoveRegistryKey($bAllPassed)
     __RunTestFrameworkUninstallerTest_RemoveFolderIfEmpty($bAllPassed)
 	__RunTestFrameworkUninstallerTest_RemoveInstalledFile($bAllPassed)
     __RunTestFrameworkUninstallerTest_RunUninstall($bAllPassed)
