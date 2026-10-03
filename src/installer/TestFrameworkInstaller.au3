@@ -450,7 +450,7 @@ EndFunc
 ; Returns    : Wizard map ($mWizard) ready to be passed to _InitWizard()
 ; ===============================================================================================================================
 Func __Installation()
-	Local $mCfg = _NewInstallerCfg()
+	Local $mCfg = _NewInstallerCfg(_NewWndCfg(594, 380))
 	Local $sInstallerTitle = $TFW_APP_NAME
 	Local $sHeaderTitle = $TFW_APP_NAME
 	Local $mWizard = _NewWizard($mCfg, $sInstallerTitle, $sHeaderTitle)
