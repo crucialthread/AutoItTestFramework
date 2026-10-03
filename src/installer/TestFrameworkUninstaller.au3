@@ -3,9 +3,9 @@
 #AutoIt3Wrapper_Outfile_x64=..\..\.out\TestFrameworkUninstaller.exe
 #AutoIt3Wrapper_Res_Comment=A simple, lightweight unit test framework for AutoIt
 #AutoIt3Wrapper_Res_Description=AutoIt Test Framework Uninstaller
-#AutoIt3Wrapper_Res_Fileversion=1.0.0.0
+#AutoIt3Wrapper_Res_Fileversion=1.0.1.0
 #AutoIt3Wrapper_Res_ProductName=AutoIt Test Framework
-#AutoIt3Wrapper_Res_ProductVersion=1.0.0
+#AutoIt3Wrapper_Res_ProductVersion=1.0.1
 #AutoIt3Wrapper_Res_CompanyName=Crucial Thread
 #AutoIt3Wrapper_Res_LegalCopyright=MIT License
 #AutoIt3Wrapper_Res_SaveSource=y
@@ -22,7 +22,7 @@
 
 ; #INDEX# =======================================================================================================================
 ; Title .........: AutoIt Test Framework - TestFrameworkUninstaller.au3
-; Version .......: 1.0.0
+; Version .......: 1.0.1
 ; AutoIt Version : 3.3.18.0
 ; Language ......: English
 ; Author ........: Crucial Thread

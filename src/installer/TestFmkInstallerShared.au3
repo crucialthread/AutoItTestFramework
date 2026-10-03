@@ -5,7 +5,7 @@
 
 ; #INDEX# =======================================================================================================================
 ; Title .........: AutoIt Test Framework - TestFmkInstallerShared.au3
-; Version .......: 1.1.0
+; Version .......: 1.0.1
 ; AutoIt Version : 3.3.18.0
 ; Language ......: English
 ; Author ........: Crucial Thread
@@ -16,7 +16,7 @@
 ; Constants
 ; ===============================================================================================================================
 
-Global Const $TFW_INSTALLER_VERSION = "1.0.0"
+Global Const $TFW_INSTALLER_VERSION = "1.0.1"
 Global Const $TFW_APP_NAME 			= "AutoIt Test Framework"
 Global Const $TFW_UNINSTALLER_TITLE = $TFW_APP_NAME & " Uninstall"
 
