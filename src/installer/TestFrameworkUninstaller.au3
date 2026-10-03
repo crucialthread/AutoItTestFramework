@@ -76,10 +76,6 @@ EndFunc
 ; Returns    : True if both paths were read successfully, False if either registry read fails
 ; ===============================================================================================================================
 Func __ReadInstallRecord()
-	$g_sAutoItDir = "C:\Program Files (x86)\AutoIt3"
-    $g_sIncludePath = $g_sAutoItDir & "\Include\Vendor\TestFramework"
-    $g_sInstallPath = $g_sAutoItDir & "\TestFramework"
-	Return True
     $g_sIncludePath = _Tstbl_RegRead($REG_INSTALL_KEY, "IncludePath")
     If @error Then Return False
     $g_sInstallPath = _Tstbl_RegRead($REG_INSTALL_KEY, "InstallPath")
