@@ -375,7 +375,7 @@ Func __Uninstall()
     ; ===================================================================
 	Local $sIntroText = "This process will remove " & $TFW_APP_NAME & " from your computer." & @CRLF & @CRLF & _
         "Current installation:" & @CRLF & @CRLF & _
-        " Library:       " & $g_sIncludePath & @CRLF & _
+        " Library: " & $g_sIncludePath & @CRLF & _
         " Documentation: " & $g_sInstallPath & @CRLF & @CRLF & _
         "Click Next to continue or Cancel to exit."
 	Local $sIntroSubHeading = "Welcome to " & $TFW_UNINSTALLER_TITLE
