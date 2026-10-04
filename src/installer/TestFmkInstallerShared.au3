@@ -10,6 +10,10 @@
 ; Language ......: English
 ; Author ........: Crucial Thread
 ; Description ...: AutoIt Test Framework Installer/Uninstaller shared constants, globals, and functions.
+;
+; Dependencies ..: AutoItTryCatch (https://github.com/crucialthread/AutoItTryCatch) to provide try/catch and thrown exceptions
+;                  CrucialSetupWizard (https://github.com/crucialthread/CrucialSetupWizard) to provide installer GUI wizard
+;                  AutoItTestFramework itself from the dist branch as a submodule, required by CrucialSetupWizard
 ; ===============================================================================================================================
 
 ; ===============================================================================================================================

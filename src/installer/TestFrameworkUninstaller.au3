@@ -37,6 +37,10 @@
 ; Note ..........: Requires administrator rights to delete from Program Files.
 ; Note ..........: The uninstall steps in __RunUninstall are mocked when running as a _
 ;                  plain script outside of test mode ($__TFW_TEST_MODE not declared).
+;
+; Dependencies ..: AutoItTryCatch (https://github.com/crucialthread/AutoItTryCatch) to provide try/catch and thrown exceptions
+;                  CrucialSetupWizard (https://github.com/crucialthread/CrucialSetupWizard) to provide installer GUI wizard
+;                  AutoItTestFramework itself from the dist branch as a submodule, required by CrucialSetupWizard
 ; ===============================================================================================================================
 
 ;================================================================================================================================

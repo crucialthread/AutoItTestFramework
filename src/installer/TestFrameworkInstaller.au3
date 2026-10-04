@@ -39,6 +39,10 @@
 ;                  compile time. The compiled .exe is fully self-contained.
 ; Note ..........: The installation steps in __RunInstall are mocked when running as a _
 ;                  plain script outside of test mode ($__TFW_TEST_MODE not declared).
+;
+; Dependencies ..: AutoItTryCatch (https://github.com/crucialthread/AutoItTryCatch) to provide try/catch and thrown exceptions
+;                  CrucialSetupWizard (https://github.com/crucialthread/CrucialSetupWizard) to provide installer GUI wizard
+;                  AutoItTestFramework itself from the dist branch as a submodule, required by CrucialSetupWizard
 ; ===============================================================================================================================
 
 ;================================================================================================================================
@@ -474,9 +478,10 @@ Func __Installation()
     ; ===================================================================
     ; Page 2 - Install Path
     ; ===================================================================
-    Local $sPathPageInfo = "TestFramework.au3 will be copied to the folder below." & @CRLF & @CRLF & _
-						   "A registry entry will be created so AutoIt finds it automatically" & @CRLF & _
-						   "using #include <TestFramework.au3> from any project."
+    Local $sPathPageInfo = "The library files will be copied to AutoIt Include/Vendor, " & @CRLF & _
+						   "and a registry entry will be created so AutoIt finds it automatically" & @CRLF & _
+						   "using #include <TestFramework.au3> from any project." & @CRLF & @CRLF & _
+						   "The other files will be installed to the folder below."
 
 	Local $sPathLabel = "Install folder:"
 	Local $sPathSubHeading = "Choose install folder"
